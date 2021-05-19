@@ -1,5 +1,7 @@
+import re
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from sqlalchemy.orm import relationship
 db = SQLAlchemy()
 migrate = Migrate()
 
@@ -16,6 +18,7 @@ class User(db.Model):
     department = db.Column(db.String(255))
     scard = db.Column(db.Boolean, default=False)
     avatar = db.Column(db.String(255))
+    relationship = db.Column(db.Enum('secret', 'single', 'in_a_relationship', 'complicated', 'open_relationship', 'no_show'))
     interest = db.Column(db.Text)
     club = db.Column(db.Text)
     course = db.Column(db.Text)

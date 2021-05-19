@@ -13,7 +13,7 @@
     <div class="top-blank"></div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid container">
-            <a class="navbar-brand home-page" href="#">Scard</a>
+            <a class="navbar-brand home-page" href="/">Scard</a>
             <form class="d-flex me-auto flex-lg-fill">
                 <input class="form-control border-info me-auto" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-info search" type="submit"><i class="bi bi-search"></i></button>
@@ -36,7 +36,7 @@
                         <a class="nav-link" href="#"><i class="bi bi-envelope-fill"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-person-fill"></i></a>
+                        <a class="nav-link" href="/my/profile"><i class="bi bi-person-fill"></i></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link signout" href="#">登出</a>
@@ -52,7 +52,36 @@
     </nav>
 
     <main class="container mx-auto row mt-4">
-        
+        <form class="col-10 col-md-8 col-lg-6 p-4 bg-white rounded mx-auto basic-profile"> 
+            <img src="/static/200px-Langdon_Alger.png" class="img-thumbnail mx-auto d-block" alt="...">
+            <div>
+                <input type="text" readonly class="form-control-plaintext text-center h4" id="name" name="name" value="邱宇軒">
+            </div>
+            <div class="mb-3 row gx-2">
+                <div class="col">
+                    <input type="text" readonly class="form-control-plaintext text-end" id="collage" name="collage" value="台師大" required>
+                </div>
+                <div class="col">
+                    <input type="text" readonly class="form-control-plaintext" id="collage" name="collage" value="心輔所" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="birthday" class="form-label">生日</label>
+                <input type="date" readonly class="form-control-plaintext" id="birthday" name="birthday" value="1997-04-25" required>
+            </div>
+            <div class="mb-3">
+                <label for="collage" class="form-label">學校</label>
+                <input type="text" class="form-control" id="collage" name="collage" placeholder="輸入學校" required>
+            </div>
+            <div class="mb-3">
+                <label for="department" class="form-label">系所</label>
+                <input type="text" class="form-control" id="department" name="department" placeholder="輸入系所" required>
+            </div>
+            <p class="message"></p>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-info text-white">送出</button>
+            </div>
+        </form>
     </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>

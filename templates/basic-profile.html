@@ -10,6 +10,7 @@
     <title>註冊｜Scard</title>
 </head>
 <body class="bg-scard">
+    <div class="top-blank"></div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid container">
             <a class="navbar-brand home-page" href="#">Scard</a>
@@ -21,7 +22,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 nav-user show">
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="#"><i class="bi bi-pencil-fill"></i></a>
                     </li>
@@ -38,16 +39,53 @@
                         <a class="nav-link" href="#"><i class="bi bi-person-fill"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">登出</a>
+                        <a class="nav-link signout" href="#">登出</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 nav-stranger">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signup">註冊／登入</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-    <main class="container mx-auto">
-
+    <main class="container mx-auto row mt-4">
+        <form class="col-10 col-md-8 col-lg-6 p-4 bg-white rounded mx-auto basic-profile"> 
+            <h3 class="text-center mb-3">基本資料</h3>
+            <div class="mb-3">
+                <label for="name" class="form-label">真實姓名</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="輸入真實姓名" aria-describedby="nameHelp" required>
+                <div id="nameHelp" class="form-text">真實姓名不會公開在看板上</div>
+            </div>
+            <div class="mb-3">
+                <label for="gender" class="form-label">性別</label>
+                <select class="form-select" id="gender" name="gender" required>
+                    <option value="male">男生</option>
+                    <option value="female">女生</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="birthday" class="form-label">出生年月日</label>
+                <input type="date" class="form-control" id="birthday" name="birthday" required>
+            </div>
+            <div class="mb-3">
+                <label for="collage" class="form-label">學校</label>
+                <input type="text" class="form-control" id="collage" name="collage" placeholder="輸入學校" required>
+            </div>
+            <div class="mb-3">
+                <label for="department" class="form-label">系所</label>
+                <input type="text" class="form-control" id="department" name="department" placeholder="輸入系所" required>
+            </div>
+            <p class="message"></p>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-info text-white">送出</button>
+            </div>
+        </form>
     </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+<script src="/static/js/all.js"></script>
+<script src="/static/js/basicprofile.js"></script>
 </body>
 </html>

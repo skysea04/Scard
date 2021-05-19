@@ -1,9 +1,21 @@
+.top-blank{
+    width: 100%;
+    height: 59px;
+}
+
+.navbar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+}
+
 .bg-scard{
     background-color: #00324E;
 }
 
-
-.form-control:focus {
+:is(.form-control, .form-select):focus {
     box-shadow: none;
 }
 
@@ -37,6 +49,13 @@ i{
     font-size: 1.5rem;
 }
 
+.nav-user, .nav-stranger{
+    display: none;
+}
+
+.message{
+    color: red;
+}
 
 @media(max-width:1200px){
     .container{

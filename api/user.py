@@ -9,8 +9,8 @@ def get_user():
     # 驗證使用者是否有登入
     if 'user' in session:
         data = {
-            "id": session['user']["id"],
-            "verify": session['user']["verify"]
+            "id": session["user"]["id"],
+            "verify": session["user"]["verify"]
         }
         return jsonify(data), 200
 
@@ -34,7 +34,10 @@ def post_user():
             db.session.add(new_user)
             db.session.commit()
             exist_user = User.query.filter_by(email=email).first()
-            session["user"] = exist_user.id
+            session["user"] = {
+                "id": exist_user.id,
+                "verify": exist_user.verify
+            }
             data = {
                 "ok": True
             }
@@ -42,7 +45,6 @@ def post_user():
 
         # 該email已經在使用者名單內
         else:
-
             # 密碼也正確，讓他登入
             if exist_user.password == password:
                 session["user"] = {

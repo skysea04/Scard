@@ -11,7 +11,14 @@
     z-index: 1;
 }
 
-.bg-scard{
+.bg-scard-l{
+    background-color: #3397CF;
+}
+.scard-l{
+    color: #3397CF;
+}
+
+.scard-d{
     background-color: #00324E;
 }
 

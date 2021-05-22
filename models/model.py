@@ -1,9 +1,8 @@
-import re
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from sqlalchemy.orm import relationship
 db = SQLAlchemy()
-migrate = Migrate()
+migrate = Migrate(compare_type=True)
+
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -17,7 +16,7 @@ class User(db.Model):
     collage = db.Column(db.String(255))
     department = db.Column(db.String(255))
     scard = db.Column(db.Boolean, default=False)
-    avatar = db.Column(db.String(255))
+    avatar = db.Column(db.String(255), default="https://scard-bucket.s3-ap-northeast-1.amazonaws.com/avatar/default_avatar.jpeg")
     relationship = db.Column(db.Enum('secret', 'single', 'in_a_relationship', 'complicated', 'open_relationship', 'no_show'))
     interest = db.Column(db.Text)
     club = db.Column(db.Text)

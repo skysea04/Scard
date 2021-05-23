@@ -1,25 +1,72 @@
-from flask import request, jsonify, session
-from . import api
+import io
+import os
+from re import T
+import sys
 from uuid import uuid4
+
+import boto3
+from flask import json, jsonify, request, session
 from PIL import Image
-import sys, os, boto3, io
+
+from . import api
 
 s3 = boto3.client('s3')
 
 sys.path.append("..")
-from models.model import db, User
+from models.model import User, db
 
 no_sign_data = {
     "error": True,
     "message": "要先登入唷"
 }
 
+@api.route('/verify', methods=["GET"])
+def verify_user():
+    # 查看是否登入
+    if "user" in session:
+        user_id = session["user"]["id"]
+        user = User.query.filter_by(id=user_id).first()
+        # 檢查使用者是否通過基本驗證
+        if user.verify == False:
+            data = {
+                "error": True,
+                "message": "要先填寫基本資料唷"
+            }
+            return jsonify(data), 400
+        # 通過認證
+        data = {"ok": True}
+        return jsonify(data), 200
+        
+    return jsonify(no_sign_data), 403
+
+
 @api.route('/profile', methods=["GET"])
 def get_profile():
-    return 0
+    # 查看是否登入
+    if "user" in session:
+        user_id = session["user"]["id"]
+        user = User.query.filter_by(id=user_id).first()
+        data = {
+            "avatar": user.avatar,
+            "name": user.name,
+            "collage": user.collage,
+            "department": user.department,
+            "relationship": user.relationship,
+            "interest": user.interest,
+            "club": user.club,
+            "course": user.course,
+            "country": user.country,
+            "worry": user.worry,
+            "swap": user.swap,
+            "want_to_try": user.want_to_try
+        }
+        return jsonify(data), 200
+        
+    return jsonify(no_sign_data), 403
 
 @api.route('/profile', methods=["POST"])
 def post_profile():
+    # 查看是否登入
     if 'user' in session:
         user_id = session["user"]["id"]
         profile = request.json
@@ -57,7 +104,55 @@ def post_profile():
 
 @api.route('/profile', methods=["PATCH"])
 def patch_profile():
-    return 0
+    # 查看是否登入
+    if "user" in session:
+        user_id = session["user"]["id"]
+        data = request.json
+        collage = data["collage"]
+        department = data["department"]
+        relationship = data["relationship"]
+        interest = data["interest"]
+        club = data["club"]
+        course = data["course"]
+        country = data["country"]
+        worry = data["worry"]
+        swap = data["swap"]
+        want_to_try = data["want_to_try"]
+        user = User.query.filter_by(id=user_id).first()
+        # 屏除將學校與系所欄位刪除的更新
+        if collage == '' or department == '':
+            data = {
+                "error": True,
+                "message": "學校與系所一定要填喔"
+            }
+            return jsonify(data), 400
+        else:
+            # 屏除必填項目字數少於25字的更新
+            if len(interest) < 25 or len(swap) < 25 or len(want_to_try) < 25:
+                data = {
+                    "error": True,
+                    "message": "必填項目不可少於25字"
+                }
+                return jsonify(data), 400
+
+            # 將資料更新，並回傳ok資訊
+            user.collage = collage
+            user.department = department
+            user.relationship = relationship
+            user.interest = interest
+            user.club = club
+            user.course = course
+            user.country = country
+            user.worry = worry
+            user.swap = swap
+            user.want_to_try = want_to_try
+            # 填寫過後就可以抽卡了
+            user.scard = True
+            db.session.commit()
+            data = {"ok": True}
+            return jsonify(data), 200
+
+    return jsonify(no_sign_data), 403 
 
 
 @api.route('/profile/avatar', methods=["PATCH"])
@@ -65,7 +160,8 @@ def patch_avatar():
     if "user" in session:
         user_id = session["user"]["id"]
         file = request.files["avatar"]
-        if file.filename != '':
+        allow_file = ['png', 'jpg', 'jpeg', 'gif']
+        if file.filename.rsplit('.', 1)[1] in allow_file:
             read_file = file.read()
             img = Image.open(io.BytesIO(read_file))
             img = img.convert('RGB')

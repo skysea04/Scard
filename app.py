@@ -4,7 +4,7 @@ import os
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
-app.config["SECRET_KEY"] = os.urandom(24).hex()
+app.config["SECRET_KEY"] = '123'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://skysea:Rock8967@database-scard.comdtbthwj2y.ap-northeast-1.rds.amazonaws.com:3306/scard'
 # app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping":True}

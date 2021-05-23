@@ -17,7 +17,7 @@ class User(db.Model):
     department = db.Column(db.String(255))
     scard = db.Column(db.Boolean, default=False)
     avatar = db.Column(db.String(255), default="https://scard-bucket.s3-ap-northeast-1.amazonaws.com/avatar/default_avatar.jpeg")
-    relationship = db.Column(db.Enum('secret', 'single', 'in_a_relationship', 'complicated', 'open_relationship', 'no_show'))
+    relationship = db.Column(db.Enum('secret', 'single', 'in_a_relationship', 'complicated', 'open_relationship', 'no_show'), default="no_show")
     interest = db.Column(db.Text)
     club = db.Column(db.Text)
     course = db.Column(db.Text)

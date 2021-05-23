@@ -29,9 +29,7 @@ async function postProfile(e){
     const res = await fetch(profileAPI, {
         method: 'POST',
         body: JSON.stringify(profileData),
-        headers: {
-        'Content-Type': 'application/json'
-        }
+        headers: {'Content-Type': 'application/json'}
     })
     const data = await res.json()
     if(data.ok){

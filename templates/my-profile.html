@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/static/css/nav.css">
-    <link rel="stylesheet" href="/static/css/my-profile.css">
+    <link rel="stylesheet" href="/static/css/profile.css">
     <title>註冊 / Scard</title>
 </head>
 <body class="scard-d">
@@ -31,7 +31,7 @@
                         <a class="nav-link" href="#"><i class="bi bi-bell-fill"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-file-person"></i></a>
+                        <a class="nav-link" href="/scard"><i class="bi bi-file-person"></i></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#"><i class="bi bi-envelope-fill"></i></a>
@@ -53,9 +53,9 @@
     </nav>
 
     <main class="container mx-auto row my-4 ">
-        <form class="col-10 col-md-8 col-lg-6 p-4 bg-white rounded mx-auto profile"> 
+        <form class="col-12 col-md-10 col-lg-8 p-4 p-lg-5 bg-white rounded mx-auto profile"> 
             <div class="avatar-container mx-auto">
-                <img src="https://scard-bucket.s3-ap-northeast-1.amazonaws.com/avatar/default_avatar.jpeg" class="img-thumbnail" alt="...">
+                <img src="../static/blank.png" class="img-thumbnail" alt="...">
                 <div class="avatar-upload px-2 rounded">
                     <label for="avatar">
                         <i class="bi bi-camera-fill"></i>
@@ -69,7 +69,7 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">頭像預覽</h5>
+                            <h5 class="modal-title" id="avatar-confirm">頭像預覽</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -137,7 +137,7 @@
                 <textarea class="form-control" id="want_to_try" name="want_to_try" rows="3" required></textarea>
             </div>
             
-            <p class="message"></p>
+            <p class="message text-end"></p>
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn bg-scard-l text-white">更新</button>
             </div>
@@ -149,7 +149,7 @@
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">您尚未登入</h5>
+            <h5 class="modal-title" id="to-signup-modal">您尚未登入</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -167,7 +167,7 @@
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">您尚未填寫基本資料</h5>
+            <h5 class="modal-title" id="to-verify-modal">您尚未填寫基本資料</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -176,6 +176,23 @@
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
             <a href="/basicprofile" class="btn bg-scard-l text-white">填資料去</a>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- 更新完成Modal -->
+    <div class="modal fade" id="finish-update" tabindex="-1" aria-labelledby="finish-update" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="finish-update">更新成功</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            個人資訊已成功更新！
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+            <button type="button" class="btn bg-scard-l text-white" data-bs-dismiss="modal">確認</button>
             </div>
         </div>
         </div>

@@ -1,5 +1,5 @@
 const toVerifyModal = new bootstrap.Modal(document.getElementById('to-verify-modal'))
-
+const finshModal = new bootstrap.Modal(document.getElementById('finish-update'))
 
 //// 編輯頭像功能
 const avatarInput = document.querySelector('#avatar')
@@ -8,7 +8,7 @@ const avatarConfirm = new bootstrap.Modal(document.getElementById('avatar-confir
 const avatarConfirmModel = document.querySelector("#avatar-confirm")
 const saveAvatarBtn = avatarConfirmModel.querySelector('.save-avatar')
 const closeBtn = avatarConfirmModel.querySelector('.btn-close')
-const alertMessage = avatarConfirmModel.querySelector('p.message')
+const avatarAlertMessage = avatarConfirmModel.querySelector('p.message')
 
 
 // 顯示預覽的圖像樣貌
@@ -31,9 +31,9 @@ async function saveAvatar(){
     const data = await res.json()
     if(data.ok){
         closeBtn.click()
-        avatar.src += `?t='+${Math.random()}`
+        avatar.src = `${data.src}?t='+${Math.random()}`
     }else{
-        alertMessage.innerText = data.message
+        avatarAlertMessage.innerText = data.message
     }
 }
 
@@ -56,6 +56,7 @@ const country = document.querySelector('textarea[name="country"]')
 const worry = document.querySelector('textarea[name="worry"]')
 const swap = document.querySelector('textarea[name="swap"]')
 const wantToTry = document.querySelector('textarea[name="want_to_try"]')
+const alertMessage = document.querySelector('form.profile>p.message')
 
 
 // 檢查是否通過驗證
@@ -107,6 +108,7 @@ async function getProfile(){
     }
 }
 
+// 更新自我介紹
 async function updateProfile(e){
     e.preventDefault()
 
@@ -129,7 +131,12 @@ async function updateProfile(e){
         headers: {'Content-Type': 'application/json'}
     })
     const data = await res.json()
-    console.table(data)
+    if(data.ok){
+        alertMessage.innerText = ''
+        finshModal.show()
+    }else{
+        alertMessage.innerText = data.message
+    }
 }
 
 profileForm.addEventListener('submit', updateProfile)

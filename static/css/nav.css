@@ -14,6 +14,14 @@
 .bg-scard-l{
     background-color: #3397CF;
 }
+
+.bg-scard-l:hover{
+    background-color: #5AB0DB;
+}
+.bg-scard-l:focus{
+    box-shadow: none;
+}
+
 .scard-l{
     color: #3397CF;
 }

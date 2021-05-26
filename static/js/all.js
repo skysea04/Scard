@@ -1,6 +1,7 @@
 const userAPI = '/api/user'
 const profileAPI = '/api/profile'
 const verifyAPI = '/api/verify'
+const scardAPI = '/api/scard'
 
 // 根據是否登入顯示不同的nav內容
 const navUser = document.querySelector('.nav-user')

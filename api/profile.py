@@ -1,11 +1,6 @@
-import io
-import os
-from re import T
-import sys
+from flask import jsonify, request, session
+import io, sys, boto3
 from uuid import uuid4
-
-import boto3
-from flask import json, jsonify, request, session
 from PIL import Image
 
 from . import api
@@ -173,11 +168,10 @@ def patch_avatar():
             
             try:
                 user = User.query.filter_by(id=user_id).first()
-                avatar_folder = 'https://scard-bucket.s3-ap-northeast-1.amazonaws.com/avatar'
-
+                avatar_folder = 'https://scard-bucket.s3-ap-northeast-1.amazonaws.com'
+                avatar_name = "avatar/%s.jpeg" % (str(uuid4()))
                 # 如果舊avatar是default，直接將圖片上傳到s3，並將user.avatar改為新avatar連結
-                if user.avatar == f'{avatar_folder}/default_avatar.jpeg':
-                    avatar_name = "avatar/%s.jpeg" % (str(uuid4()))
+                if user.avatar == f'{avatar_folder}/avatar/default_avatar.jpeg':
                     user.avatar = f'{avatar_folder}/{avatar_name}'
                     s3.upload_fileobj(in_mem_file, "scard-bucket", avatar_name, ExtraArgs={'ContentType': "image/jpeg", 'ACL': "public-read"})
                     db.session.commit()
@@ -186,7 +180,10 @@ def patch_avatar():
                 else:
                     avatar_name = f'avatar/{user.avatar.split("avatar/")[1]}'
                     s3.put_object(Body=in_mem_file, Bucket="scard-bucket", Key=avatar_name, ContentType="image/jpeg", ACL="public-read")
-                data = {"ok": True}
+                data = {
+                    "ok": True, 
+                    "src": f'{avatar_folder}/{avatar_name}'
+                }
                 return jsonify(data), 200
             
             except:

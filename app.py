@@ -7,7 +7,7 @@ app.config["TEMPLATES_AUTO_RELOAD"]=True
 app.config["SECRET_KEY"] = '123'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://skysea:Rock8967@database-scard.comdtbthwj2y.ap-northeast-1.rds.amazonaws.com:3306/scard'
-# app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping":True}
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping":True}
 
 from models.model import db, migrate
 db.init_app(app)
@@ -23,6 +23,8 @@ def index():
 
 @app.route("/signup")
 def signup():
+	if 'user' in session:
+		return redirect(url_for('index'))
 	return render_template("signup.html")
 
 @app.route('/basicprofile')
@@ -32,6 +34,11 @@ def basic_profile():
 @app.route('/my/profile')
 def my_profile():
     return render_template('my-profile.html')
+
+@app.route('/scard')
+def scard():
+	return render_template('scard.html')
+
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0',port=3000, debug=True)

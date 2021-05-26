@@ -1,3 +1,4 @@
+// 登入/註冊流程
 const signupForm = document.querySelector('form.signup')
 
 async function signup(e){

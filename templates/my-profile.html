@@ -1,57 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/static/css/nav.css">
-    <link rel="stylesheet" href="/static/css/profile.css">
-    <title>註冊 / Scard</title>
-</head>
-<body class="scard-d">
-    <div class="top-blank"></div>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid container">
-            <a class="navbar-brand home-page" href="/">Scard</a>
-            <form class="d-flex me-auto flex-lg-fill">
-                <input class="form-control border-info me-auto" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-info search" type="submit"><i class="bi bi-search"></i></button>
-            </form>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 nav-user show">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="#"><i class="bi bi-pencil-fill"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-bell-fill"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/scard"><i class="bi bi-file-person"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-envelope-fill"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/my/profile"><i class="bi bi-person-fill"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link signout" href="#">登出</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 nav-stranger">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/signup">註冊／登入</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+{% extends "basic.html" %}
 
+    {% block CSS %}
+    <link rel="stylesheet" href="/static/css/profile.css">
+    {% endblock %}
+    
+    {% block title %}
+    <title>自我介紹 / Scard</title>
+    {% endblock %}
+
+    {% block main %}
     <main class="container mx-auto row my-4 ">
         <form class="col-12 col-md-10 col-lg-8 p-4 p-lg-5 bg-white rounded mx-auto profile"> 
             <div class="avatar-container mx-auto">
@@ -143,7 +100,9 @@
             </div>
         </form>
     </main>
-    
+    {% endblock %}
+
+    {% block modal %}
     <!-- 要求登入Modal -->
     <div class="modal fade" id="to-signup-modal" tabindex="-1" aria-labelledby="to-signup-modal" aria-hidden="true">
         <div class="modal-dialog">
@@ -197,9 +156,8 @@
         </div>
         </div>
     </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
-<script src="/static/js/all.js"></script>
-<script src="/static/js/profile.js"></script>
-</body>
-</html>
+    {% endblock %}
+    
+    {% block JS %}
+    <script src="/static/js/profile.js"></script>
+    {% endblock %}

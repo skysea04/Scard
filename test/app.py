@@ -26,10 +26,3 @@
 #     return '00'
 # count()
 
-a = None
-b = 'aaa'
-
-if isinstance(b, str) and isinstance(a, str):
-    print('gogo')
-
-

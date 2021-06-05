@@ -47,7 +47,9 @@ class Scard(db.Model):
 
     def as_dict(self):
         return{c.name: getattr(self, c.name) for c in self.__table__.columns}
-    
+
+Index('user1_date_index', Scard.user_1, Scard.create_date)
+Index('user2_date_index', Scard.user_2, Scard.create_date)
 
 class Messages(db.Model):
     __tablename__ = 'messages'

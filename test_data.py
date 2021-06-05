@@ -2,6 +2,7 @@ import sys, random
 from datetime import date
 # sys.path.append("..")
 from models.model import db, User, Scard
+from sqlalchemy import update
 from app import app
 db.__init__(app)
 
@@ -18,12 +19,9 @@ def create_user():
 
 # 增加未開卡天數
 def update_no_scard_days():
-    users = User.query.filter(User.days_no_open_scard < 3).all()
-    for user in users:
-        user.days_no_open_scard += 1
+    User.query.filter(User.days_no_open_scard < 3).update({User.days_no_open_scard: User.days_no_open_scard + 1})
     db.session.commit()
-
-update_no_scard_days()
+# update_no_scard_days()
 
 
 # 建立配對

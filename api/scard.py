@@ -4,7 +4,7 @@ from . import api
 from datetime import date
 import sys
 sys.path.append("..")
-from models.model import db, User, Scard
+from models.model import Messages, db, User, Scard
 
 
 
@@ -63,24 +63,32 @@ def get_scard():
             if user.scard == False:
                 return jsonify(my_profile_data), 403
                                 
-            scard = Scard.query.filter(or_(Scard.user_1 == user_id, Scard.user_2 == user_id)).filter_by(create_date=date.today()).first()
-            # 將days_no_open_card歸0
-            user.days_no_open_card = 0
+            scard_1 = Scard.query.filter_by(user_1=user_id, create_date=date.today()).first()
+            scard_2 = Scard.query.filter_by(user_2=user_id, create_date=date.today()).first()
+            # 將days_no_open_scard歸0
+            user.days_no_open_scard = 0
             db.session.commit()
             
-            # 如果今天沒有抽到卡，通知使用者將會參加明天的抽卡
-            if not scard:
+            if scard_1:
+                invited = False if scard_1.user_1_message is None else True
+                is_friend = scard_1.is_friend
+                match_id = scard_1.user_2
+                message_room_id = scard_1.id
+            elif scard_2:
+                invited = False if scard_2.user_2_message is None else True
+                is_friend = scard_2.is_friend
+                match_id = scard_2.user_1
+                message_room_id = scard_2.id
+            # 今天沒有抽到卡，通知使用者將會參加明天的抽卡
+            else:
                 return jsonify(tomorrow_scard_data), 403
-            
-            user_message = scard.user_1_message if user_id == scard.user_1 else scard.user_2_message
-            invited = False if user_message is None else True
-            is_friend = scard.is_friend
-            match_id = scard.user_2 if user_id == scard.user_1 else scard.user_1
+
             match_user = User.query.filter_by(id=match_id).first()
             
             data = {
                 'isFriend': is_friend,
                 'invited': invited,
+                'messageRoomId': message_room_id,
                 'avatar': match_user.avatar,
                 'name': match_user.name,
                 'collage': match_user.collage,
@@ -108,22 +116,41 @@ def invite_friend():
         message = data['message']
 
         user_id = session['user']['id']
-        scard = Scard.query.filter(or_(Scard.user_1 == user_id, Scard.user_2 == user_id)).filter_by(create_date=date.today()).first()
+        scard_1 = Scard.query.filter_by(user_1=user_id, create_date=date.today()).first()
+        scard_2 = Scard.query.filter_by(user_2=user_id, create_date=date.today()).first()
+
         # 根據使用者是user_1還是user_2 填入不同的message欄位
-        if user_id == scard.user_1:
-            scard.user_1_message = message
-        else:
-            scard.user_2_message = message
+        if scard_1:
+            scard_1.user_1_message = message
+            # 如果兩個欄位都是str（代表有被填寫），則該配對成為好友，並將給對方的第一句話增加到message table中
+            if isinstance(scard_1.user_2_message, str):
+                scard_1.is_friend = True
+                message_1 = Messages(scard_id=scard_1.id, user_id=scard_1.user_1, message=scard_1.user_1_message)
+                message_2 = Messages(scard_id=scard_1.id, user_id=scard_1.user_2, message=scard_1.user_2_message)
+                db.session.add_all([message_1, message_2])
+
+            data = {
+                'ok': True,
+                'isFriend': scard_1.is_friend,
+                'messageRoomId': scard_1.id
+            }
         
-        # 如果兩個欄位都是str（代表有被填寫），則該配對成為好友
-        if isinstance(scard.user_1_message, str) and isinstance(scard.user_1_message, str):
-            scard.is_friend = True
+        else:
+            scard_2.user_2_message = message
+            # 如果兩個欄位都是str（代表有被填寫），則該配對成為好友
+            if isinstance(scard_2.user_1_message, str):
+                scard_2.is_friend = True
+                message_1 = Messages(scard_id=scard_2.id, user_id=scard_2.user_1, message=scard_2.user_1_message)
+                message_2 = Messages(scard_id=scard_2.id, user_id=scard_2.user_2, message=scard_2.user_2_message)
+                db.session.add_all([message_1, message_2])
+
+            data = {
+                'ok': True,
+                'isFriend': scard_2.is_friend,
+                'messageRoomId': scard_2.id
+            }
         db.session.commit()    
 
-        data = {
-            'ok': True,
-            'isFriend': scard.is_friend
-        }
         return jsonify(data), 200
         
     return jsonify(no_sign_data), 403

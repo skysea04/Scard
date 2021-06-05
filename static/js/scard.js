@@ -6,6 +6,7 @@ const modalBody = errorModalContain.querySelector('.modal-body')
 const modalHref = errorModalContain.querySelector('.modal-href')
 
 // scard頁面相關變數
+const friendHref = document.querySelector('.friend-href')
 const addFriendBtn = document.querySelector('.add-friend-btn')
 const scardPage = document.querySelector('.scard-card')
 const avatar = scardPage.querySelector('.avatar-container img')
@@ -32,8 +33,8 @@ fetch(scardAPI)
             errorModal.show()
         }else{
             if(data.isFriend){
-                addFriendBtn.innerText = '已成為卡有'
-                // 這裡還要幫他加入對方聊天的連結，之後補
+                addFriendBtn.innerText = '已成為卡友'
+                friendHref.href = `/message/${data.messageRoomId}`
             }else if(data.invited){
                 addFriendBtn.innerText = '已送出邀請'
                 addFriendBtn.classList.add('btn-secondary')
@@ -78,12 +79,13 @@ async function addFriend(e){
     if(data.ok){
         if(data.isFriend){
             addFriendBtn.innerText = '已成為卡友'
-            // 這裡還要幫他加入對方聊天的連結，之後補
+            friendHref.href = `/message/${data.messageRoomId}`
         }else{
             addFriendBtn.innerText = '已送出邀請'
             addFriendBtn.classList.add('btn-secondary')
             addFriendBtn.setAttribute("disabled", "")
         }
+        addModal.hide()
     }else{
         modalTitle.innText = data.title
         modalBody.innerText = data.message

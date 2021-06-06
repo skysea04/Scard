@@ -44,10 +44,11 @@ def get_friendlist():
         if 'user' in session:
             user_id = session['user']['id']
             # 根據使用者最後傳送或收到訊息的時間排續好友資訊
-            last_messages = db.session.execute("SELECT scard_id, message, create_time, user_1, user_2 FROM \
-                (SELECT * FROM messages ORDER BY id DESC LIMIT 9999) friend , scard \
+            last_messages = db.session.execute("SELECT scard_id, message, create_time, user_1, user_2 \
+                FROM (SELECT * FROM messages ORDER BY id DESC LIMIT 9999) friend , scard \
                 WHERE friend.scard_id = scard.id AND (scard.user_1=:id OR scard.user_2=:id) \
-                GROUP BY scard_id",
+                GROUP BY scard_id \
+                ORDER BY create_time DESC",
                 {"id":user_id})
 
             # 半個朋友都沒有的狀況
@@ -58,9 +59,9 @@ def get_friendlist():
             for last_message in last_messages:
                 last_message = last_message._asdict()
                 if user_id == last_message["user_1"]:
-                    friend = User.query.filter_by(id=last_message["user_2"]).first()
+                    friend = User.view_user(last_message["user_2"])
                 else:
-                    friend = User.query.filter_by(id=last_message["user_1"]).first()
+                    friend = User.view_user(last_message["user_1"])
                 
                 friend_data = {
                     "name": friend.name,
@@ -88,45 +89,43 @@ def get_message(id):
     # try:
         if 'user' in session:
             user_id = session['user']['id']
-            # messages = Messages.query.filter_by(scard_id=id).order_by(Messages.id).all()
-            messages = db.session.execute('SELECT user_id, message, create_time FROM messages WHERE scard_id=:id ORDER BY id DESC;', {"id":id})
             
-            # 使用者亂入其他頁面 
-            if not messages:
+            message_room_1 = Scard.scard_from_1(id, user_id)
+            message_room_2 = Scard.scard_from_2(id, user_id)
+
+            if message_room_1: # 如果user_1 == user_id，
+                user = User.view_user(message_room_1.user_1)
+                friend = User.view_user(message_room_1.user_2)
+            elif message_room_2: # 如果user_2 == user_id
+                user = User.view_user(message_room_2.user_2)
+                friend = User.view_user(message_room_2.user_1)
+            else:  # 使用者亂入不屬於自己所有的訊息頻道 
                 return jsonify(not_friend_data), 400
 
-            # 抓取message中兩個
-            users = db.session.execute('SELECT user.* \
-                FROM scard INNER JOIN user WHERE (scard.user_1=user.id or scard.user_2=user.id)\
-                AND scard.id=:id', {"id":id})
-            
-            for user in users:
-                user = user._asdict()
-                # print(user)
-                if user_id == user["id"]:
-                    user_data = {
-                        "id": user["id"],
-                        "name": user["name"],
-                        "avatar": user["avatar"]
-                    }
-                else:
-                    friend_data = {
-                        "id": user["id"],
-                        "name": user["name"],
-                        "avatar": user["avatar"],
-                        "collage": user["collage"],
-                        "department": user["department"],
-                        "birthday": user["birthday"].strftime("%-m月%-d日"),
-                        "relationship": user["relationship"],
-                        "interest": user["interest"],
-                        "club": user["club"],
-                        "course": user["course"],
-                        "country": user["country"],
-                        "worry": user["worry"],
-                        "swap": user["swap"],
-                        "wantToTry": user["want_to_try"]
-                    }
+            user_data = {
+                "id": user.id,
+                "name": user.name,
+                "avatar": user.avatar
+            }
+                # else:
+            friend_data = {
+                "id": friend.id,
+                "name": friend.name,
+                "avatar": friend.avatar,
+                "collage": friend.collage,
+                "department": friend.department,
+                "birthday": friend.birthday.strftime("%-m月%-d日"),
+                "relationship": friend.relationship,
+                "interest": friend.interest,
+                "club": friend.club,
+                "course": friend.course,
+                "country": friend.country,
+                "worry": friend.worry,
+                "swap": friend.swap,
+                "wantToTry": friend.want_to_try
+            }
 
+            messages = db.session.execute('SELECT user_id, message, create_time FROM messages WHERE scard_id=:id ORDER BY id DESC', {"id":id})
             message_list = []
             for message in messages:
                 message = message._asdict()

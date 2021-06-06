@@ -1,10 +1,11 @@
+from functools import cache
 from flask import request, jsonify, session
 from sqlalchemy import or_
 from . import api
 from datetime import date
 import sys
 sys.path.append("..")
-from models.model import Messages, db, User, Scard
+from models.model import Messages, db, User, Scard, cache
 
 
 
@@ -54,7 +55,8 @@ def get_scard():
         if 'user' in session:
             user_id = session['user']['id']
 
-            user = User.query.filter_by(id=user_id).first()
+            user = User.view_user(user_id)
+            # user = User.query.filter_by(id=user_id).first()
             # 若User欄位的verify為false，建議使用者轉移到basic_profile填寫頁面
             if user.verify == False:
                 return jsonify(basic_profile_data), 403
@@ -63,8 +65,10 @@ def get_scard():
             if user.scard == False:
                 return jsonify(my_profile_data), 403
                                 
-            scard_1 = Scard.query.filter_by(user_1=user_id, create_date=date.today()).first()
-            scard_2 = Scard.query.filter_by(user_2=user_id, create_date=date.today()).first()
+            # scard_1 = Scard.query.filter_by(user_1=user_id, create_date=date.today()).first()
+            # scard_2 = Scard.query.filter_by(user_2=user_id, create_date=date.today()).first()
+            scard_1 = Scard.view_scard_1(user_id, date.today())
+            scard_2 = Scard.view_scard_2(user_id, date.today())
             # 將days_no_open_scard歸0
             user.days_no_open_scard = 0
             db.session.commit()
@@ -83,7 +87,8 @@ def get_scard():
             else:
                 return jsonify(tomorrow_scard_data), 403
 
-            match_user = User.query.filter_by(id=match_id).first()
+            match_user = User.view_user(match_id)
+            # match_user = User.query.filter_by(id=match_id).first()
             
             data = {
                 'isFriend': is_friend,
@@ -129,6 +134,14 @@ def invite_friend():
                 message_2 = Messages(scard_id=scard_1.id, user_id=scard_1.user_2, message=scard_1.user_2_message)
                 db.session.add_all([message_1, message_2])
 
+                # 刪除舊的卡友資訊快取，建立新快取
+                cache.delete_memoized(Scard.view_scard_2, Scard, scard_1.user_2, date.today())    
+                scard = Scard.view_scard_2(scard_1.user_2, date.today())
+
+            # 刪除舊的卡友資訊快取，建立新快取
+            cache.delete_memoized(Scard.view_scard_1, Scard, user_id, date.today())    
+            scard = Scard.view_scard_1(user_id, date.today())
+            
             data = {
                 'ok': True,
                 'isFriend': scard_1.is_friend,
@@ -143,6 +156,13 @@ def invite_friend():
                 message_1 = Messages(scard_id=scard_2.id, user_id=scard_2.user_1, message=scard_2.user_1_message)
                 message_2 = Messages(scard_id=scard_2.id, user_id=scard_2.user_2, message=scard_2.user_2_message)
                 db.session.add_all([message_1, message_2])
+                # 刪除舊的卡友資訊快取，建立新快取
+                cache.delete_memoized(Scard.view_scard_1, Scard, scard_2.user_1, date.today())    
+                scard = Scard.view_scard_1(scard_2.user_1, date.today())
+
+            # 刪除舊的卡友資訊快取，建立新快取
+            cache.delete_memoized(Scard.view_scard_2, Scard, user_id, date.today())    
+            scard = Scard.view_scard_2(user_id, date.today())
 
             data = {
                 'ok': True,

@@ -1,13 +1,11 @@
 import sys, random
 from datetime import date
 # sys.path.append("..")
-from models.model import db, User, Scard
+from models.model import db, User, Scard, cache
 from sqlalchemy import update
 from app import app
 db.__init__(app)
 
-
-today = date.today()
 
 # 新增測試帳號
 def create_user():
@@ -23,6 +21,13 @@ def update_no_scard_days():
     db.session.commit()
 # update_no_scard_days()
 
+
+# 清除昨日配對快取
+def clear_scard_cache():
+    cache.delete_memoized(Scard.view_scard_1)
+    cache.delete_memoized(Scard.view_scard_2)
+
+clear_scard_cache()
 
 # 建立配對
 def match_user():
@@ -66,6 +71,8 @@ def match_user():
         print('user_id: ', user_id, ', match_id: ', match_id)
         match = Scard(user_1=user_id, user_2=match_id)
         db.session.add(match)
+        scard_1 = Scard.view_scard_1(user_id, date.today())
+        scard_2 = Scard.view_scard_2(match_id, date.today())
 
         # 將已經配對的id設為0
         user_list[user_index] = 0

@@ -8,7 +8,7 @@ from . import api
 s3 = boto3.client('s3')
 
 sys.path.append("..")
-from models.model import User, db
+from models.model import User, db, cache
 
 no_sign_data = {
     "error": True,
@@ -20,7 +20,8 @@ def verify_user():
     # 查看是否登入
     if "user" in session:
         user_id = session["user"]["id"]
-        user = User.query.filter_by(id=user_id).first()
+        user = User.view_user(user_id)
+        # user = User.query.filter_by(id=user_id).first()
         # 檢查使用者是否通過基本驗證
         if user.verify == False:
             data = {
@@ -40,7 +41,8 @@ def get_profile():
     # 查看是否登入
     if "user" in session:
         user_id = session["user"]["id"]
-        user = User.query.filter_by(id=user_id).first()
+        user = User.view_user(user_id)
+        # user = User.query.filter_by(id=user_id).first()
         data = {
             "avatar": user.avatar,
             "name": user.name,
@@ -89,6 +91,9 @@ def post_profile():
         user.department = department
         db.session.commit()
 
+        cache.delete_memoized(User.view_user, User, user_id)
+        user = User.view_user(user_id)
+
         data = {"ok": True}
         return jsonify(data), 200
         
@@ -114,6 +119,7 @@ def patch_profile():
         swap = data["swap"]
         want_to_try = data["want_to_try"]
         user = User.query.filter_by(id=user_id).first()
+
         # 屏除將學校與系所欄位刪除的更新
         if collage == '' or department == '':
             data = {
@@ -145,6 +151,11 @@ def patch_profile():
             user.scard = True
             db.session.commit()
             data = {"ok": True}
+
+            # 清除原本該使用者的快取資料，重新存入快取
+            cache.delete_memoized(User.view_user, User, user_id)
+            user = User.view_user(user_id)
+
             return jsonify(data), 200
 
     return jsonify(no_sign_data), 403 
@@ -184,6 +195,9 @@ def patch_avatar():
                     "ok": True, 
                     "src": f'{avatar_folder}/{avatar_name}'
                 }
+                # 清除原本該使用者的快取資料，重新存入快取
+                cache.delete_memoized(User.view_user, User, user_id)
+                user = User.view_user(user_id)
                 return jsonify(data), 200
             
             except:

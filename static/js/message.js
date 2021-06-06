@@ -1,3 +1,11 @@
+// errorModal相關變數
+const errorModalContain = document.getElementById('error-modal')
+const errorModal = new bootstrap.Modal(errorModalContain)
+const modalTitle = errorModalContain.querySelector('.modal-title')
+const modalBody = errorModalContain.querySelector('.modal-body')
+const modalHref = errorModalContain.querySelector('.modal-href')
+
+
 //// 切換訊息與卡友資訊分頁
 const messageNav = document.querySelector('#nav-message')
 const friendInfoNav = document.querySelector('#nav-friend-info')
@@ -26,12 +34,13 @@ friendInfoNav.addEventListener('click', showFriendInfo)
 //// 獲取好友列表
 const friendlistAPI = '/api/friendlist'
 const friendList = document.querySelector('.friends .list-group')
-
 async function getFriend(){
+    // 清空後重新render
     const res = await fetch(friendlistAPI)
     const data = await res.json()
     // 列出朋友
     if(data.data){ // 正常render資料
+        friendList.innerHTML = ''
         data.data.forEach(friend => {
             // 朋友姓名
             const friendName = document.createElement('h6')
@@ -76,7 +85,11 @@ async function getFriend(){
         const friendInThisMessage = document.querySelector(`a[href=\'${location.pathname}\']`)
         friendInThisMessage.classList.add('active')
     }else{ //出現錯誤，顯示提示Modal
-        
+        modalTitle.innText = data.title
+        modalBody.innerText = data.message
+        modalHref.innerText = data.confirm
+        modalHref.href = data.url
+        errorModal.show()
     }
 }
 
@@ -88,6 +101,8 @@ const messageRoomId = location.pathname.split('/').pop()
 const messageAPI = `/api/message/${messageRoomId}`
 const messageList = document.querySelector('.messages ul')
 const userAvatar = document.querySelector('.send-message .message-avatar img')
+// 定義使用者id, 姓名, 頭像 變數
+let usrId, usrName, usrAvatar
 
 async function getMessages(){
     const res = await fetch(messageAPI)
@@ -95,7 +110,10 @@ async function getMessages(){
     if(data.data){ //正常render資料
         const user = data.user
         const friend = data.friend
-
+        usrId = user.id
+        usrName = user.name 
+        usrAvatar= user.avatar
+        
         // render friend資訊頁
         let relationship
         switch(friend.relationship){
@@ -189,9 +207,92 @@ async function getMessages(){
             messageList.append(li)
         })
     }else{ //出現錯誤，顯示提示Modal
-
+        modalTitle.innText = data.title
+        modalBody.innerText = data.message
+        modalHref.innerText = data.confirm
+        modalHref.href = data.url
+        errorModal.show()
     }
 }
 
 getMessages()
+
+
+//// 傳送訊息
+const socket = io()
+socket.on('connect', function(){
+    socket.emit('join_room', messageRoomId)
+
+    const message = document.querySelector('#send-message')
+    const sendBtn = document.querySelector('#send-btn')
+
+    function sendMessage(){
+        const alertMessage = document.querySelector('#alert-message')
+        if(message.value == ''){ // 如果沒有輸入內容顯示提醒文字，並不送出訊息
+            alertMessage.innerText = '尚未輸入內容！'
+        }else{ // 若有內容送出訊息
+            alertMessage.innerText = ''
+            socket.emit('send_message', {
+                id: usrId,
+                name: usrName,
+                avatar: usrAvatar,
+                room: messageRoomId,
+                message: message.value
+            })
+            message.value = ''
+        }
+    }
+
+    sendBtn.addEventListener('click', sendMessage)
+})
+
+socket.on('receive_message', data => {
+    // 訊息發送者頭貼
+    const avatar = document.createElement('img')
+    avatar.src = data.avatar
+    avatar.classList.add('rounded-circle')
+
+    // 頭貼外框
+    const avatarContainer = document.createElement('div')
+    avatarContainer.classList.add('message-avatar', 'pt-2')
+
+    avatarContainer.append(avatar)
+
+    // 訊息發送者
+    const messageUser = document.createElement('h6')
+    messageUser.innerText = data.name
+    messageUser.classList.add('name', 'text-black-50', 'm-0')
+
+    // 訊息日期
+    const messageTime = document.createElement('p')
+    messageTime.innerText = data.time
+    messageTime.classList.add('time', 'text-black-50', 'm-0', 'f-14')
+
+    // 訊息資訊內框
+    const innerContainer = document.createElement('div')
+    innerContainer.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-1', 'lh-l')
+
+    innerContainer.append(messageUser, messageTime)
+
+    // 訊息
+    const theMessage = document.createElement('p')
+    theMessage.innerText = data.message
+    theMessage.classList.add('letter', 'pt-2', 'm-0')
+
+    // 訊息資訊外框
+    const outerContainer = document.createElement('div')
+    outerContainer.classList.add('py-3', 'w-100')
+
+    outerContainer.append(innerContainer, theMessage)
+
+    // 訊息欄位最外層
+    const li = document.createElement('li')
+    li.classList.add('list-group-item', 'd-flex')
+
+    li.append(avatarContainer, outerContainer)
+    messageList.prepend(li)
+
+    getFriend()
+})
+
 

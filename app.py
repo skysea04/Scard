@@ -1,6 +1,7 @@
 from flask import *
 from flask_socketio import SocketIO, join_room, send
 import os
+from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()
 mysql_user = os.getenv("MYSQL_USER")
@@ -17,9 +18,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_user}:{mysql_pa
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping":True}
 
 socketio = SocketIO(app)
-from models.model import db, migrate
+from models.model import Messages, db, migrate, cache
 db.init_app(app)
 migrate.init_app(app, db)
+
+cache.init_app(app)
 
 # 向app註冊api的藍圖
 from api import api
@@ -49,7 +52,21 @@ def scard():
 
 @app.route('/message')
 def redirect_message():
-	return redirect(url_for('message', id=1))
+	if "user" in session:
+		user_id = session["user"]["id"]
+		# 找尋最近期通信過的朋友
+		message_id = db.session.execute("SELECT scard_id\
+			FROM (SELECT * FROM messages ORDER BY id DESC LIMIT 9999) friend , scard \
+			WHERE friend.scard_id = scard.id AND (scard.user_1=:id OR scard.user_2=:id) \
+			GROUP BY scard_id \
+			LIMIT 1",
+			{"id":user_id}).first()
+		# 如果有朋友，轉移到該位朋友的頻道
+		if message_id:
+			message_id = message_id[0]
+			return redirect(url_for('message', id=message_id))
+
+	return redirect(url_for('index'))
 
 @app.route('/message/<id>')
 def message(id):
@@ -59,6 +76,20 @@ def message(id):
 def handle_message(msg):
     print('get message:'+ msg)
     send(msg, broadcast=True)
+
+@socketio.on('join_room')
+def handle_join_room(room_id):
+	join_room(room_id)
+	send(room_id)
+
+@socketio.on('send_message')
+def handle_send_message(data):
+	data["time"] = datetime.now().strftime("%-m月%-d日 %H:%M")
+	message = Messages(scard_id=data["room"], user_id=data["id"], message=data["message"])
+	db.session.add(message)
+	db.session.commit()
+	socketio.emit('receive_message', data, room=data["room"])
+
 
 if __name__ == '__main__':
 	socketio.run(app, host='0.0.0.0',port=3000, debug=True)

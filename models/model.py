@@ -9,6 +9,7 @@ from flask_caching import Cache
 
 redis = Redis()
 cache = Cache(config={"CACHE_TYPE": "RedisCache"})
+#, "CACHE_REDIS_HOST": "scard-cahce-001.crci7w.0001.apne1.cache.amazonaws.com"
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
 
@@ -35,6 +36,7 @@ class User(db.Model):
     swap = db.Column(db.Text)
     want_to_try = db.Column(db.Text)
     days_no_open_scard = db.Column(db.Integer, default=3, nullable=False)
+    match_list = db.Column(db.JSON, default=[])
 
     def as_dict(self):
         return{c.name: getattr(self, c.name) for c in self.__table__.columns}

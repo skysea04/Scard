@@ -36,7 +36,8 @@ def post_user():
             exist_user = User.query.filter_by(email=email).first()
             session["user"] = {
                 "id": exist_user.id,
-                "verify": exist_user.verify
+                "verify": exist_user.verify,
+                "scard": exist_user.scard
             }
             data = {
                 "ok": True
@@ -49,7 +50,8 @@ def post_user():
             if exist_user.password == password:
                 session["user"] = {
                     "id": exist_user.id,
-                    "verify": exist_user.verify
+                    "verify": exist_user.verify,
+                    "scard": exist_user.scard
                 }
                 data = {
                     "ok": True

@@ -53,25 +53,20 @@ server_error_data = {
 def get_scard():
     try:
         if 'user' in session:
-            user_id = session['user']['id']
+            user_id = session["user"]["id"]
+            user_verify = session["user"]["verify"]
+            user_scard = session["user"]["scard"]
 
-            user = User.view_user(user_id)
-            # user = User.query.filter_by(id=user_id).first()
             # 若User欄位的verify為false，建議使用者轉移到basic_profile填寫頁面
-            if user.verify == False:
+            if user_verify == False:
                 return jsonify(basic_profile_data), 403
                 
             # 若是自我介紹還沒填完scard為false，建議使用者轉移到my_profile填寫頁面
-            if user.scard == False:
+            if user_scard == False:
                 return jsonify(my_profile_data), 403
                                 
-            # scard_1 = Scard.query.filter_by(user_1=user_id, create_date=date.today()).first()
-            # scard_2 = Scard.query.filter_by(user_2=user_id, create_date=date.today()).first()
             scard_1 = Scard.view_scard_1(user_id, date.today())
             scard_2 = Scard.view_scard_2(user_id, date.today())
-            # 將days_no_open_scard歸0
-            user.days_no_open_scard = 0
-            db.session.commit()
             
             if scard_1:
                 invited = False if scard_1.user_1_message is None else True
@@ -88,7 +83,6 @@ def get_scard():
                 return jsonify(tomorrow_scard_data), 403
 
             match_user = User.view_user(match_id)
-            # match_user = User.query.filter_by(id=match_id).first()
             
             data = {
                 'isFriend': is_friend,
@@ -174,3 +168,18 @@ def invite_friend():
         return jsonify(data), 200
         
     return jsonify(no_sign_data), 403
+
+@api.route('/scard/zeroing', methods=["GET"])
+def zeroing_scard():
+    try:
+        if 'user' in session:
+            user_id = session["user"]["id"]
+            # 將days_no_open_scard歸0
+            User.query.filter_by(id=user_id).update({User.days_no_open_scard: 0})
+            db.session.commit()
+            data = {
+                "ok": True
+            }
+            return jsonify(data), 200
+    except:
+        return jsonify(server_error_data), 500

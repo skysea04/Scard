@@ -1,3 +1,7 @@
+// api們
+const scardAPI = '/api/scard'
+const scardZeroingAPI = '/api/scard/zeroing'
+
 // errorModal相關變數
 const errorModalContain = document.getElementById('error-modal')
 const errorModal = new bootstrap.Modal(errorModalContain)
@@ -51,11 +55,18 @@ fetch(scardAPI)
             country.innerText = data.country
             worry.innerText = data.worry
             swap.innerText = data.swap
-            wantToTry.innerText = data.wantToTry          
+            wantToTry.innerText = data.wantToTry
+            
+            // 將沒看卡的天數歸0
+            scardZeroing()
         }
     })
 
-// 
+function scardZeroing(){
+    fetch(scardZeroingAPI)
+}
+
+// 加好友
 const addModalContain = document.getElementById('add-friend-modal')
 const addModal = new bootstrap.Modal(addModalContain)
 const addFriendForm = addModalContain.querySelector('form')

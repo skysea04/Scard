@@ -1,4 +1,3 @@
-from functools import cache
 from flask import request, jsonify, session
 from sqlalchemy import or_
 from . import api

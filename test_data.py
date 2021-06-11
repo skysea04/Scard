@@ -44,8 +44,8 @@ def create_user():
             # db.session.add(user)
 
         user_db.commit()
-    n = 80
-    thread_num = 20
+    n = 0
+    thread_num = 1
     threads = []
     for i in range(thread_num):
         threads.append(threading.Thread(target=add_user, args= ((i+n)*1000+1, (i+1+n) * 1000+1)))
@@ -64,7 +64,7 @@ def update_no_scard_days():
 def clear_scard_cache():
     cache.delete_memoized(Scard.view_scard_1)
     cache.delete_memoized(Scard.view_scard_2)
-    # cache.clear()
+    cache.clear()
 
 # 建立配對
 def match_user():
@@ -163,8 +163,8 @@ def match_user_method_2():
         # db.session.add(match)
 
         # 先幫使用者們做好抽卡流程的快取
-        # scard_1 = Scard.view_scard_1(user_id, today)
-        # scard_2 = Scard.view_scard_2(match_id, today)
+        scard_1 = Scard.view_scard_1(user_id, today)
+        scard_2 = Scard.view_scard_2(match_id, today)
 
         # 將已經配對的id設為0
         user_list[user_index] = 0
@@ -187,6 +187,8 @@ def match_user_method_3():
     new_cursor.execute('DELETE FROM scard WHERE is_friend IS False AND create_date=%s', (yesterday,))
 
     # 建立本次要抽卡的使用者清單, 第一位測試帳號永遠開放抽卡
+    new_cursor.execute('UPDATE user SET days_no_open_scard=0 WHERE id=1')
+    new_db.commit()
     user_list = []
     matches_list = []
     new_cursor.execute('SELECT id, match_list FROM user WHERE days_no_open_scard < 3')
@@ -195,6 +197,8 @@ def match_user_method_3():
         user_list.append(user[0])
         matches_list.append(json.loads(user[1]))
     
+    new_db.close()
+
     # 查看本次抽卡人數，若非偶數則剔除第一位測試帳號
     user_count = len(user_list)
     if user_count % 2 != 0:
@@ -202,14 +206,8 @@ def match_user_method_3():
         del matches_list[0]
         user_count -= 1
     print(user_count)
-    # ================開始執行threading==================
-    group_user_count = math.ceil(user_count / 10)
-    print(group_user_count)
-    new_db.commit()
-    new_db.close()
 
-
-
+    # 配對函式
     def matching(first_index, end_index):
         print(first_index, end_index)
         
@@ -237,11 +235,12 @@ def match_user_method_3():
                 match_index = random.randrange(user_index + 1, end_index)
                 match_id = user_list[match_index]
 
-            # print('user_id: ', user_id, ', match_id: ', match_id)
+            print('user_id: ', user_id, ', match_id: ', match_id)
             cursor.execute('UPDATE user SET match_list=JSON_ARRAY_APPEND(match_list, "$" , %s) WHERE id=%s'%(match_id, user_id))
            
             cursor.execute('INSERT INTO scard (user_1, user_2) VALUES (%s, %s)'%(user_id, match_id))
-
+            # scard_1 = Scard.view_scard_1(user_id, today)
+            # scard_2 = Scard.view_scard_2(match_id, today)
             # 將已經配對的id設為0
             user_list[user_index] = 0
             user_list[match_index] = 0
@@ -251,20 +250,26 @@ def match_user_method_3():
         mydb.close()
         
         return 'ok'
-    threads = []
-    # 永遠開10個執行緒跑
-    for i in range(10):
-        if i == 9:
-            threads.append(threading.Thread(target=matching, args= (i*group_user_count, user_count)))
-        else:
-            threads.append(threading.Thread(target=matching, args= (i*group_user_count, (i+1)*group_user_count)))
-        threads[i].start()
-   
-    for i in range(10):
-        threads[i].join()
     
-    # print('finish')
+    # 如果配對人數不多，直接執行配對函式
+    if user_count <= 1000:
+        matching(0, user_count)
 
+    # 若人數大於1000，分10個執行緒，執行配對函式
+    else:
+        group_user_count = math.ceil(user_count / 10)
+        print(group_user_count)
+        threads = []
+        # 永遠開10個執行緒跑
+        for i in range(10):
+            if i == 9:
+                threads.append(threading.Thread(target=matching, args= (i*group_user_count, user_count)))
+            else:
+                threads.append(threading.Thread(target=matching, args= (i*group_user_count, (i+1)*group_user_count)))
+            threads[i].start()
+    
+        for i in range(10):
+            threads[i].join()
 
 # 新增測試帳號
 # create_user()

@@ -1,5 +1,5 @@
 import sys, random, math, time, json
-from datetime import date
+from datetime import date, timedelta
 import threading
 # sys.path.append("..")
 from models.model import db, User, Scard, cache
@@ -13,6 +13,10 @@ db.__init__(app)
 測試區
 '''
 start_time = time.time()
+today = date.today()
+str_today = today.strftime('%Y-%m-%d')
+yesterday = today - timedelta(days=1)
+str_yesterday = yesterday.strftime('%Y-%m-%d')
 
 import mysql.connector
 
@@ -179,7 +183,8 @@ def match_user_method_3():
             database='scard'
         )
     new_cursor = new_db.cursor()
-    new_cursor.execute('DELETE FROM scard WHERE is_friend IS Null')
+    # 刪掉昨天沒有成為朋友的配對們
+    new_cursor.execute('DELETE FROM scard WHERE is_friend IS False AND create_date=%s', (yesterday,))
 
     # 建立本次要抽卡的使用者清單, 第一位測試帳號永遠開放抽卡
     user_list = []
@@ -197,9 +202,9 @@ def match_user_method_3():
         del matches_list[0]
         user_count -= 1
     print(user_count)
-    # ================執行threading分野==================
-    thread_num = math.ceil(user_count / 1000)
-    print(thread_num)
+    # ================開始執行threading==================
+    group_user_count = math.ceil(user_count / 10)
+    print(group_user_count)
     new_db.commit()
     new_db.close()
 
@@ -243,17 +248,19 @@ def match_user_method_3():
 
         # 最後的commit大約會花費25秒的時間，一次commit會比分開commit快很多倍
         mydb.commit() 
+        mydb.close()
         
         return 'ok'
     threads = []
-    for i in range(thread_num):
-        if i == thread_num - 1:
-            threads.append(threading.Thread(target=matching, args= (i*1000, user_count)))
+    # 永遠開10個執行緒跑
+    for i in range(10):
+        if i == 9:
+            threads.append(threading.Thread(target=matching, args= (i*group_user_count, user_count)))
         else:
-            threads.append(threading.Thread(target=matching, args= (i*1000, (i+1)*1000)))
+            threads.append(threading.Thread(target=matching, args= (i*group_user_count, (i+1)*group_user_count)))
         threads[i].start()
    
-    for i in range(thread_num):
+    for i in range(10):
         threads[i].join()
     
     # print('finish')

@@ -44,8 +44,8 @@ def create_user():
             # db.session.add(user)
 
         user_db.commit()
-    n = 0
-    thread_num = 30
+    n = 80
+    thread_num = 20
     threads = []
     for i in range(thread_num):
         threads.append(threading.Thread(target=add_user, args= ((i+n)*1000+1, (i+1+n) * 1000+1)))
@@ -237,7 +237,7 @@ def match_user_method_3():
                 match_index = random.randrange(user_index + 1, end_index)
                 match_id = user_list[match_index]
 
-            print('user_id: ', user_id, ', match_id: ', match_id)
+            # print('user_id: ', user_id, ', match_id: ', match_id)
             cursor.execute('UPDATE user SET match_list=JSON_ARRAY_APPEND(match_list, "$" , %s) WHERE id=%s'%(match_id, user_id))
            
             cursor.execute('INSERT INTO scard (user_1, user_2) VALUES (%s, %s)'%(user_id, match_id))

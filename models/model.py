@@ -1,8 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import expression, func
 from flask_migrate import Migrate
 from datetime import date, datetime
 from sqlalchemy import Index, text
-from sqlalchemy.sql import func
 
 from redis import Redis
 from flask_caching import Cache
@@ -19,14 +19,14 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    verify = db.Column(db.Boolean, default=False)
+    verify = db.Column(db.Boolean, server_default=expression.false(), nullable=False)
     name = db.Column(db.String(255))
     gender = db.Column(db.Enum("male", "female"))
     birthday = db.Column(db.Date)
     collage = db.Column(db.String(255))
     department = db.Column(db.String(255))
-    scard = db.Column(db.Boolean, default=False)
-    avatar = db.Column(db.String(255), default="https://scard-bucket.s3-ap-northeast-1.amazonaws.com/avatar/default_avatar.jpeg")
+    scard = db.Column(db.Boolean, server_default=expression.false(), nullable=False)
+    avatar = db.Column(db.String(255), server_default="https://scard-bucket.s3-ap-northeast-1.amazonaws.com/avatar/default_avatar.jpeg")
     relationship = db.Column(db.Enum('secret', 'single', 'in_a_relationship', 'complicated', 'open_relationship', 'no_show'), default="no_show")
     interest = db.Column(db.Text)
     club = db.Column(db.Text)
@@ -35,8 +35,8 @@ class User(db.Model):
     worry = db.Column(db.Text)
     swap = db.Column(db.Text)
     want_to_try = db.Column(db.Text)
-    days_no_open_scard = db.Column(db.Integer, default=3, nullable=False)
-    match_list = db.Column(db.JSON, default=[])
+    days_no_open_scard = db.Column(db.Integer, server_default=text("3"), nullable=False)
+    match_list = db.Column(db.JSON, server_default=text('(JSON_ARRAY())'))
 
     def as_dict(self):
         return{c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -54,10 +54,10 @@ class Scard(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_1 = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user_2 = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    create_date = db.Column(db.Date, default=date.today())
+    create_date = db.Column(db.Date, server_default=text('(NOW())'))
     user_1_message = db.Column(db.String(255))
     user_2_message = db.Column(db.String(255))
-    is_friend = db.Column(db.Boolean, default=False)
+    is_friend = db.Column(db.Boolean, server_default=expression.false(), nullable=False)
 
     def as_dict(self):
         return{c.name: getattr(self, c.name) for c in self.__table__.columns}

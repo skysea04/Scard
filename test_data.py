@@ -1,5 +1,6 @@
-import sys, random
+import sys, random, math, time, json
 from datetime import date
+import threading
 # sys.path.append("..")
 from models.model import db, User, Scard, cache
 from sqlalchemy import update
@@ -7,14 +8,47 @@ from app import app
 db.__init__(app)
 
 
-today = date.today()
+
+'''
+測試區
+'''
+start_time = time.time()
+
+import mysql.connector
+
+'''
+測試區
+'''
 # 新增測試帳號
 def create_user():
-    for i in range(10000, 10001):
-        user = User(email=f'test{i}@test.com', password='123', name=f'test{i}', collage='test collage', department='test department', gender='male', birthday=date(1996,5,23), verify=True, scard=True, days_no_open_scard=0)
-        db.session.add(user)
-    db.session.commit()
-# create_user()
+    def add_user(f_id, l_id):
+        user_db = mysql.connector.connect(
+            host="database-scard.comdtbthwj2y.ap-northeast-1.rds.amazonaws.com",
+            user="skysea",
+            password="Rock8967",
+            database='scard'
+        )
+        user_cursor = user_db.cursor()
+        
+        for i in range(f_id, l_id):
+            sql = 'INSERT INTO user (email, password, name, collage, department, gender, birthday, verify, scard, days_no_open_scard) VALUES (%s, %s, %s, %s, %s, %s, %s ,%s ,%s ,%s)'
+            val = (f'test{i}@test.com', '123', f'測試人員{i}', 'test collage', 'test department', 'male', date(1996,5,23), True, True, 0)
+            user_cursor.execute(sql, val)
+            print(i)
+
+            # user = User(email=f'test{i}@test.com', password='123', name=f'test{i}', collage='test collage', department='test department', gender='male', birthday=date(1996,5,23), verify=True, scard=True, days_no_open_scard=0)
+            # db.session.add(user)
+
+        user_db.commit()
+    n = 0
+    thread_num = 30
+    threads = []
+    for i in range(thread_num):
+        threads.append(threading.Thread(target=add_user, args= ((i+n)*1000+1, (i+1+n) * 1000+1)))
+        threads[i].start()
+   
+    for i in range(thread_num):
+        threads[i].join()
 
 # 增加未開卡天數
 def update_no_scard_days():
@@ -120,7 +154,7 @@ def match_user_method_2():
         # User.query.filter_by(id=user_id).update({User.match_list: match_list})
         
         print('user_id: ', user_id, ', match_id: ', match_id)
-        db.session.execute('INSERT INTO scard (user_1, user_2, create_date) VALUES (:user_id, :match_id, :date)', {"user_id":user_id, "match_id":match_id, "date":today})
+        db.session.execute('INSERT INTO scard (user_1, user_2) VALUES (:user_id, :match_id, :date)', {"user_id":user_id, "match_id":match_id})
         # match = Scard(user_1=user_id, user_2=match_id)
         # db.session.add(match)
 
@@ -136,6 +170,94 @@ def match_user_method_2():
     db.session.commit()
     return 'ok'
 
+# 建立配對(多執行緒)
+def match_user_method_3():
+    new_db = mysql.connector.connect(
+            host="database-scard.comdtbthwj2y.ap-northeast-1.rds.amazonaws.com",
+            user="skysea",
+            password="Rock8967",
+            database='scard'
+        )
+    new_cursor = new_db.cursor()
+    new_cursor.execute('DELETE FROM scard WHERE is_friend IS Null')
+
+    # 建立本次要抽卡的使用者清單, 第一位測試帳號永遠開放抽卡
+    user_list = []
+    matches_list = []
+    new_cursor.execute('SELECT id, match_list FROM user WHERE days_no_open_scard < 3')
+    all_users = new_cursor.fetchall()
+    for user in all_users:
+        user_list.append(user[0])
+        matches_list.append(json.loads(user[1]))
+    
+    # 查看本次抽卡人數，若非偶數則剔除第一位測試帳號
+    user_count = len(user_list)
+    if user_count % 2 != 0:
+        del user_list[0]
+        del matches_list[0]
+        user_count -= 1
+    print(user_count)
+    # ================執行threading分野==================
+    thread_num = math.ceil(user_count / 1000)
+    print(thread_num)
+    new_db.commit()
+    new_db.close()
+
+
+
+    def matching(first_index, end_index):
+        print(first_index, end_index)
+        
+        mydb = mysql.connector.connect(
+            host="database-scard.comdtbthwj2y.ap-northeast-1.rds.amazonaws.com",
+            user="skysea",
+            password="Rock8967",
+            database='scard'
+        )
+        cursor = mydb.cursor()
+
+        for user_index in range(first_index, end_index):
+            user_id = user_list[user_index]
+            match_list = matches_list[user_index]
+
+            # user_id若已經配對過則值為0，不用再配對，直接進入下一輪
+            if user_id == 0: continue
+
+            # 隨機配對一位使用者，配對者id一定大於(>)使用者id
+            match_index = random.randrange(user_index + 1, end_index)
+            match_id = user_list[match_index]
+
+            # 若match_id為零（已在本輪配對過），或是已經有過相同的配對紀錄(old_match_list)，則重新配對一次
+            while (match_id == 0) or (match_id in match_list):
+                match_index = random.randrange(user_index + 1, end_index)
+                match_id = user_list[match_index]
+
+            print('user_id: ', user_id, ', match_id: ', match_id)
+            cursor.execute('UPDATE user SET match_list=JSON_ARRAY_APPEND(match_list, "$" , %s) WHERE id=%s'%(match_id, user_id))
+           
+            cursor.execute('INSERT INTO scard (user_1, user_2) VALUES (%s, %s)'%(user_id, match_id))
+
+            # 將已經配對的id設為0
+            user_list[user_index] = 0
+            user_list[match_index] = 0
+
+        # 最後的commit大約會花費25秒的時間，一次commit會比分開commit快很多倍
+        mydb.commit() 
+        
+        return 'ok'
+    threads = []
+    for i in range(thread_num):
+        if i == thread_num - 1:
+            threads.append(threading.Thread(target=matching, args= (i*1000, user_count)))
+        else:
+            threads.append(threading.Thread(target=matching, args= (i*1000, (i+1)*1000)))
+        threads[i].start()
+   
+    for i in range(thread_num):
+        threads[i].join()
+    
+    # print('finish')
+
 
 # 新增測試帳號
 # create_user()
@@ -144,10 +266,15 @@ def match_user_method_2():
 # update_no_scard_days()
 
 # 清除昨日配對快取
-clear_scard_cache()
+# clear_scard_cache()
 
 # 建立配對(查看過去所有配對)
 # match_user()
 
 # 建立配對(比對user的match_list)
-match_user_method_2()
+# match_user_method_2()
+# 建立配對(多執行緒)
+match_user_method_3()
+
+end_time = time.time()
+print(f'共花{end_time-start_time}秒')

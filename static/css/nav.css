@@ -46,6 +46,10 @@ a{
     font-size: 1.8rem;
 }
 
+/* .navbar{
+    background-color: #006AA6;
+} */
+
 .navbar input{
     border-radius: 5px 0 0 5px;
 }

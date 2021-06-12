@@ -87,6 +87,11 @@ def get_friendlist():
 @api.route('/message/<id>', methods=["GET"])
 def get_message(id):
     # try:
+        if request.args.get('page'):
+            page = int(request.args.get('page'))
+            render_num = 30
+            first_index = page * render_num
+            next_page = page + 1
         if 'user' in session:
             user_id = session['user']['id']
             
@@ -125,7 +130,11 @@ def get_message(id):
                 "wantToTry": friend.want_to_try
             }
 
-            messages = db.session.execute('SELECT user_id, message, create_time FROM messages WHERE scard_id=:id ORDER BY id DESC', {"id":id})
+            messages = db.session.execute('SELECT user_id, message, create_time FROM messages WHERE scard_id=:id ORDER BY id DESC LIMIT :index, :render_num', {"id":id, "index":first_index, "render_num":render_num})
+            next_message = db.session.execute('SELECT user_id, message, create_time FROM messages WHERE scard_id=:id ORDER BY id DESC LIMIT :index, :render_num', {"id":id, "index":first_index + render_num, "render_num":1}).first()
+            # for message in next_messages:
+            if next_message == None: 
+                next_page = None
             message_list = []
             for message in messages:
                 message = message._asdict()
@@ -138,7 +147,8 @@ def get_message(id):
             data = {
                 "user": user_data,
                 "friend": friend_data,
-                "data": message_list
+                "data": message_list,
+                "nextPage": next_page
             }
             return jsonify(data), 200
         # 沒有登入

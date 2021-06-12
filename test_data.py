@@ -56,7 +56,7 @@ def create_user():
 
 # 增加未開卡天數
 def update_no_scard_days():
-    User.query.filter(User.days_no_open_scard < 3).update({User.days_no_open_scard: User.days_no_open_scard + 1})
+    User.query.filter(User.days_no_open_scard <= 3).update({User.days_no_open_scard: User.days_no_open_scard + 1})
     db.session.commit()
 
 
@@ -64,7 +64,7 @@ def update_no_scard_days():
 def clear_scard_cache():
     cache.delete_memoized(Scard.view_scard_1)
     cache.delete_memoized(Scard.view_scard_2)
-    cache.clear()
+    # cache.clear()
 
 # 建立配對
 def match_user():
@@ -191,7 +191,7 @@ def match_user_method_3():
     new_db.commit()
     user_list = []
     matches_list = []
-    new_cursor.execute('SELECT id, match_list FROM user WHERE days_no_open_scard < 3')
+    new_cursor.execute('SELECT id, match_list FROM user WHERE scard IS True AND days_no_open_scard <= 3')
     all_users = new_cursor.fetchall()
     for user in all_users:
         user_list.append(user[0])
@@ -278,7 +278,7 @@ def match_user_method_3():
 # update_no_scard_days()
 
 # 清除昨日配對快取
-# clear_scard_cache()
+clear_scard_cache()
 
 # 建立配對(查看過去所有配對)
 # match_user()

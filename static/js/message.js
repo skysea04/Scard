@@ -9,21 +9,21 @@ const modalHref = errorModalContain.querySelector('.modal-href')
 //// 切換訊息與卡友資訊分頁
 const messageNav = document.querySelector('#nav-message')
 const friendInfoNav = document.querySelector('#nav-friend-info')
-const messagePage = document.querySelector('.messages')
+const messageField = document.querySelector('.messages')
 const friendInfoPage = document.querySelector('.friend-info')
 
 function showMessage(e){
     e.preventDefault()
     messageNav.classList.add('active')
     friendInfoNav.classList.remove('active')
-    messagePage.classList.add('d-block')
+    messageField.classList.add('d-block')
     friendInfoPage.classList.remove('d-block')
 }
 function showFriendInfo(e){
     e.preventDefault()
     messageNav.classList.remove('active')
     friendInfoNav.classList.add('active')
-    messagePage.classList.remove('d-block')
+    messageField.classList.remove('d-block')
     friendInfoPage.classList.add('d-block')
 }
 
@@ -98,14 +98,34 @@ getFriend()
 
 //// 獲取聊天訊息
 const messageRoomId = location.pathname.split('/').pop()
-const messageAPI = `/api/message/${messageRoomId}`
+const messageAPI = `/api/message/${messageRoomId}?page=`
+let messagePage = 0
 const messageList = document.querySelector('.messages ul')
+const messageLoadIcon = document.querySelector('#message-load')
 const userAvatar = document.querySelector('.send-message .message-avatar img')
+
+//////////////
+let options = {threshold: 0.5}
+// 符合設定條件下，loading icon進入viewport時觸發此 callback 函式
+let renderNextMessages = (entries) => {
+    // entries 能拿到所有目標元素進出(intersect)變化的資訊
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            //  目標元素進入 viewport 時做一些事情
+            getMessages()
+        } 
+    })
+}
+let observer = new IntersectionObserver(renderNextMessages, options)
+
+observer.observe(messageLoadIcon)
+///////////////
+
 // 定義使用者id, 姓名, 頭像 變數
 let usrId, usrName, usrAvatar
 
 async function getMessages(){
-    const res = await fetch(messageAPI)
+    const res = await fetch(messageAPI+messagePage)
     const data = await res.json()
     if(data.data){ //正常render資料
         const user = data.user
@@ -113,6 +133,12 @@ async function getMessages(){
         usrId = user.id
         usrName = user.name 
         usrAvatar= user.avatar
+        
+        // 更動messagePage判斷有沒有下一頁
+        messagePage = data.nextPage
+        if(messagePage == null){
+            messageLoadIcon.style.display = 'none'
+        }
         
         // render friend資訊頁
         let relationship
@@ -204,7 +230,9 @@ async function getMessages(){
             li.classList.add('list-group-item', 'd-flex')
 
             li.append(avatarContainer, outerContainer)
-            messageList.append(li)
+            messageLoadIcon.insertAdjacentElement('beforebegin', li);
+
+            // messageList.append(li)
         })
     }else{ //出現錯誤，顯示提示Modal
         modalTitle.innText = data.title
@@ -214,8 +242,6 @@ async function getMessages(){
         errorModal.show()
     }
 }
-
-getMessages()
 
 
 //// 傳送訊息

@@ -28,15 +28,19 @@ cache.init_app(app)
 from api import api
 app.register_blueprint(api, url_prefix="/api")
 
-@app.route("/")
+@app.route('/')
 def index():
-	return render_template("index.html")
+	return render_template('index.html')
 
-@app.route("/signup")
+@app.route('/post')
+def post():
+	return render_template('post.html')
+
+@app.route('/signup')
 def signup():
 	if 'user' in session:
 		return redirect(url_for('index'))
-	return render_template("signup.html")
+	return render_template('signup.html')
 
 @app.route('/basicprofile')
 def basic_profile():

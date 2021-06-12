@@ -1,12 +1,12 @@
 from flask import request, jsonify, session
 from sqlalchemy import or_
 from . import api
-from datetime import date
+from datetime import date, timedelta
 import sys
 sys.path.append("..")
 from models.model import Messages, db, User, Scard, cache
 
-
+yesterday = date.today() - timedelta(days=1)
 
 no_sign_data = {
     "error": True,
@@ -47,9 +47,10 @@ server_error_data = {
     'confirm': '返回首頁',
     'url': '/'
 }
-
+import time
 @api.route('/scard', methods=["GET"])
 def get_scard():
+    start = time.time()
     try:
         if 'user' in session:
             user_id = session["user"]["id"]
@@ -64,8 +65,8 @@ def get_scard():
             if user_scard == False:
                 return jsonify(my_profile_data), 403
                                 
-            scard_1 = Scard.view_scard_1(user_id, date.today())
-            scard_2 = Scard.view_scard_2(user_id, date.today())
+            scard_1 = Scard.view_scard_1(user_id, yesterday)
+            scard_2 = Scard.view_scard_2(user_id, yesterday)
             
             if scard_1:
                 invited = False if scard_1.user_1_message is None else True
@@ -99,6 +100,8 @@ def get_scard():
                 'swap': match_user.swap,
                 'wantToTry': match_user.want_to_try
             }
+            end = time.time()
+            print(end-start)
             return jsonify(data), 200
         # 沒有登入
         return jsonify(no_sign_data), 403
@@ -114,8 +117,8 @@ def invite_friend():
         message = data['message']
 
         user_id = session['user']['id']
-        scard_1 = Scard.query.filter_by(user_1=user_id, create_date=date.today()).first()
-        scard_2 = Scard.query.filter_by(user_2=user_id, create_date=date.today()).first()
+        scard_1 = Scard.query.filter_by(user_1=user_id, create_date=yesterday).first()
+        scard_2 = Scard.query.filter_by(user_2=user_id, create_date=yesterday).first()
 
         # 根據使用者是user_1還是user_2 填入不同的message欄位
         if scard_1:
@@ -128,12 +131,12 @@ def invite_friend():
                 db.session.add_all([message_1, message_2])
 
                 # 刪除舊的卡友資訊快取，建立新快取
-                cache.delete_memoized(Scard.view_scard_2, Scard, scard_1.user_2, date.today())    
-                scard = Scard.view_scard_2(scard_1.user_2, date.today())
+                cache.delete_memoized(Scard.view_scard_2, Scard, scard_1.user_2, yesterday)    
+                scard = Scard.view_scard_2(scard_1.user_2, yesterday)
 
             # 刪除舊的卡友資訊快取，建立新快取
-            cache.delete_memoized(Scard.view_scard_1, Scard, user_id, date.today())    
-            scard = Scard.view_scard_1(user_id, date.today())
+            cache.delete_memoized(Scard.view_scard_1, Scard, user_id, yesterday)    
+            scard = Scard.view_scard_1(user_id, yesterday)
             
             data = {
                 'ok': True,
@@ -150,12 +153,12 @@ def invite_friend():
                 message_2 = Messages(scard_id=scard_2.id, user_id=scard_2.user_2, message=scard_2.user_2_message)
                 db.session.add_all([message_1, message_2])
                 # 刪除舊的卡友資訊快取，建立新快取
-                cache.delete_memoized(Scard.view_scard_1, Scard, scard_2.user_1, date.today())    
-                scard = Scard.view_scard_1(scard_2.user_1, date.today())
+                cache.delete_memoized(Scard.view_scard_1, Scard, scard_2.user_1, yesterday)    
+                scard = Scard.view_scard_1(scard_2.user_1, yesterday)
 
             # 刪除舊的卡友資訊快取，建立新快取
-            cache.delete_memoized(Scard.view_scard_2, Scard, user_id, date.today())    
-            scard = Scard.view_scard_2(user_id, date.today())
+            cache.delete_memoized(Scard.view_scard_2, Scard, user_id, yesterday)    
+            scard = Scard.view_scard_2(user_id, yesterday)
 
             data = {
                 'ok': True,

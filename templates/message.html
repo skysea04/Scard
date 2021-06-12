@@ -32,15 +32,15 @@
             <div class="p-2 bg-white rounded mx-auto scard-friend h-100"> 
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a id="nav-message" class="nav-link active" aria-current="page" href=""></a>
+                        <a id="nav-message" class="nav-link active" aria-current="page" href="">&nbsp;</a>
                     </li>
                     <li class="nav-item">
-                        <a id="nav-friend-info" class="nav-link" href=""></a>
+                        <a id="nav-friend-info" class="nav-link" href="">&nbsp;</a>
                     </li>      
                 </ul>
                 <div class="messages d-block">
                     <ul class="list-group list-group-flush old-messages d-flex flex-column-reverse border-0">
-                        <!-- fetch訊息 -->
+                        <!-- 一條訊息的html -->
                         <!-- <li class="list-group-item d-flex">
                             <div class="message-avatar pt-2">
                                 <img class="rounded-circle" src="/static/default_avatar.jpeg" alt="">
@@ -51,10 +51,15 @@
                                     <p class="time text-black-50 m-0">5月30日 09:01</p>
                                 </div>
                                 <p class="letter pt-2 m-0">
-                                    每天都想來一發爽的yoyoyoyoyasdasdasddasasdfasdfasdfasdfasdf
+                                    每天都想來一發爽的testestestetestestest
                                 </p>
                             </div>
                         </li> -->
+                        <li id="message-load" class="text-center m-4" style="list-style:none">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </li>
                     </ul>
                     <div class="px-3 d-flex send-message">
                         <div class="message-avatar pt-2">

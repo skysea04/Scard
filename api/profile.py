@@ -179,22 +179,25 @@ def patch_avatar():
             
             try:
                 user = User.query.filter_by(id=user_id).first()
-                avatar_folder = 'https://scard-bucket.s3-ap-northeast-1.amazonaws.com'
-                avatar_name = "avatar/%s.jpeg" % (str(uuid4()))
+                s3_url = 'https://scard-bucket.s3-ap-northeast-1.amazonaws.com'
+                cdn_url = 'https://d2lzngk4bddvz9.cloudfront.net'
+
+                new_avatar_name = "avatar/%s.jpeg" % (str(uuid4()))
                 # 如果舊avatar是default，直接將圖片上傳到s3，並將user.avatar改為新avatar連結
-                if user.avatar == f'{avatar_folder}/avatar/default_avatar.jpeg':
-                    user.avatar = f'{avatar_folder}/{avatar_name}'
-                    s3.upload_fileobj(in_mem_file, "scard-bucket", avatar_name, ExtraArgs={'ContentType': "image/jpeg", 'ACL': "public-read"})
-                    db.session.commit()
+                if user.avatar == f'{cdn_url}/avatar/default_avatar.jpeg':
+                    s3.upload_fileobj(in_mem_file, "scard-bucket", new_avatar_name, ExtraArgs={'ContentType': "image/jpeg", 'ACL': "public-read"})
 
                 # 舊avatar不是default，將圖片進行更新
                 else:
-                    avatar_name = f'avatar/{user.avatar.split("avatar/")[1]}'
-                    s3.put_object(Body=in_mem_file, Bucket="scard-bucket", Key=avatar_name, ContentType="image/jpeg", ACL="public-read")
+                    old_avatar_name = f'avatar/{user.avatar.split("avatar/")[1]}'
+                    s3.delete_object(Bucket="scard-bucket", Key=old_avatar_name)
+                    s3.upload_fileobj(in_mem_file, "scard-bucket", new_avatar_name, ExtraArgs={'ContentType': "image/jpeg", 'ACL': "public-read"})
                 data = {
                     "ok": True, 
-                    "src": f'{avatar_folder}/{avatar_name}'
+                    "src": f'{cdn_url}/{new_avatar_name}'
                 }
+                user.avatar = f'{cdn_url}/{new_avatar_name}'
+                db.session.commit()
                 # 清除原本該使用者的快取資料，重新存入快取
                 cache.delete_memoized(User.view_user, User, user_id)
                 user = User.view_user(user_id)

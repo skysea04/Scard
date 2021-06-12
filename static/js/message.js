@@ -237,7 +237,7 @@ socket.on('connect', function(){
                 name: usrName,
                 avatar: usrAvatar,
                 room: messageRoomId,
-                message: message.value
+                message: message.value.trim()
             })
             message.value = ''
         }

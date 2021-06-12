@@ -31,7 +31,7 @@ async function saveAvatar(){
     const data = await res.json()
     if(data.ok){
         closeBtn.click()
-        avatar.src = `${data.src}?t='+${Math.random()}`
+        avatar.src = data.src
     }else{
         avatarAlertMessage.innerText = data.message
     }
@@ -93,7 +93,7 @@ async function getProfile(){
                 }
             }
         }
-        avatar.src = `${data.avatar}?t='+${Math.random()}`
+        avatar.src = data.avatar
         name.value = data.name
         collage.value = data.collage
         department.value = data.department

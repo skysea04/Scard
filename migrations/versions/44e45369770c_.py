@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 30af5e8a3492
+Revision ID: 44e45369770c
 Revises: 
-Create Date: 2021-06-12 00:27:48.430530
+Create Date: 2021-06-12 14:08:33.017959
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '30af5e8a3492'
+revision = '44e45369770c'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,7 +29,7 @@ def upgrade():
     sa.Column('collage', sa.String(length=255), nullable=True),
     sa.Column('department', sa.String(length=255), nullable=True),
     sa.Column('scard', sa.Boolean(), server_default=sa.text('false'), nullable=False),
-    sa.Column('avatar', sa.String(length=255), server_default='https://scard-bucket.s3-ap-northeast-1.amazonaws.com/avatar/default_avatar.jpeg', nullable=True),
+    sa.Column('avatar', sa.String(length=255), server_default='https://d2lzngk4bddvz9.cloudfront.net/avatar/default_avatar.jpeg', nullable=True),
     sa.Column('relationship', sa.Enum('secret', 'single', 'in_a_relationship', 'complicated', 'open_relationship', 'no_show'), nullable=True),
     sa.Column('interest', sa.Text(), nullable=True),
     sa.Column('club', sa.Text(), nullable=True),

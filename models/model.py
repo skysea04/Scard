@@ -26,7 +26,7 @@ class User(db.Model):
     collage = db.Column(db.String(255))
     department = db.Column(db.String(255))
     scard = db.Column(db.Boolean, server_default=expression.false(), nullable=False)
-    avatar = db.Column(db.String(255), server_default="https://scard-bucket.s3-ap-northeast-1.amazonaws.com/avatar/default_avatar.jpeg")
+    avatar = db.Column(db.String(255), server_default="https://d2lzngk4bddvz9.cloudfront.net/avatar/default_avatar.jpeg")
     relationship = db.Column(db.Enum('secret', 'single', 'in_a_relationship', 'complicated', 'open_relationship', 'no_show'), default="no_show")
     interest = db.Column(db.Text)
     club = db.Column(db.Text)

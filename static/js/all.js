@@ -1,6 +1,5 @@
 const userAPI = '/api/user'
 const profileAPI = '/api/profile'
-const verifyAPI = '/api/verify'
 
 // 根據是否登入顯示不同的nav內容
 const navUser = document.querySelector('.nav-user')
@@ -12,7 +11,6 @@ async function checkSign(){
     if(data.id){
         navUser.classList.add('d-flex')
         navStranger.classList.add('d-none')
-        try{verify()}catch{}
     }
     else{
         navUser.classList.remove('d-flex')

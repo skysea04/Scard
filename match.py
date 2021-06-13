@@ -14,9 +14,7 @@ db.__init__(app)
 '''
 start_time = time.time()
 today = date.today()
-str_today = today.strftime('%Y-%m-%d')
 yesterday = today - timedelta(days=1)
-str_yesterday = yesterday.strftime('%Y-%m-%d')
 
 import mysql.connector
 

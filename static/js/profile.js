@@ -1,4 +1,10 @@
-const toVerifyModal = new bootstrap.Modal(document.getElementById('to-verify-modal'))
+// errorModal相關變數
+const errorModalContain = document.getElementById('error-modal')
+const errorModal = new bootstrap.Modal(errorModalContain)
+const modalTitle = errorModalContain.querySelector('.modal-title')
+const modalBody = errorModalContain.querySelector('.modal-body')
+const modalHref = errorModalContain.querySelector('.modal-href')
+
 const finshModal = new bootstrap.Modal(document.getElementById('finish-update'))
 
 //// 編輯頭像功能
@@ -59,23 +65,16 @@ const wantToTry = document.querySelector('textarea[name="want_to_try"]')
 const alertMessage = document.querySelector('form.profile>p.message')
 
 
-// 檢查是否通過驗證
-async function verify(){
-    const res = await fetch(verifyAPI)
-    const data = await res.json()
-    if(data.ok){
-        getProfile()
-    }else{
-        toVerifyModal.show()
-    }
-}
-
 // 查看人個資訊
 async function getProfile(){
     const res = await fetch(profileAPI)
     const data = await res.json()
     if(data.error){
-        console.log(data.message)
+        modalTitle.innText = data.title
+        modalBody.innerText = data.message
+        modalHref.innerText = data.confirm
+        modalHref.href = data.url
+        errorModal.show()
     }else{
         // 改變select option的函式
         function select(selectId, optionValToSelect){
@@ -107,7 +106,7 @@ async function getProfile(){
         wantToTry.value = data.want_to_try
     }
 }
-
+getProfile()
 // 更新自我介紹
 async function updateProfile(e){
     e.preventDefault()

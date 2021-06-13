@@ -10,30 +10,22 @@ s3 = boto3.client('s3')
 sys.path.append("..")
 from models.model import User, db, cache
 
+
 no_sign_data = {
     "error": True,
-    "message": "要先登入唷"
+    'title': '您尚未登入',
+    'message': '想一起加入討論，要先登入 Scard 唷！',
+    'confirm': '登入',
+    'url': '/signup'
 }
 
-@api.route('/verify', methods=["GET"])
-def verify_user():
-    # 查看是否登入
-    if "user" in session:
-        user_id = session["user"]["id"]
-        user = User.view_user(user_id)
-        # user = User.query.filter_by(id=user_id).first()
-        # 檢查使用者是否通過基本驗證
-        if user.verify == False:
-            data = {
-                "error": True,
-                "message": "要先填寫基本資料唷"
-            }
-            return jsonify(data), 400
-        # 通過認證
-        data = {"ok": True}
-        return jsonify(data), 200
-        
-    return jsonify(no_sign_data), 403
+basic_profile_data = {
+    'error': True, 
+    'title': '您尚未填寫基本資料',
+    'message': '想一起加入討論，要先填完基本資料唷！',
+    'confirm': '填資料去',
+    'url': '/basicprofile'
+}
 
 
 @api.route('/profile', methods=["GET"])
@@ -41,6 +33,11 @@ def get_profile():
     # 查看是否登入
     if "user" in session:
         user_id = session["user"]["id"]
+        user_verify = session["user"]["verify"]
+        # 檢查使用者是否通過基本驗證
+        if user_verify == False:
+            return jsonify(basic_profile_data), 400
+
         user = User.view_user(user_id)
         # user = User.query.filter_by(id=user_id).first()
         data = {

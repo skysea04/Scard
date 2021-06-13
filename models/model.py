@@ -8,7 +8,7 @@ from redis import Redis
 from flask_caching import Cache
 
 redis = Redis()
-cache = Cache(config={"CACHE_TYPE": "RedisCache", "CACHE_REDIS_HOST": "scard-cahce-001.crci7w.0001.apne1.cache.amazonaws.com"})
+cache = Cache(config={"CACHE_TYPE": "RedisCache"})
 #, "CACHE_REDIS_HOST": "scard-cahce-001.crci7w.0001.apne1.cache.amazonaws.com"
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)

@@ -47,10 +47,9 @@ server_error_data = {
     'confirm': '返回首頁',
     'url': '/'
 }
-import time
+
 @api.route('/scard', methods=["GET"])
 def get_scard():
-    start = time.time()
     try:
         if 'user' in session:
             user_id = session["user"]["id"]
@@ -100,8 +99,6 @@ def get_scard():
                 'swap': match_user.swap,
                 'wantToTry': match_user.want_to_try
             }
-            end = time.time()
-            print(end-start)
             return jsonify(data), 200
         # 沒有登入
         return jsonify(no_sign_data), 403

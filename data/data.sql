@@ -12,3 +12,15 @@ where friend.scard_id = scard.id and  (scard.user_1=586 or scard.user_2=586)
 group by scard_id;
 
 
+INSERT INTO postboard (sys_name, show_name) 
+VALUES 
+    ('relationship', '感情'), 
+    ('trending', '時事'), 
+    ('talk', '閒聊'),
+    ('mood', '心情'),
+    ('job', '工作'),
+    ('youtuber', 'Youtuber'),
+    ('acg', '動漫'),
+    ('tvepisode', '戲劇綜藝'),
+    ('music', '音樂'),
+    ('COVID-19', 'COVID-19');

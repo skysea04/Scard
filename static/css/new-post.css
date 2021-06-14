@@ -2,10 +2,10 @@ body.scard-d{
     background-color: white;
 }
 
-.choose-board{
+.board-select{
     width: auto;
 }
-.choose-identity{
+.name-select{
     width: auto;
     border: none;
 }
@@ -18,7 +18,7 @@ body.scard-d{
     min-height: calc(100vh - 340px);
 }
 .post-content>div{
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 

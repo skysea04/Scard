@@ -3,6 +3,7 @@ from flask_socketio import SocketIO, join_room, send
 import os
 from datetime import datetime
 from dotenv import load_dotenv
+from sqlalchemy.engine import url
 load_dotenv()
 mysql_user = os.getenv("MYSQL_USER")
 mysql_password = os.getenv("MYSQL_PASSWORD")
@@ -32,9 +33,11 @@ app.register_blueprint(api, url_prefix="/api")
 def index():
 	return render_template('index.html')
 
-@app.route('/post')
+@app.route('/new-post')
 def post():
-	return render_template('post.html')
+	if 'user' in session:
+		return render_template('new-post.html')
+	return redirect(url_for('signup'))
 
 @app.route('/signup')
 def signup():
@@ -44,15 +47,21 @@ def signup():
 
 @app.route('/basicprofile')
 def basic_profile():
-    return render_template('basic-profile.html')
+	if 'user' in session:
+		return render_template('basic-profile.html')
+	return redirect(url_for('signup'))
 
 @app.route('/my/profile')
 def my_profile():
-    return render_template('my-profile.html')
+	if 'user' in session:
+		return render_template('my-profile.html')
+	return redirect(url_for('signup'))
 
 @app.route('/scard')
 def scard():
-	return render_template('scard.html')
+	if 'user' in session:
+		return render_template('scard.html')
+	return redirect(url_for('signup'))
 
 @app.route('/message')
 def redirect_message():
@@ -74,7 +83,9 @@ def redirect_message():
 
 @app.route('/message/<id>')
 def message(id):
-	return render_template('message.html')
+	if 'user' in session:
+		return render_template('message.html')
+	return redirect(url_for('signup'))
 
 @socketio.on('message')
 def handle_message(msg):
@@ -89,10 +100,10 @@ def handle_join_room(room_id):
 @socketio.on('send_message')
 def handle_send_message(data):
 	data["time"] = datetime.now().strftime("%-m月%-d日 %H:%M")
+	socketio.emit('receive_message', data, room=data["room"])
 	message = Messages(scard_id=data["room"], user_id=data["id"], message=data["message"])
 	db.session.add(message)
 	db.session.commit()
-	socketio.emit('receive_message', data, room=data["room"])
 
 
 if __name__ == '__main__':

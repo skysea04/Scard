@@ -1,6 +1,6 @@
 {% extends "basic.html" %}
     {% block CSS %}
-    <link rel="stylesheet" href="/static/css/post.css">
+    <link rel="stylesheet" href="/static/css/new-post.css">
     {% endblock %}
 
     {% block title %}
@@ -9,49 +9,39 @@
 
     {% block main %}
     <main class="container mx-auto p-3 px-5 row"> 
-        <form class="col-12 col-md-10 col-lg-8  bg-white rounded mx-auto profile"> 
+        <div class="col-12 col-md-10 col-lg-8  bg-white rounded mx-auto post-form"> 
 
-            <select class="form-select mb-3 choose-board">
+            <select class="form-select mb-3 board-select">
                 <option selected>選擇發文看板</option>
-                <option value="1">感情</option>
-                <option value="2">時事</option>
-                <option value="3">閒聊</option>
-                <option value="4">心情</option>
-                <option value="5">生涯</option>
-                <option value="6">工作</option>
-                <option value="7">動漫</option>
-                <option value="8">追劇</option>
-                <option value="9">音樂</option>
             </select>
 
             <div class="mb-3 d-flex">
                 <img src="https://d2lzngk4bddvz9.cloudfront.net/avatar/default_avatar.jpeg" class="rounded-circle mx-2 post-avatar" alt="">
-                <select class="form-select choose-identity">
+                <select class="form-select name-select">
                     <option selected>選擇發文身份</option>
-                    <option value="c-d">台師大 心輔系</option>
-                    <option value="c">台師大</option>
-                    <option value="anonymous">匿名</option>
                 </select>
             </div>
 
             <textarea class="form-control form-control-lg mb-3 post-title" rows="1" placeholder="文章標題"></textarea>
 
-            <div class="form-control border rounded mb-3 p-3 post-content" contenteditable="true" placeholder="內容..."></div>
+            <div class="form-control border rounded mb-3 p-3 post-content" contenteditable="true">
+                <div id="content-line"><br></div>
+            </div>
 
             <div class="d-flex justify-content-between">
                 <div class="upload-img-field mx-2">
                     <label for="img">
                         <i class="bi bi-image fs-2 text-secondary"></i>
                     </label>
-                    <input id="img" class="d-none" type="file" accept="image/*" name="img">
+                    <input id="img" class="d-none" type="file" accept="image/*">
                 </div>
                 <div class="d-flex align-items-center">
                     <p class="message text-end"></p>
                     <a href="/" class="btn btn-secondary me-4">取消</a>
-                    <button type="submit" class="btn bg-scard-l text-white">送出</button>
+                    <button class="btn bg-scard-l text-white">送出</button>
                 </div>
             </div>
-        </form>
+        </div>
     </main>
     {% endblock %}
     
@@ -67,7 +57,7 @@
             <div class="modal-body"></div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-            <a href="/basicprofile" class="btn bg-scard-l text-white modal-href"></a>
+            <a href="/" class="btn bg-scard-l text-white modal-href"></a>
             </div>
         </div>
         </div>
@@ -75,5 +65,5 @@
     {% endblock %}
 
     {% block JS %}
-    <script src="/static/js/post.js"></script>
+    <script src="/static/js/new-post.js"></script>
     {% endblock %}

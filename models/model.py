@@ -1,3 +1,4 @@
+from enum import unique
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import expression, func
 from flask_migrate import Migrate
@@ -8,7 +9,7 @@ from redis import Redis
 from flask_caching import Cache
 
 redis = Redis()
-cache = Cache(config={"CACHE_TYPE": "RedisCache"})
+cache = Cache(config={"CACHE_TYPE": "RedisCache", "CACHE_REDIS_HOST": "scard-cahce-001.crci7w.0001.apne1.cache.amazonaws.com"})
 #, "CACHE_REDIS_HOST": "scard-cahce-001.crci7w.0001.apne1.cache.amazonaws.com"
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
@@ -93,3 +94,21 @@ class Messages(db.Model):
 
     def as_dict(self):
         return{c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class PostBoard(db.Model):
+    __tablename__ = 'postboard'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    sys_name = db.Column(db.String(255), unique=True, nullable=False)
+    show_name = db.Column(db.String(255), unique=True, nullable=False)
+    rule = db.Column(db.Text)
+
+class Post(db.Model):
+    __tablename__ = 'post'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    board_id = db.Column(db.Integer, db.ForeignKey('postboard.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_name = db.Column(db.String(255), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    content = db.Column(db.String(255), nullable=False)
+    create_time = db.Column(db.DateTime, server_default=text('NOW()'))
+    like_count = db.Column(db.Integer, server_default=text("0"), nullable=False)

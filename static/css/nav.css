@@ -67,6 +67,7 @@ button.search{
     padding-right: 0.8rem;
     padding-left: 0.8rem;
     line-height: 24px;
+    cursor: pointer;
 }
 i{
     font-size: 1.5rem;

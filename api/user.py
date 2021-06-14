@@ -37,7 +37,9 @@ def post_user():
             session["user"] = {
                 "id": exist_user.id,
                 "verify": exist_user.verify,
-                "scard": exist_user.scard
+                "scard": exist_user.scard,
+                "collage": exist_user.collage,
+                "department": exist_user.department
             }
             data = {
                 "ok": True
@@ -51,7 +53,9 @@ def post_user():
                 session["user"] = {
                     "id": exist_user.id,
                     "verify": exist_user.verify,
-                    "scard": exist_user.scard
+                    "scard": exist_user.scard,
+                    "collage": exist_user.collage,
+                    "department": exist_user.department
                 }
                 data = {
                     "ok": True

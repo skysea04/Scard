@@ -1,0 +1,161 @@
+{% extends "basic.html" %}
+
+    {% block CSS %}
+    <link rel="stylesheet" href="/static/css/profile.css">
+    {% endblock %}
+    
+    {% block title %}
+    <title>自我介紹 / Scard</title>
+    {% endblock %}
+
+    {% block main %}
+    <main class="container mx-auto row my-4 ">
+        <form class="col-12 col-md-10 col-lg-8 p-4 p-lg-5 bg-white rounded mx-auto profile"> 
+            <div class="avatar-container mx-auto">
+                <img src="../static/blank.png" class="img-thumbnail" alt="...">
+                <div class="avatar-upload px-2 rounded">
+                    <label for="avatar">
+                        <i class="bi bi-camera-fill"></i>
+                    </label>
+                    <input id="avatar" type="file" accept="image/*" name="avatar">
+                </div>
+            </div>
+
+            <!-- 預覽圖片Modal -->
+            <div class="modal fade" id="avatar-confirm" tabindex="-1" aria-labelledby="avatar-confirm" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="avatar-confirm">頭像預覽</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <img id="temp-avatar" class="temp-avatar"  alt="">
+                        </div>
+                        <div class="modal-footer">
+                            <p class="message"></p>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                            <button type="button" class="btn bg-scard-l text-white save-avatar">儲存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <input type="text" readonly class="form-control-plaintext text-center h4" id="name" name="name">
+            </div>
+            <div class="mb-3 row gx-2">
+                <div class="col">
+                    <label for="collage" class="form-label scard-l">學校</label>
+                    <input type="text" class="form-control" id="collage" name="collage"  required>
+                </div>
+                <div class="col">
+                    <label for="department" class="form-label scard-l">系所</label>
+                    <input type="text" class="form-control" id="department" name="department" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="relationship" class="form-label scard-l">感情狀態</label>
+                <select class="form-select" id="relationship" name="relationship">
+                    <option value="secret">秘密</option>
+                    <option value="single">單身</option>
+                    <option value="in_a_relationship">穩定交往</option>
+                    <option value="open_relationship">交往中但保有交友空間</option>
+                    <option value="complicated">一言難盡</option>
+                    <option value="no_show select">不顯示</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="interest" class="form-label scard-l">興趣與專長（必填）</label>
+                <textarea class="form-control" id="interest" name="interest" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="club" class="form-label scard-l">曾經參加過的社團</label>
+                <textarea class="form-control" id="club" name="club" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="course" class="form-label scard-l">喜歡的課程</label>
+                <textarea class="form-control" id="course" name="course" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="country" class="form-label scard-l">喜歡的國家</label>
+                <textarea class="form-control" id="country" name="country" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="worry" class="form-label scard-l">自己最近的困擾</label>
+                <textarea class="form-control" id="worry" name="worry" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="swap" class="form-label scard-l">可以交換的事情（必填）</label>
+                <textarea class="form-control" id="swap" name="swap" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="want_to_try" class="form-label scard-l">想嘗試的事情（必填）</label>
+                <textarea class="form-control" id="want_to_try" name="want_to_try" rows="3" required></textarea>
+            </div>
+            
+            <p class="message text-end"></p>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn bg-scard-l text-white">更新</button>
+            </div>
+        </form>
+    </main>
+    {% endblock %}
+
+    {% block modal %}
+    <!-- 要求登入Modal -->
+    <div class="modal fade" id="to-signup-modal" tabindex="-1" aria-labelledby="to-signup-modal" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="to-signup-modal">您尚未登入</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                想要一起加入討論，要先登入 Scard 唷！
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <a href="/signup" class="btn bg-scard-l text-white">登入</a>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- 處理各式Error訊息的Modal -->
+    <div class="modal fade" id="error-modal" tabindex="-1" aria-labelledby="error-modal" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="error-modal"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <a href="" class="btn bg-scard-l text-white modal-href"></a>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- 更新完成Modal -->
+    <div class="modal fade" id="finish-update" tabindex="-1" aria-labelledby="finish-update" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="finish-update">更新成功</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            個人資訊已成功更新！
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+            <button type="button" class="btn bg-scard-l text-white" data-bs-dismiss="modal">確認</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    {% endblock %}
+    
+    {% block JS %}
+    <script src="/static/js/profile.js"></script>
+    {% endblock %}

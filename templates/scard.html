@@ -1,0 +1,130 @@
+{% extends "basic.html" %}
+
+    {% block CSS %}
+    <link rel="stylesheet" href="/static/css/profile.css">
+    <link rel="stylesheet" href="/static/css/scard.css">
+    {% endblock %}
+    
+    {% block title %}
+    <title>抽卡 / Scard</title>
+    {% endblock %}
+
+    {% block main %}
+    <main class="container mx-auto row my-4 ">
+        <div class="col-12 col-md-10 col-lg-8 p-4 p-lg-5 bg-white rounded mx-auto scard-card"> 
+            <div class="avatar-container mx-auto">
+                <img src="../static/blank.png" class="img-thumbnail" alt="...">
+            </div>
+
+            <div>
+                <h4 class="mx-auto text-center my-3 name"></h4>
+            </div>
+
+            <div class="mb-3">
+                <div class="mx-auto text-center text-muted">
+                    <span class="collage"></span>
+                    <span>&nbsp</span>
+                    <span class="department"></span>
+                </div>
+            </div>
+            
+            <div class="mb-3 d-flex justify-content-center">
+                <a class="friend-href">
+                    <button class="btn bg-scard-l text-white add-friend-btn">送出邀請</button>
+                </a>
+            </div>
+
+            <div class="mb-4">
+                <label for="interest" class="form-label scard-l">興趣與專長</label>
+                <p class="interest"></p>
+            </div>
+            <div class="mb-4">
+                <label for="club" class="form-label scard-l">曾經參加過的社團</label>
+                <p class="club"></p>
+            </div>
+            <div class="mb-4">
+                <label for="course" class="form-label scard-l">喜歡的課程</label>
+                <p class="course"></p>
+            </div>
+            <div class="mb-4">
+                <label for="country" class="form-label scard-l">喜歡的國家</label>
+                <p class="country"></p>
+            </div>
+            <div class="mb-4">
+                <label for="worry" class="form-label scard-l">自己最近的困擾</label>
+                <p class="worry"></p>
+            </div>
+            <div class="mb-4">
+                <label for="swap" class="form-label scard-l">可以交換的事情</label>
+                <p class="swap"></p>
+            </div>
+            <div class="mb-4">
+                <label for="want_to_try" class="form-label scard-l">想嘗試的事情</label>
+                <p class="want-to-try"></p>
+            </div>
+        </div>
+    </main>
+    {% endblock %}
+
+    {% block modal %}
+    <!-- 要求登入Modal -->
+    <div class="modal fade" id="to-signup-modal" tabindex="-1" aria-labelledby="to-signup-modal" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="to-signup-modal">您尚未登入</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                想要一起加入討論，要先登入 Scard 唷！
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <a href="/signup" class="btn bg-scard-l text-white">登入</a>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- 處理各式Error訊息的Modal -->
+    <div class="modal fade" id="error-modal" tabindex="-1" aria-labelledby="error-modal" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="error-modal"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <a href="" class="btn bg-scard-l text-white modal-href"></a>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- 加好友Modal -->
+    <div class="modal fade" id="add-friend-modal" tabindex="-1" aria-labelledby="add-friend-modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="add-friend-modal">邀請對方成為卡友</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                        <textarea class="form-control" id="message-text" placeholder="留給對方一句話吧" required rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="submit" class="btn bg-scard-l text-white">送出邀請</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+    
+    {% block JS %}
+    <script src="/static/js/scard.js"></script>
+    {% endblock %}

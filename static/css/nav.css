@@ -1,9 +1,44 @@
-.bg-scard{
+a{
+    text-decoration: none;
+}
+
+.top-blank{
+    width: 100%;
+    height: 59px;
+}
+
+.navbar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+}
+
+.bg-scard-l{
+    background-color: #3397CF;
+}
+
+.bg-scard-l:hover{
+    background-color: #5AB0DB;
+}
+.bg-scard-l:focus{
+    box-shadow: none;
+}
+
+.scard-l{
+    color: #3397CF;
+}
+
+.scard-d{
     background-color: #00324E;
 }
 
+.bi-wallet2::before{
+    transform: rotate(270deg);
+}
 
-.form-control:focus {
+:is(.form-control, .form-select):focus {
     box-shadow: none;
 }
 
@@ -14,6 +49,10 @@
 .home-page{
     font-size: 1.8rem;
 }
+
+/* .navbar{
+    background-color: #006AA6;
+} */
 
 .navbar input{
     border-radius: 5px 0 0 5px;
@@ -32,11 +71,19 @@ button.search{
     padding-right: 0.8rem;
     padding-left: 0.8rem;
     line-height: 24px;
+    cursor: pointer;
 }
 i{
     font-size: 1.5rem;
 }
 
+.nav-user, .nav-stranger{
+    display: none;
+}
+
+.message{
+    color: red;
+}
 
 @media(max-width:1200px){
     .container{

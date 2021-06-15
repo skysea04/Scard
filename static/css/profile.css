@@ -1,0 +1,35 @@
+.avatar-container{
+    width: 200px;
+    height: 200px;
+    position: relative;
+}
+
+.avatar-container img{
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+}
+
+.avatar-upload{
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    cursor: pointer;
+}
+
+.avatar-upload label{
+    cursor: pointer;
+}
+
+
+.avatar-container input{
+    display: none;
+}
+
+.temp-avatar{
+    width: 200px; 
+    height: 200px; 
+    object-fit: cover;
+}

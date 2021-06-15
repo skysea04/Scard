@@ -1,80 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/static/css/nav.css">
-    <title>註冊｜Scard</title>
-</head>
-<body class="bg-scard">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid container">
-            <a class="navbar-brand home-page" href="#">Scard</a>
-            <form class="d-flex me-auto flex-lg-fill">
-                <input class="form-control border-info me-auto" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-info search" type="submit"><i class="bi bi-search"></i></button>
-            </form>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="#"><i class="bi bi-pencil-fill"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-bell-fill"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-file-person"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-envelope-fill"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-person-fill"></i></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">登出</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <main class="container row gx-5 mx-auto">
-        <div class="col-xl-6 col-md">
-            <form class="p-3 mt-5 bg-white rounded"> 
-                <h3>登入</h3>
-                <div class="mb-3">
-                    <label for="signinMail" class="form-label">常用信箱</label>
-                    <input type="email" class="form-control" id="signinMail" aria-describedby="emailHelp">
-                </div>
-                <div class="mb-3">
-                    <label for="signinPassword" class="form-label">密碼</label>
-                    <input type="password" class="form-control" id="signinPassword">
-                </div>
-                <button type="submit" class="btn btn-info text-white">登入</button>
-            </form>
-        </div>
-        <div class="col-xl-6 col-md">
-            <form class="p-3 mt-5 bg-white rounded"> 
-                <h3>註冊</h3>
-                <div class="mb-3">
-                    <label for="signupMail" class="form-label">常用信箱</label>
-                    <input type="email" class="form-control" id="signupMail" aria-describedby="emailHelp">
-                </div>
-                <div class="mb-3">
-                    <label for="signupPassword" class="form-label">密碼</label>
-                    <input type="password" class="form-control" id="signupPassword">
-                </div>
-                <button type="submit" class="btn btn-info text-white">註冊</button>
-            </form>
-        </div>      
-    </main>
+{% extends "basic.html" %}
+    {% block title %}
+    <title>註冊 / Scard</title>
+    {% endblock %}
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
-</body>
-</html>
+    {% block main %}
+    <main class="container mx-auto row mt-5">
+        <form class="col-10 col-md-8 col-lg-6 p-4 bg-white rounded mx-auto signup"> 
+            <h3>註冊 / 登入</h3>
+            <div class="mb-3">
+                <label for="email" class="form-label">常用信箱</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">密碼</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <p class="message"></p>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn bg-scard-l text-white">註冊 / 登入</button>
+            </div>
+        </form>
+    </main>
+    {% endblock %}
+    
+    {% block JS %}
+    <script src="/static/js/signup.js"></script>
+    {% endblock %}

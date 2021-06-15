@@ -1,0 +1,70 @@
+{% extends "basic.html" %}
+
+    {% block CSS %}
+    
+    {% endblock %}
+    
+    {% block title %}
+    <title>個人資料驗證 / Scard</title>
+    {% endblock %}
+
+    {% block main %}
+    <main class="container mx-auto row mt-4">
+        <form class="col-10 col-md-8 col-lg-6 p-4 bg-white rounded mx-auto basic-profile"> 
+            <h3 class="text-center mb-3">基本資料</h3>
+            <div class="mb-3">
+                <label for="name" class="form-label">真實姓名</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="輸入真實姓名" aria-describedby="nameHelp" required>
+                <div id="nameHelp" class="form-text">真實姓名不會公開在看板上</div>
+            </div>
+            <div class="mb-3">
+                <label for="gender" class="form-label">性別</label>
+                <select class="form-select" id="gender" name="gender" required>
+                    <option value="male">男生</option>
+                    <option value="female">女生</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="birthday" class="form-label">生日</label>
+                <input type="date" class="form-control" id="birthday" name="birthday" required>
+            </div>
+            <div class="mb-3">
+                <label for="collage" class="form-label">學校</label>
+                <input type="text" class="form-control" id="collage" name="collage" placeholder="輸入學校" required>
+            </div>
+            <div class="mb-3">
+                <label for="department" class="form-label">系所</label>
+                <input type="text" class="form-control" id="department" name="department" placeholder="輸入系所" required>
+            </div>
+            <p class="message"></p>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-info text-white">送出</button>
+            </div>
+        </form>
+    </main>
+    {% endblock %}
+
+    {% block modal %}
+    <!-- 要求登入Modal -->
+    <div class="modal fade" id="to-signup-modal" tabindex="-1" aria-labelledby="to-signup-modal" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">您尚未登入</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                想要一起加入討論，要先登入 Scard 唷！
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <a href="/signup" class="btn bg-scard-l text-white">登入</a>
+            </div>
+        </div>
+        </div>
+    </div>
+    {% endblock %}
+    
+    {% block JS %}
+    <script src="/static/js/basicprofile.js"></script>
+    {% endblock %}

@@ -1,0 +1,124 @@
+.f-14{
+    font-size: 14px;
+}
+
+.friends, .messages-and-friends-info{
+    height: calc(100vh - 59px - 24px - 30px);
+}
+.friends{
+    flex-basis: 350px;
+    flex-shrink: 0;
+}
+.messages-and-friends-info{
+    flex-shrink: 1;
+}
+
+.list-group{
+    height: calc(100% - 40px);
+    overflow-y: auto;
+    border-top: 1px solid #999999;
+    border-bottom: 1px solid #999999;
+}
+
+.friend{
+    border-bottom: 1px solid #444444;
+}
+
+.friend.active{
+    background-color: #006AA6;
+}
+.friend:hover{
+    border-left: 2px solid #006AA6;
+}
+.friend:hover.p-3{
+    padding-left: calc(1rem - 2px) !important;
+}
+
+.friend img{
+    display: block;
+    width: 60px;
+    height: 60px;
+    object-fit: cover;    
+}
+.w-240{
+    width: 240px;
+}
+
+
+/* friend nav欄位 */
+.nav-link, .nav-link:focus, .nav-link:hover{
+    color: #495057;
+}
+
+.nav-tabs .nav-link.active{
+    color: #3397CF;
+}
+
+.friend-info, .messages{
+    height: calc(100% - 60px);
+    display: none;
+}
+
+
+
+/* 朋友資訊 */
+.list-group .friend:last-child{
+    border-bottom-width: 0;
+}
+.friend-info{
+    overflow-y: auto;
+}
+.avatar-container{
+    width: 200px;
+    height: 200px;
+    position: relative;
+}
+.avatar-container img{
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+}
+
+h4.friend-name{
+    width: 200px;
+}
+.short-letter{
+    height: 24px;
+}
+
+
+
+
+/* 信件相關 */
+.list-group-flush>.list-group-item:last-child {
+    border-bottom-width: 1px;
+}
+
+.old-messages{
+    height: calc(100% - 200px);
+}
+
+.old-messages li:first-of-type{
+    border-bottom: 0;
+}
+
+.message-avatar{
+    width: 60px;
+}
+.message-avatar img{
+    /* display: block; */
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
+.send-message{
+    position: relative;
+    z-index: 4;
+    box-shadow: 0 -1.2rem 1.5rem -.9rem rgba(0, 0, 0, 0.18);
+}
+
+.messages .card-header{
+    height: 60px;
+    line-height: 40px;
+}

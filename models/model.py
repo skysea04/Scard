@@ -5,8 +5,10 @@ from sqlalchemy import Index, text
 from redis import Redis
 from flask_caching import Cache
 import os
-redis_host = os.getenv("REDIS_HOST")
+from dotenv import load_dotenv
+load_dotenv()
 
+redis_host = os.getenv("REDIS_HOST")
 
 redis = Redis()
 cache = Cache(config={"CACHE_TYPE": "RedisCache", "CACHE_REDIS_HOST": redis_host})

@@ -5,15 +5,19 @@ const modalTitle = errorModalContain.querySelector('.modal-title')
 const modalBody = errorModalContain.querySelector('.modal-body')
 const modalHref = errorModalContain.querySelector('.modal-href')
 
+modalHref.addEventListener('click',()=> errorModal.hide())
+
 //// api資訊
 const newPostAPI = '/api/new-post'
 const postImageAPI = '/api/new-post/image'
 
-
-//// 將看版資訊與個人名稱資訊匯入
+//// 定義文章各欄位變數
 const boardSelect = document.querySelector('.board-select')
 const nameSelect = document.querySelector('.name-select')
+const postTitle = document.querySelector('.post-title')
+const postContent = document.querySelector('.post-content')
 
+//// 將看版資訊與個人名稱資訊匯入
 fetch(newPostAPI)
     .then(res => res.json())
     .then(data => {
@@ -27,10 +31,10 @@ fetch(newPostAPI)
         else{
             // 新增發文身份名稱選項
             const fullName = document.createElement('option')
-            fullName.value = `${data.collage} ${data.department}`
+            fullName.value = 'full'
             fullName.innerText = `${data.collage} ${data.department}`
             const collageName = document.createElement('option')
-            collageName.value = data.collage
+            collageName.value = 'collage'
             collageName.innerText = data.collage
             const anonymous = document.createElement('option')
             anonymous.value = '匿名'
@@ -47,45 +51,71 @@ fetch(newPostAPI)
         }
     })
 
+//// 儲存文章標題
+postTitle.value = localStorage.getItem('newPostTitle')
+function savePostTitle(){
+    localStorage.setItem('newPostTitle', postTitle.value)
+}
+postTitle.addEventListener('input', savePostTitle)
 
 //// 內文編輯器
-const editField = document.querySelector('.post-content')
-editField.innerHTML = localStorage.getItem('new-post')
-let postContent = editField.innerHTML
-let textCursor = editField.querySelector('div')
+postContent.innerHTML = localStorage.getItem('newPostContent')
+let postContentHTML = postContent.innerHTML
+let allContent = postContent.childNodes
+let textCursor = allContent[allContent.length - 1]
 
-editField.addEventListener('input', function(){
-    // console.log(editField.innerHTML)
-    postContent = editField.innerHTML
-    // console.log('content', postContent)
-    if(postContent == ''){
-        postContent = '<div><br></div>'
-        localStorage.setItem('new-post', postContent);
-        editField.innerHTML = localStorage.getItem('new-post')
-        textCursor = editField.querySelector('div')
+// 每次輸入內文就會儲存完整html到localhost
+function inputSave(){
+    postContentHTML = postContent.innerHTML
+    if(postContentHTML == ''){
+        postContentHTML = '<p><br></p>'
+        localStorage.setItem('newPostContent', postContentHTML)
+        postContent.innerHTML = localStorage.getItem('newPostContent')
+        textCursor = postContent.querySelector('p')
     }else{
         textCursor = window.getSelection().anchorNode
         if(textCursor.nodeName == '#text'){
-            textCursor = window.getSelection().baseNode.parentElement
+            textCursor = textCursor.parentNode
+        }
+        localStorage.setItem('newPostContent', postContentHTML)
+    }
+}
+// 在postContent內更改點擊位置可以改變textCursor元素
+function changetextCursor(){
+    tempCursor = window.getSelection().anchorNode
+    if(tempCursor.nodeName == '#text' && tempCursor.parentNode.nodeName=='P'){
+        textCursor = window.getSelection().anchorNode.parentElement
+    }else if(tempCursor.nodeName == 'p'){
+        textCursor = window.getSelection().anchorNode
+    }else if(tempCursor.firstChild && tempCursor.firstChild.classList){
+        if(tempCursor.firstChild.classList.contains('upload-img')){
+            textCursor = window.getSelection().anchorNode
         }
     }
-    // console.log('textCursor', textCursor)
-    localStorage.setItem('new-post', postContent);
-})
+}
+// 每次點擊皆改動
+postContent.addEventListener('input', inputSave)
+document.addEventListener('selectionchange', changetextCursor)
 
-editField.addEventListener('click', function(){
-    textCursor = window.getSelection().anchorNode
-    // console.log('mouseup', window.getSelection())
-    if(textCursor.nodeName == '#text'){
-        textCursor = window.getSelection().baseNode.parentElement
-    }
-    else if(textCursor.classList.contains('post-form') || textCursor.nodeName == 'LABEL'){
-        textCursor = editField.querySelector('div')
-    }
-    // console.log('textCursor', textCursor)
-})
+// 點選上傳圖片時，可以整個選取
+function selectImages(){
+    let contentImgs = document.querySelectorAll('div .upload-img')
+    contentImgs.forEach(contentImg => {
+        function selectImg(){
+            let selection = window.getSelection()
+            selection.removeAllRanges()
+            let theImage = this
+            let range = document.createRange()
+            range.selectNode(theImage)
+            selection.addRange(range)
+        }
+        contentImg.addEventListener('click', selectImg)
+    })
+}
+// 先執行一次
+selectImages()
 
-//// 上傳圖片
+//// 上傳圖片到文章中
 const imgInput = document.querySelector('#img')
 async function showUpload(){
     const imgData = new FormData();
@@ -103,9 +133,11 @@ async function showUpload(){
         imgContainer.appendChild(imgSelf)
         textCursor.insertAdjacentElement('afterend', imgContainer)
         textCursor = imgContainer
+        
 
-        postContent = editField.innerHTML
-        localStorage.setItem('new-post', postContent);
+        postContentHTML = postContent.innerHTML
+        localStorage.setItem('newPostContent', postContentHTML);
+        selectImages()   
     }else{
         modalTitle.innText = data.title
         modalBody.innerText = data.message
@@ -114,6 +146,34 @@ async function showUpload(){
         errorModal.show()
     }    
 }
-
 imgInput.addEventListener('change', showUpload)
 
+//// 上傳貼文
+const sendPostBtn = document.querySelector('.send-post')
+async function sendPost(){
+    const postData = {
+        board: boardSelect.value,
+        name: nameSelect.value,
+        title: postTitle.value,
+        content: postContent.innerHTML
+    }
+    const res = await fetch(newPostAPI, {
+        method: 'POST',
+        body: JSON.stringify(postData),
+        headers: {'Content-Type': 'application/json'}
+    })
+    const data = await res.json()
+    if(data.error){//出現錯誤，顯示提示Modal
+        modalTitle.innText = data.title
+        modalBody.innerText = data.message
+        modalHref.innerText = data.confirm
+        modalHref.href = data.url
+        errorModal.show()
+    }else{
+        localStorage.setItem('newPostTitle', '')
+        localStorage.setItem('newPostContent', '<p><br></p>')
+        window.location = data.url
+    }
+}
+
+sendPostBtn.addEventListener('click', sendPost)

@@ -8,7 +8,7 @@ from . import api
 s3 = boto3.client('s3')
 
 sys.path.append("..")
-from models.model import PostBoard, User, db, cache
+from models.model import Post, PostBoard, User, db, cache
 
 no_sign_data = {
     "error": True,
@@ -42,6 +42,29 @@ error_format_data = {
     'url': '/new-post'
 }
 
+wrong_board_data = {
+    "error": True,
+    'title': '看板選擇錯誤',
+    'message': '你沒有選擇看板喔，重新選擇一次吧',
+    'confirm': '確認',
+    'url': '#'
+}
+
+wrong_name_data = {
+    "error": True,
+    'title': '名稱選擇錯誤',
+    'message': '你沒有選擇名稱喔，重新選擇一次吧',
+    'confirm': '確認',
+    'url': '#'
+}
+
+wrong_content_data = {
+    "error": True,
+    'title': '文章缺乏內容',
+    'message': '你的文章沒有標題或內容喔，快來補齊他們吧',
+    'confirm': '確認',
+    'url': '#'
+}
 
 @api.route('/new-post', methods=["GET"])
 def get_new_post():
@@ -81,8 +104,50 @@ def post_new_post():
         if user_verify == False:
             return jsonify(basic_profile_data), 403
         
-        
+        req_data = request.json
+        try:
+            board_id = int(req_data["board"])
+        except:
+            return jsonify(wrong_board_data), 400
+        select_name = req_data["name"]
+        post_title = req_data["title"]
+        post_content = req_data["content"]
 
+        # 查看使用者是否有正確選擇board
+        board_list = []
+        post_boards = PostBoard.query.all()
+        for board in post_boards:
+            board_list.append(board.id)
+            
+        board_id
+        if board_id not in board_list:
+            return jsonify(wrong_board_data), 400
+        
+        # 查看使用者是否有正確選擇發文名稱
+        user = User.view_user(user_id)
+        if select_name == 'full':
+            user_name = f'{user.collage} {user.department}'
+        elif select_name == 'collage':
+            user_name = user.collage
+        elif select_name == '匿名':
+            user_name = '匿名'
+        else:
+            return jsonify(wrong_name_data), 400
+        
+        # 查看使用者是否有填寫文章標題或內容
+        if post_title == '' or post_content == '<p><br></p>':
+            return jsonify(wrong_content_data), 400
+
+        # 將文章更新到資料庫，回傳使用者成功資訊
+        new_post = Post(board_id=board_id, user_id=user_id, user_name=user_name, title=post_title, content=post_content)
+        db.session.add(new_post)
+        db.session.commit()
+        data = {
+            'ok': True,
+            'url': '/'
+        }
+        return jsonify(data), 200
+        
     return jsonify(no_sign_data), 403
 
 @api.route('/new-post/image', methods=["POST"])

@@ -1,5 +1,5 @@
 from flask import *
-from flask_socketio import SocketIO, join_room, send
+# from flask_socketio import SocketIO, join_room, send
 import os
 from datetime import datetime
 from dotenv import load_dotenv
@@ -18,7 +18,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}:3306/{mysql_database}'
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping":True}
 
-socketio = SocketIO(app)
+# socketio = SocketIO(app)
 from models.model import Messages, db, migrate, cache
 db.init_app(app)
 migrate.init_app(app, db)
@@ -87,24 +87,25 @@ def message(id):
 		return render_template('message.html')
 	return redirect(url_for('signup'))
 
-@socketio.on('message')
-def handle_message(msg):
-    print('get message:'+ msg)
-    send(msg, broadcast=True)
+# @socketio.on('message')
+# def handle_message(msg):
+#     print('get message:'+ msg)
+#     send(msg, broadcast=True)
 
-@socketio.on('join_room')
-def handle_join_room(room_id):
-	join_room(room_id)
-	send(room_id)
+# @socketio.on('join_room')
+# def handle_join_room(room_id):
+# 	join_room(room_id)
+# 	send(room_id)
 
-@socketio.on('send_message')
-def handle_send_message(data):
-	data["time"] = datetime.now().strftime("%-m月%-d日 %H:%M")
-	socketio.emit('receive_message', data, room=data["room"])
-	message = Messages(scard_id=data["room"], user_id=data["id"], message=data["message"])
-	db.session.add(message)
-	db.session.commit()
+# @socketio.on('send_message')
+# def handle_send_message(data):
+# 	data["time"] = datetime.now().strftime("%-m月%-d日 %H:%M")
+# 	socketio.emit('receive_message', data, room=data["room"])
+# 	message = Messages(scard_id=data["room"], user_id=data["id"], message=data["message"])
+# 	db.session.add(message)
+# 	db.session.commit()
 
 
 if __name__ == '__main__':
-	socketio.run(app, host='0.0.0.0',port=8000, debug=True)
+	# socketio.run(app, host='0.0.0.0',port=8000, debug=True)
+	app.run(host='0.0.0.0',port=8000, debug=True)

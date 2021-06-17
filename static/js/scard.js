@@ -72,9 +72,12 @@ const addModal = new bootstrap.Modal(addModalContain)
 const addFriendForm = addModalContain.querySelector('form')
 const message = addFriendForm.querySelector('textarea')
 
-addFriendBtn.addEventListener('click', () => {
-    addModal.show()
-})
+function addModalShow(){
+    if(friendHref.href == ''){
+        addModal.show()
+    }
+}
+addFriendBtn.addEventListener('click', addModalShow)
 
 async function addFriend(e){
     e.preventDefault()

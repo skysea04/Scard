@@ -128,11 +128,11 @@ def invite_friend():
                 db.session.add_all([message_1, message_2])
 
                 # 刪除舊的卡友資訊快取，建立新快取
-                cache.delete_memoized(Scard.view_scard_2, Scard, scard_1.user_2, yesterday)    
+                cache.delete_memoized(Scard.view_scard_2, scard_1.user_2, yesterday)    
                 scard = Scard.view_scard_2(scard_1.user_2, yesterday)
 
             # 刪除舊的卡友資訊快取，建立新快取
-            cache.delete_memoized(Scard.view_scard_1, Scard, user_id, yesterday)    
+            cache.delete_memoized(Scard.view_scard_1, user_id, yesterday)    
             scard = Scard.view_scard_1(user_id, yesterday)
             
             data = {
@@ -150,11 +150,11 @@ def invite_friend():
                 message_2 = Messages(scard_id=scard_2.id, user_id=scard_2.user_2, message=scard_2.user_2_message)
                 db.session.add_all([message_1, message_2])
                 # 刪除舊的卡友資訊快取，建立新快取
-                cache.delete_memoized(Scard.view_scard_1, Scard, scard_2.user_1, yesterday)    
+                cache.delete_memoized(Scard.view_scard_1, scard_2.user_1, yesterday)    
                 scard = Scard.view_scard_1(scard_2.user_1, yesterday)
 
             # 刪除舊的卡友資訊快取，建立新快取
-            cache.delete_memoized(Scard.view_scard_2, Scard, user_id, yesterday)    
+            cache.delete_memoized(Scard.view_scard_2, user_id, yesterday)    
             scard = Scard.view_scard_2(user_id, yesterday)
 
             data = {

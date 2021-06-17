@@ -64,13 +64,13 @@ class Scard(db.Model):
     def as_dict(self):
         return{c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-    @classmethod
+    # @classmethod
     @cache.memoize(86400)
-    def view_scard_1(cls, user_id, create_date):
+    def view_scard_1(user_id, create_date):
         return Scard.query.filter_by(user_1=user_id, create_date=create_date).first()
-    @classmethod
+    # @classmethod
     @cache.memoize(86400)
-    def view_scard_2(cls, user_id, create_date):
+    def view_scard_2(user_id, create_date):
         return Scard.query.filter_by(user_2=user_id, create_date=create_date).first()
     
     @classmethod

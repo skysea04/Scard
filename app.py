@@ -1,3 +1,4 @@
+from logging import debug
 from flask import *
 from flask_socketio import SocketIO, join_room, send
 import os
@@ -10,6 +11,13 @@ mysql_password = os.getenv("MYSQL_PASSWORD")
 mysql_host = os.getenv("MYSQL_HOST")
 mysql_database = os.getenv("MYSQL_DATABASE")
 
+'''test area'''
+
+'''test area'''
+
+
+
+
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
@@ -19,7 +27,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_user}:{mysql_pa
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping":True}
 
 socketio = SocketIO(app)
-from models.model import Messages, db, migrate, cache
+from models.model import Messages, PostBoard, db, migrate, cache
 db.init_app(app)
 migrate.init_app(app, db)
 
@@ -31,10 +39,21 @@ app.register_blueprint(api, url_prefix="/api")
 
 @app.route('/')
 def index():
-	return render_template('index.html')
+	return redirect(url_for('show_board'))
+
+@app.route('/b')
+@app.route('/b/<board>')
+def show_board(board=None):
+	boards = PostBoard.query.all()
+	board_list = []
+	for post_board in boards:
+		board_list.append(post_board.sys_name)
+	if board == None or board in board_list:
+		return render_template('index.html')
+	return 'error'
 
 @app.route('/new-post')
-def post():
+def new_post():
 	if 'user' in session:
 		return render_template('new-post.html')
 	return redirect(url_for('signup'))
@@ -107,4 +126,4 @@ def handle_send_message(data):
 
 
 if __name__ == '__main__':
-	socketio.run(app, host='0.0.0.0',port=8000)
+	socketio.run(app, host='0.0.0.0', port=8000, debug=True)

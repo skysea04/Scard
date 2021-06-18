@@ -20,7 +20,7 @@ body.scard-d{
 .post-content>p{
     margin-bottom: 3px;
 }
-.post-content>div>img{
+.post-content>p>img{
     border: 3px solid white;
 }
 
@@ -34,4 +34,12 @@ body.scard-d{
     display: block;
     max-width: 100%;
     max-height: 50vh;
+}
+
+.upload-img-spinner{
+    position: absolute;
+    top: 50%;
+    left: 45%;
+    width: 100px;
+    height: 100px;
 }

@@ -1,0 +1,46 @@
+.f-14{
+    font-size: 14px;
+}
+
+.boards{
+    height: calc(100vh - 59px - 24px - 30px);
+}
+
+.list-group{
+    height: calc(100% - 40px);
+    overflow-y: auto;
+    border: none;
+    border-radius: 0;
+}
+
+.board{
+    height: 40px;
+}
+.board:hover{
+    background-color: rgba(255, 255, 255, 0.2)
+}
+.friend.active{
+    background-color: #006AA6;
+}
+.board img{
+    display: block;
+    padding: 3px;
+    width: 30px;
+    height: 30px;
+    object-fit: cover;    
+}
+
+.post-nav{
+    top: 80px;
+}
+.post-nav .nav-link{
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.5);
+}
+.post-nav .nav-link:hover{
+    color: black;
+}
+.post-nav .nav-link.active{
+    color: black;
+    border-bottom:2px solid rgb(51, 151, 207);
+}

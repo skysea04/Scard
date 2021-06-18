@@ -284,7 +284,7 @@ clear_scard_cache()
 # 建立配對(比對user的match_list)
 # match_user_method_2()
 # 建立配對(多執行緒)
-# match_user_method_3()
+match_user_method_3()
 
 end_time = time.time()
 print(f'共花{end_time-start_time}秒')

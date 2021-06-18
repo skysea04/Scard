@@ -1,5 +1,6 @@
 {% extends "basic.html" %}
     {% block CSS %}
+    <link rel="stylesheet" href="/static/css/index.css">
     {% endblock %}
 
     {% block title %}
@@ -8,10 +9,67 @@
 
     {% block main %}
     <main class="container mx-auto row mt-4">
-        
+        <div class="col-2 blank"></div>
+        <section class="boards col-2 position-fixed">
+            <h3 class="text-white">看板列表</h3>
+            <div class="list-group mt-2">
+                <a href="/b/COVID-19" class="board pe-3 d-flex w-100  text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/coronavirus.svg" alt="">
+                    <p class="my-auto">COVID-19</p>
+                </a>
+                <a href="/b/relationship" class="board pe-3 d-flex w-100  text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/like.svg" alt="">
+                    <p class="my-auto">感情</p>
+                </a>
+                <a href="/b/trending" class="board pe-3 d-flex w-100  text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/trend.svg" alt="">
+                    <p class="my-auto">時事</p>
+                </a>
+                <a href="/b/talk" class="board pe-3 d-flex w-100  text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/chat.svg" alt="">
+                    <p class="my-auto">閒聊</p>
+                </a>
+                <a href="/b/mood" class="board pe-3 d-flex w-100  text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/attitude.svg" alt="">
+                    <p class="my-auto">心情</p>
+                </a>
+                <a href="/b/job" class="board pe-3 d-flex w-100  text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/businessman.svg" alt="">
+                    <p class="my-auto">工作</p>
+                </a>
+                <a href="/b/youtuber" class="board pe-3 d-flex w-100  text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/youtube.svg" alt="">
+                    <p class="my-auto">Youtuber</p>
+                </a>
+                <a href="/b/tvepisode" class="board pe-3 d-flex w-100  text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/smart-tv.svg" alt="">
+                    <p class="my-auto">戲劇綜藝</p>
+                </a>
+                <a href="/b/music" class="board pe-3 d-flex w-100  text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/music-note.svg" alt="">
+                    <p class="my-auto">音樂</p>
+                </a>
+
+            </div>
+        </section>
+        <section class="col-8 bg-white rounded posts px-0" style="height: 4000px;">
+            <ul class="nav mt-3 position-sticky border-bottom w-100 px-3 post-nav">
+                <li class="nav-item">
+                    <a class="nav-link active hot-nav" href="/b">熱門</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link latest-nav" href="/b?latest=true">最新</a>
+                </li>
+            </ul>
+            <div class="posts">
+
+            </div>
+        </section>
+        <!-- <div class="col-1 border border-secondary"></div> -->
     </main>
     {% endblock %}
     
     {% block JS %}
+    <script src="/static/js/index.js"></script>
     {% endblock %}
 

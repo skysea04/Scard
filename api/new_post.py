@@ -69,6 +69,7 @@ wrong_content_data = {
 @api.route('/new-post', methods=["GET"])
 def get_new_post():
     if "user" in session:
+        # print(session)
         user_id = session["user"]["id"]
         user_verify = session["user"]["verify"]
         if user_verify == False:

@@ -69,9 +69,9 @@ def post_profile():
         birthday = profile["birthday"]
         collage = profile["collage"]
         department = profile["department"]
-        
+        print(name, gender, birthday, collage, department)
         # 填寫不符規定的情況
-        if name == '' or gender !=("male" or "female") or birthday == '' or collage == '' or department == '':
+        if name == '' or (gender !="male" and gender != "female") or birthday == '' or collage == '' or department == '':
             input_error_data = {
                 "error": True,
                 "message": '資料填寫不符規定'
@@ -88,15 +88,21 @@ def post_profile():
         user.department = department
         if gender == 'male':
             user.comment_avatar = '/static/icons/avatar/male-mask.svg'
-            session["user"]["commentAvatar"] = '/static/icons/avatar/male-mask.svg'
         elif gender == 'female':
             user.comment_avatar = '/static/icons/avatar/female-mask.svg'
-            session["user"]["commentAvatar"] = '/static/icons/avatar/female-mask.svg'
         db.session.commit()
 
         cache.delete_memoized(User.view_user, User, user_id)
         user = User.view_user(user_id)
-
+        session["user"]= False
+        session["user"] = {
+                    "id": user.id,
+                    "verify": user.verify,
+                    "scard": user.scard,
+                    "collage": user.collage,
+                    "department": user.department,
+                    "commentAvatar": user.comment_avatar
+                }
         data = {"ok": True}
         return jsonify(data), 200
         
@@ -158,6 +164,15 @@ def patch_profile():
             # 清除原本該使用者的快取資料，重新存入快取
             cache.delete_memoized(User.view_user, User, user_id)
             user = User.view_user(user_id)
+            session["user"]= False
+            session["user"] = {
+                        "id": user.id,
+                        "verify": user.verify,
+                        "scard": user.scard,
+                        "collage": user.collage,
+                        "department": user.department,
+                        "commentAvatar": user.comment_avatar
+                    }
 
             return jsonify(data), 200
 

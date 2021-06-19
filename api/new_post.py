@@ -1,5 +1,5 @@
 from flask import jsonify, request, session
-import io, sys, boto3
+import io, sys, boto3, re
 from uuid import uuid4
 from PIL import Image
 
@@ -76,6 +76,7 @@ def get_new_post():
         
         user_collage = session["user"]["collage"]
         user_department = session["user"]["department"]
+        user_avatar = session["user"]["commentAvatar"]
 
         # 搜集所有po文版資訊
         board_list = []
@@ -90,6 +91,7 @@ def get_new_post():
         data = {
             "collage": user_collage,
             "department": user_department,
+            "avatar": user_avatar,
             "boardList": board_list
         }
         return jsonify(data), 200
@@ -138,8 +140,13 @@ def post_new_post():
         if post_title == '' or post_content == '<p><br></p>':
             return jsonify(wrong_content_data), 400
 
+        # 抓到所有內文中的圖片檔案，如果有圖片則將第一筆圖片src放入資料庫
+        imgs = re.findall(r"https://.{73}jpeg",post_content)
+        if imgs == []:
         # 將文章更新到資料庫，回傳使用者成功資訊
-        new_post = Post(board_id=board_id, user_id=user_id, user_name=user_name, title=post_title, content=post_content)
+            new_post = Post(board_id=board_id, user_id=user_id, user_name=user_name, title=post_title, content=post_content)
+        elif imgs[0]:
+            new_post = Post(board_id=board_id, user_id=user_id, user_name=user_name, title=post_title, content=post_content, first_img = imgs[0])
         db.session.add(new_post)
         db.session.commit()
         data = {

@@ -39,7 +39,8 @@ def post_user():
                 "verify": exist_user.verify,
                 "scard": exist_user.scard,
                 "collage": exist_user.collage,
-                "department": exist_user.department
+                "department": exist_user.department,
+                "commentAvatar": exist_user.comment_avatar
             }
             data = {
                 "ok": True
@@ -55,7 +56,8 @@ def post_user():
                     "verify": exist_user.verify,
                     "scard": exist_user.scard,
                     "collage": exist_user.collage,
-                    "department": exist_user.department
+                    "department": exist_user.department,
+                    "commentAvatar": exist_user.comment_avatar
                 }
                 data = {
                     "ok": True

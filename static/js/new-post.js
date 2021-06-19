@@ -16,7 +16,7 @@ const boardSelect = document.querySelector('.board-select')
 const nameSelect = document.querySelector('.name-select')
 const postTitle = document.querySelector('.post-title')
 const postContent = document.querySelector('.post-content')
-
+const postAvatar = document.querySelector('.post-avatar')
 //// 將看版資訊與個人名稱資訊匯入
 fetch(newPostAPI)
     .then(res => res.json())
@@ -40,6 +40,9 @@ fetch(newPostAPI)
             anonymous.value = '匿名'
             anonymous.innerText = '匿名'
             nameSelect.append(fullName, collageName, anonymous)
+
+            // 新增發文頭像
+            postAvatar.src = data.avatar
 
             // 新增發文看板選項
             data.boardList.forEach(board => {

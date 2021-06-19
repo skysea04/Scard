@@ -39,6 +39,7 @@ class User(db.Model):
     want_to_try = db.Column(db.Text)
     days_no_open_scard = db.Column(db.Integer, server_default=text("3"), nullable=False)
     match_list = db.Column(db.JSON, server_default=text('(JSON_ARRAY())'))
+    comment_avatar = db.Column(db.String(255))
 
     def as_dict(self):
         return{c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -101,6 +102,7 @@ class PostBoard(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     sys_name = db.Column(db.String(255), unique=True, nullable=False)
     show_name = db.Column(db.String(255), unique=True, nullable=False)
+    icon = db.Column(db.String(255), unique=True, nullable=False)
     rule = db.Column(db.Text)
 
 class Post(db.Model):
@@ -110,6 +112,8 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user_name = db.Column(db.String(255), nullable=False)
     title = db.Column(db.String(255), nullable=False)
-    content = db.Column(db.String(255), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    first_img = db.Column(db.String(255))
     create_time = db.Column(db.DateTime, server_default=text('NOW()'))
     like_count = db.Column(db.Integer, server_default=text("0"), nullable=False)
+    comment_count = db.Column(db.Integer, server_default=text("0"), nullable=False)

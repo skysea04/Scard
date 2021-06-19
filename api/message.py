@@ -1,7 +1,5 @@
 from flask import request, jsonify, session
-from sqlalchemy import or_
 from . import api
-from datetime import date
 import sys
 sys.path.append("..")
 from models.model import Messages, db, User, Scard

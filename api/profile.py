@@ -86,6 +86,12 @@ def post_profile():
         user.birthday = birthday
         user.collage = collage
         user.department = department
+        if gender == 'male':
+            user.comment_avatar = '/static/icons/avatar/male-mask.svg'
+            session["user"]["commentAvatar"] = '/static/icons/avatar/male-mask.svg'
+        elif gender == 'female':
+            user.comment_avatar = '/static/icons/avatar/female-mask.svg'
+            session["user"]["commentAvatar"] = '/static/icons/avatar/female-mask.svg'
         db.session.commit()
 
         cache.delete_memoized(User.view_user, User, user_id)
@@ -126,10 +132,10 @@ def patch_profile():
             return jsonify(data), 400
         else:
             # 屏除必填項目字數少於25字的更新
-            if len(interest) < 25 or len(swap) < 25 or len(want_to_try) < 25:
+            if len(interest) < 15 or len(swap) < 15 or len(want_to_try) < 15:
                 data = {
                     "error": True,
-                    "message": "必填項目不可少於25字"
+                    "message": "必填項目不可少於15字"
                 }
                 return jsonify(data), 400
 

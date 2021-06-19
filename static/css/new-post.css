@@ -17,10 +17,10 @@ body.scard-d{
 .post-content{
     min-height: calc(100vh - 340px);
 }
-.post-content>p{
+.post-content p{
     margin-bottom: 3px;
 }
-.post-content>p>img{
+.post-content p img{
     border: 3px solid white;
 }
 

@@ -124,6 +124,10 @@ def handle_send_message(data):
 	db.session.add(message)
 	db.session.commit()
 
+@app.errorhandler(404)
+def page_not_found(e):
+    # note that we set the 404 status explicitly
+    return render_template('404.html'), 404
 
 if __name__ == '__main__':
-	socketio.run(app, host='0.0.0.0', port=8000)
+	socketio.run(app, host='0.0.0.0', port=8000, debug=True)

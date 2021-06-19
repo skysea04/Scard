@@ -12,6 +12,9 @@ where friend.scard_id = scard.id and  (scard.user_1=586 or scard.user_2=586)
 group by scard_id;
 
 
+
+
+
 INSERT INTO postboard (sys_name, show_name, icon) 
 VALUES 
     ('relationship', '感情', 'https://d2lzngk4bddvz9.cloudfront.net/board/relationship.svg'), 

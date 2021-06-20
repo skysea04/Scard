@@ -56,11 +56,19 @@ def show_board(board=None):
 def view_post(board, post_id):
 	post = Post.query.filter_by(id=post_id).first()
 	if post:
+<<<<<<< HEAD
 		right_board = PostBoard.view_board(post.board_id)
 		if right_board.sys_name == board:
 			return render_template('post.html')
 		else:
 			return redirect(f'/b/{right_board.sys_name}/p/{post_id}')
+=======
+		right_board = PostBoard.query.filter_by(id=post.board_id).first()
+		if right_board:
+			return render_template('post.html')
+		else:
+			return redirect(f'/b{board.sys_name}/p/{post_id}')
+>>>>>>> 86f47d9391d6515d886bd04b3abd3b2f374b1252
 	else:
 		return render_template('post-not-exist.html')
 			

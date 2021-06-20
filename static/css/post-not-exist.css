@@ -1,0 +1,6 @@
+.post-not-exist{
+    height: calc(100vh - 100px);
+}
+.post-not-exist>div{
+    top:25%;
+}

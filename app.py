@@ -27,7 +27,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_user}:{mysql_pa
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping":True}
 
 socketio = SocketIO(app)
-from models.model import Messages, PostBoard, db, migrate, cache
+from models.model import Messages, Post, PostBoard, db, migrate, cache
 db.init_app(app)
 migrate.init_app(app, db)
 
@@ -50,7 +50,20 @@ def show_board(board=None):
 		board_list.append(post_board.sys_name)
 	if board == None or board in board_list:
 		return render_template('index.html')
-	return 'error'
+	abort(404)
+
+@app.route('/b/<board>/p/<post_id>')
+def view_post(board, post_id):
+	post = Post.query.filter_by(id=post_id).first()
+	if post:
+		right_board = PostBoard.view_board(post.board_id)
+		if right_board.sys_name == board:
+			return render_template('post.html')
+		else:
+			return redirect(f'/b/{right_board.sys_name}/p/{post_id}')
+	else:
+		return render_template('post-not-exist.html')
+			
 
 @app.route('/new-post')
 def new_post():

@@ -105,6 +105,10 @@ class PostBoard(db.Model):
     icon = db.Column(db.String(255), unique=True, nullable=False)
     rule = db.Column(db.Text)
 
+    @cache.memoize(9999999999999)
+    def view_board(board_id):
+        return PostBoard.query.filter_by(id=board_id).first()
+
 class Post(db.Model):
     __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

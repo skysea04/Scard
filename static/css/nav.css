@@ -1,3 +1,7 @@
+body{
+    font-family: Roboto,Helvetica Neue,Helvetica,Arial,PingFang TC,黑體-繁,Heiti TC,蘋果儷中黑,Apple LiGothic Medium,微軟正黑體,Microsoft JhengHei,sans-serif;
+}
+
 a{
     text-decoration: none;
 }
@@ -28,6 +32,10 @@ a{
 
 .scard-l{
     color: #3397CF;
+}
+
+.scard-l:hover{
+    color: #3389cf;
 }
 
 .scard-d{

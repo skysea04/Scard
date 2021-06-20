@@ -237,8 +237,8 @@ def match_user_method_3():
             cursor.execute('UPDATE user SET match_list=JSON_ARRAY_APPEND(match_list, "$" , %s) WHERE id=%s'%(match_id, user_id))
            
             cursor.execute('INSERT INTO scard (user_1, user_2) VALUES (%s, %s)'%(user_id, match_id))
-            # scard_1 = Scard.view_scard_1(user_id, today)
-            # scard_2 = Scard.view_scard_2(match_id, today)
+            scard_1 = Scard.view_scard_1(user_id, today)
+            scard_2 = Scard.view_scard_2(match_id, today)
             # 將已經配對的id設為0
             user_list[user_index] = 0
             user_list[match_index] = 0
@@ -276,7 +276,7 @@ def match_user_method_3():
 # update_no_scard_days()
 
 # 清除昨日配對快取
-clear_scard_cache()
+# clear_scard_cache()
 
 # 建立配對(查看過去所有配對)
 # match_user()

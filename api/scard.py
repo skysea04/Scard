@@ -6,8 +6,6 @@ import sys
 sys.path.append("..")
 from models.model import Messages, db, User, Scard, cache
 
-yesterday = date.today() - timedelta(days=1)
-
 no_sign_data = {
     "error": True,
     'title': '您尚未登入',
@@ -63,7 +61,8 @@ def get_scard():
             # 若是自我介紹還沒填完scard為false，建議使用者轉移到my_profile填寫頁面
             if user_scard == False:
                 return jsonify(my_profile_data), 403
-                                
+
+            yesterday = date.today() - timedelta(days=1)
             scard_1 = Scard.view_scard_1(user_id, yesterday)
             scard_2 = Scard.view_scard_2(user_id, yesterday)
             
@@ -114,6 +113,7 @@ def invite_friend():
         message = data['message']
 
         user_id = session['user']['id']
+        yesterday = date.today() - timedelta(days=1)
         scard_1 = Scard.query.filter_by(user_1=user_id, create_date=yesterday).first()
         scard_2 = Scard.query.filter_by(user_2=user_id, create_date=yesterday).first()
 

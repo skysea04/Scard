@@ -4,13 +4,36 @@ import sys
 sys.path.append("..")
 from models.model import db, User
 
+no_sign_data = {
+    "error": True,
+    'title': '您尚未登入',
+    'message': '想一起加入討論，要先登入 Scard 唷！',
+    'confirm': '登入',
+    'url': '/signup'
+}
+
+basic_profile_data = {
+    'error': True, 
+    'title': '您尚未填寫基本資料',
+    'message': '想一起加入討論，要先填完基本資料唷！',
+    'confirm': '填資料去',
+    'url': '/basicprofile'
+}
+
+my_profile_data = {
+    'error': True,
+    'title': '您尚未填寫自我介紹',
+    'message': '想開啟抽卡人生，先去豐富自我介紹吧！',
+    'confirm': '填寫自介',
+    'url': '/my/profile'
+}
+
 @api.route('/user', methods=["GET"])
 def get_user():
     # 驗證使用者是否有登入
     if 'user' in session:
         data = {
             "id": session["user"]["id"],
-            "verify": session["user"]["verify"]
         }
         return jsonify(data), 200
 
@@ -79,11 +102,28 @@ def post_user():
         }
         return jsonify(data), 500
 
-
-
 @api.route('/user', methods=["DELETE"])
 def delete_user():
     # 登出
     session.pop('user')
     data = {"ok": True}
     return jsonify(data), 200
+
+@api.route('/verify', methods=["GET"])
+def verify_user():
+    if 'user' in session:
+        verify = session["user"]["verify"]
+        scard = session["user"]["scard"]
+        href = request.args.get('a')
+        if verify == False:
+            return jsonify(basic_profile_data), 403
+        if href == 'scard' or href == 'message':
+            if scard == False:
+                return jsonify(my_profile_data), 403
+        data = {
+            "ok": True,
+            "url": f'/{href}'    
+        }
+        return jsonify(data), 200
+    
+    return jsonify(no_sign_data), 403

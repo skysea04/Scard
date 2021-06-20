@@ -1,9 +1,9 @@
 //// errorModal相關變數
-const errorModalContain = document.getElementById('error-modal')
-const errorModal = new bootstrap.Modal(errorModalContain)
-const modalTitle = errorModalContain.querySelector('.modal-title')
-const modalBody = errorModalContain.querySelector('.modal-body')
-const modalHref = errorModalContain.querySelector('.modal-href')
+// const errorModalContain = document.getElementById('error-modal')
+// const errorModal = new bootstrap.Modal(errorModalContain)
+// const modalTitle = errorModalContain.querySelector('.modal-title')
+// const modalBody = errorModalContain.querySelector('.modal-body')
+// const modalHref = errorModalContain.querySelector('.modal-href')
 
 modalHref.addEventListener('click',()=> errorModal.hide())
 

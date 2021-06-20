@@ -35,7 +35,7 @@ async function getPosts(){
     
     // 更動頁數
     page = data.nextPage
-    console.log(data.data)
+    // console.log(data.data)
     // 將文章資訊寫入網頁
     data.data.forEach(post => {
         // authorField
@@ -84,7 +84,7 @@ async function getPosts(){
         const content = document.createElement('p')
         content.className = 'mb-3 post-content'
         const postContent =  post.content.replace(/<[^>]+>/g, '');
-        console.log(postContent)
+        // console.log(postContent)
         content.append(postContent)
         // console.log(htmlToElem(post.content))
 

@@ -58,12 +58,6 @@ def update_no_scard_days():
     db.session.commit()
 
 
-# 清除昨日配對快取
-def clear_scard_cache():
-    cache.delete_memoized(Scard.view_scard_1)
-    cache.delete_memoized(Scard.view_scard_2)
-    # cache.clear()
-
 # 建立配對
 def match_user():
     # 建立本次要抽卡的使用者清單, 第一位測試帳號永遠開放抽卡
@@ -181,14 +175,13 @@ def match_user_method_3():
             database='scard'
         )
     new_cursor = new_db.cursor()
-    # 刪掉昨天沒有成為朋友的配對們
+    # 刪掉昨天沒有成為朋友的配對
     new_cursor.execute('DELETE FROM scard WHERE is_friend IS False AND create_date=%s', (yesterday,))
 
     # 建立本次要抽卡的使用者清單, 第一位測試帳號永遠開放抽卡
     new_cursor.execute('UPDATE user SET days_no_open_scard=0 WHERE id=1')
     new_db.commit()
-    user_list = []
-    matches_list = []
+    user_list, matches_list = [], []
     new_cursor.execute('SELECT id, match_list FROM user WHERE scard IS True AND days_no_open_scard <= 3')
     all_users = new_cursor.fetchall()
     for user in all_users:
@@ -203,19 +196,19 @@ def match_user_method_3():
         del user_list[0]
         del matches_list[0]
         user_count -= 1
-    print(user_count)
+    # print(user_count)
 
     # 配對函式
     def matching(first_index, end_index):
-        print(first_index, end_index)
+        # print(first_index, end_index)
         
-        mydb = mysql.connector.connect(
+        scard_db = mysql.connector.connect(
             host="database-scard.comdtbthwj2y.ap-northeast-1.rds.amazonaws.com",
             user="skysea",
             password="Rock8967",
             database='scard'
         )
-        cursor = mydb.cursor()
+        cursor = scard_db.cursor()
 
         for user_index in range(first_index, end_index):
             user_id = user_list[user_index]
@@ -237,26 +230,28 @@ def match_user_method_3():
             cursor.execute('UPDATE user SET match_list=JSON_ARRAY_APPEND(match_list, "$" , %s) WHERE id=%s'%(match_id, user_id))
            
             cursor.execute('INSERT INTO scard (user_1, user_2) VALUES (%s, %s)'%(user_id, match_id))
-            scard_1 = Scard.view_scard_1(user_id, today)
-            scard_2 = Scard.view_scard_2(match_id, today)
             # 將已經配對的id設為0
             user_list[user_index] = 0
             user_list[match_index] = 0
 
-        # 最後的commit大約會花費25秒的時間，一次commit會比分開commit快很多倍
-        mydb.commit() 
-        mydb.close()
+        scard_db.commit() 
+        scard_db.close()
         
         return 'ok'
     
     # 如果配對人數不多，直接執行配對函式
-    if user_count <= 1000:
+    if user_count <= 10000:
         matching(0, user_count)
 
-    # 若人數大於1000，分10個執行緒，執行配對函式
+    # 若人數大於10000，分10個執行緒，執行配對函式
     else:
         group_user_count = math.ceil(user_count / 10)
-        print(group_user_count)
+        # print(group_user_count)
+
+        # 確認每組人數也都是偶數
+        if (group_user_count % 2) != 0:
+            group_user_count += 1
+
         threads = []
         # 永遠開10個執行緒跑
         for i in range(10):
@@ -275,15 +270,13 @@ def match_user_method_3():
 # 增加未開卡天數
 # update_no_scard_days()
 
-# 清除昨日配對快取
-# clear_scard_cache()
-
-# 建立配對(查看過去所有配對)
+# 建立配對(ver0.1)
 # match_user()
 
-# 建立配對(比對user的match_list)
+# 建立配對(ver0.2 比對user的match_list)
 # match_user_method_2()
-# 建立配對(多執行緒)
+
+# 建立配對(ver0.3 多執行緒)
 match_user_method_3()
 
 end_time = time.time()

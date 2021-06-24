@@ -1,6 +1,7 @@
 {% extends "basic.html" %}
     {% block CSS %}
     <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="/static/css/post.css">
     {% endblock %}
 
     {% block title %}
@@ -52,12 +53,127 @@
 
             </div>
         </section>
-        <section class="col-8 bg-white rounded px-0">
-            
+        <section class="col-8 p-0 bg-white rounded">
+            <!-- 主文章 -->
+            <div class="p-5 the-post">
+                <div class="d-flex mb-3 author-field">
+                    <img class="me-2 rounded-circle" src="/static/blank.png" alt="">
+                    <p class="user-name"></p>
+                </div>
+                <h3 class="mb-2 post-title"></h3>
+                <div class="d-flex mb-3 text-secondary post-info">
+                    <a class="scard-l post-board"></a>
+                    <p>・</p>
+                    <p class="create-time"></p>
+                </div>
+                <div class="mb-4 post-content">
+                    
+                </div>
+                <div class="d-flex justify-content-between w-100 text-secondary fs-5 info-field">
+                    <div class="d-flex align-items-center post-count">
+                        <img class="me-2" src="/static/icons/like.svg" alt="">
+                        <p class="like-count"></p>
+                        <p>&nbsp;・&nbsp;</p>
+                        <img class="me-2" src="/static/icons/comment.svg" alt="">
+                        <p class="me-2 comment-count"></p>
+                    </div>
+                    <div class="d-flex align-items-end post-interact">
+                        <div class="me-4 like">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                            </svg>
+                        </div>
+                        <div class="notice">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">
+                                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 留言區 -->
+            <div class="bg-light px-5 pt-4 comments">
+                <div class="comments-field">
+                    <p class="fs-5 m-0 border-bottom">共 <span class="comment-count"></span> 則回應</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item px-0 py-3 comment">
+                            <div class="d-flex justify-content-between align-items-center text-black-50 fs-6 mb-2 comment-header">
+                                <div class="d-flex author-field">
+                                    <img class="me-2 rounded-circle avatar" src="/static/icons//avatar/female-mask.svg" alt="">
+                                    <div class="author">
+                                        <p class="mb-0 user-name">國立台灣師範大學</p>
+                                        <div class="d-flex">
+                                            <p class="floor">B1</p>
+                                            <p>・</p>
+                                            <p class="comment_time">6月22日 22:58</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex info-field post-interact">
+                                    <div class="d-flex align-items-center like">
+                                        <div class="me-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                                            </svg>
+                                        </div>
+                                        <p class="me-2">2332</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="comment-body">
+                                <img class="upload-img" src="https://d2lzngk4bddvz9.cloudfront.net/image/06a6e4f9-b987-4c0f-ada5-d4b7fde47dd8.jpeg">
+                                <p>Dcard複製品，專案內容建置中，目前已完成功能：帳號系統、基本資料、自介填寫、抽卡配對、聊天系統、PO文系統(主頁瀏覽PO文功能尚未完成)。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 留言編輯區 -->
+            <div class="px-5 py-3 position-sticky bottom-0 bg-white w-100 border-top text-secondary comment-blank">回應...</div>
+            <div class="px-5 py-3 position-sticky bottom-0 bg-white w-100 border-top post-comment d-none">
+                <div class="d-flex author-field">
+                    <img src="/static/icons/avatar/female-mask.svg" class="rounded-circle me-2 post-comment-avatar" alt="">
+                    <select class="form-select name-select">
+                        <option value='' selected>選擇發文身份</option>
+                    </select>
+                    <div class="spinner-border d-none upload-img-spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div id="expand-btn" class="ms-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrows-angle-expand" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707z"/>
+                        </svg>
+                    </div>
+                    <div id="contract-btn" class="ms-auto d-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrows-angle-contract" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M.172 15.828a.5.5 0 0 0 .707 0l4.096-4.096V14.5a.5.5 0 1 0 1 0v-3.975a.5.5 0 0 0-.5-.5H1.5a.5.5 0 0 0 0 1h2.768L.172 15.121a.5.5 0 0 0 0 .707zM15.828.172a.5.5 0 0 0-.707 0l-4.096 4.096V1.5a.5.5 0 1 0-1 0v3.975a.5.5 0 0 0 .5.5H14.5a.5.5 0 0 0 0-1h-2.768L15.828.879a.5.5 0 0 0 0-.707z"/>
+                        </svg>
+                    </div>
+                    
+                </div>
+                <div class="form-control border rounded post-comment-content overflow-auto" contenteditable="true">
+                    <p><br></p>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="upload-img-field mx-2">
+                        <label for="img">
+                            <i class="bi bi-image fs-2 text-secondary"></i>
+                        </label>
+                        <input id="img" class="d-none" type="file" accept="image/*">
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <p class="message text-end"></p>
+                        <button class="btn btn-secondary me-4 cancel">取消</button>
+                        <button class="btn bg-scard-l text-white send-comment">送出</button>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
     {% endblock %}
     
     {% block JS %}
-    <script src="/static/js/index.js"></script>
+    <script src="/static/js/post.js"></script>
     {% endblock %}

@@ -20,9 +20,7 @@
 .board:hover{
     background-color: rgba(255, 255, 255, 0.2)
 }
-.friend.active{
-    background-color: #006AA6;
-}
+
 .board img{
     display: block;
     padding: 3px;

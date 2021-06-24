@@ -121,3 +121,17 @@ class Post(db.Model):
     create_time = db.Column(db.DateTime, server_default=text('NOW()'))
     like_count = db.Column(db.Integer, server_default=text("0"), nullable=False)
     comment_count = db.Column(db.Integer, server_default=text("0"), nullable=False)
+
+class Comment(db.Model):
+    __tablename__ = 'comment'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_name = db.Column(db.String(255), nullable=False)
+    floor = db.Column(db.Integer, nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    create_time = db.Column(db.DateTime, server_default=text('NOW()'), nullable=False)
+    like_count = db.Column(db.Integer, server_default=text("0"), nullable=False)
+    
+    
+

@@ -1,32 +1,75 @@
-//// errorModal相關變數
-// const errorModalContain = document.getElementById('error-modal')
-// const errorModal = new bootstrap.Modal(errorModalContain)
-// const modalTitle = errorModalContain.querySelector('.modal-title')
-// const modalBody = errorModalContain.querySelector('.modal-body')
-// const modalHref = errorModalContain.querySelector('.modal-href')
-
-modalHref.addEventListener('click',()=> errorModal.hide())
-
-//// api資訊
+//網址ID
+const postID = location.pathname.split('/').pop()
+// api
+const postAPI = `/api/post/${postID}`
+const commentAPI = `/api/comment/${postID}`
 const newPostAPI = '/api/new-post'
 const postImageAPI = '/api/new-post/image'
 
-//// 定義文章各欄位變數
-const boardSelect = document.querySelector('.board-select')
-const nameSelect = document.querySelector('.name-select')
-const postTitle = document.querySelector('.post-title')
-const postContent = document.querySelector('.post-content')
-const postAvatar = document.querySelector('.post-avatar')
-//// 將看版資訊與個人名稱資訊匯入
+modalHref.addEventListener('click',()=> errorModal.hide())
+
+//// 匯入文章至頁面
+const thePost = document.querySelector('.the-post')
+const postAvatar = thePost.querySelector('.author-field img')
+const userName = thePost.querySelector('.author-field .user-name')
+const postTitle = thePost.querySelector('.post-title')
+const postBoard = thePost.querySelector('.post-board')
+const postCreateTime = thePost.querySelector('.create-time')
+const postContent = thePost.querySelector('.post-content')
+const postLikeCount = thePost.querySelector('.like-count')
+const postCommentCounts = document.querySelectorAll('.comment-count')
+
+const comments = document.querySelector('.comments')
+
+// 獲得文章內容
+fetch(postAPI)
+    .then(res => res.json())
+    .then(data => {
+        postAvatar.src = data.avatar
+        userName.innerText = data.userName
+        postTitle.innerText = data.title
+        postBoard.href = data.boardSrc
+        postBoard.innerText = data.boardName
+        postCreateTime.innerText = data.createTime
+        postContent.innerHTML = data.content
+        postLikeCount.innerText = data.likeCount
+        postCommentCounts.forEach( count =>{
+            count.innerText = data.commentCount
+        })
+        // if(data.commentCount == 0){
+        //     comments.classList.add('d-none')
+        //     thePost.classList.add('no-comment')
+        // }
+    })
+
+//// 匯入留言至頁面
+
+
+
+//// 使用者留言編輯區
+const commentBlank = document.querySelector('.comment-blank')
+const postComment = document.querySelector('.post-comment') // 整個留言區塊
+const cancelComment = postComment.querySelector('.cancel')
+const postCommentContent = postComment.querySelector('.post-comment-content') //留言內容區塊
+const postCommentAvatar = postComment.querySelector('.post-comment-avatar')
+const nameSelect = postComment.querySelector('.name-select')
+const sendBtn = postComment.querySelector('.send-comment')
+const expandBtn = postComment.querySelector('#expand-btn')
+const contractBtn = postComment.querySelector('#contract-btn')
+
+// 將個人名稱資訊匯入留言區
 fetch(newPostAPI)
     .then(res => res.json())
     .then(data => {
-        if(data.error){ //出現錯誤，顯示提示Modal
-            modalTitle.innText = data.title
-            modalBody.innerText = data.message
-            modalHref.innerText = data.confirm
-            modalHref.href = data.url
-            errorModal.show()
+        if(data.error){ 
+            //點擊時出現錯誤，顯示提示Modal
+            commentBlank.addEventListener('click',()=>{
+                modalTitle.innText = data.title
+                modalBody.innerText = data.message
+                modalHref.innerText = data.confirm
+                modalHref.href = data.url
+                errorModal.show()
+            })
         }
         else{
             // 新增發文身份名稱選項
@@ -42,49 +85,48 @@ fetch(newPostAPI)
             nameSelect.append(fullName, collageName, anonymous)
 
             // 新增發文頭像
-            postAvatar.src = data.avatar
+            postCommentAvatar.src = data.avatar
 
-            // 新增發文看板選項
-            data.boardList.forEach(board => {
-                const boardOption = document.createElement('option')
-                boardOption.value = board.boardId
-                boardOption.innerText = board.showName
-                boardSelect.append(boardOption)
-            })
+            commentBlank.addEventListener('click', commentToggle)
+            cancelComment.addEventListener('click', commentToggle)
         }
     })
 
-//// 儲存文章標題
-postTitle.value = localStorage.getItem('newPostTitle')
-function savePostTitle(){
-    localStorage.setItem('newPostTitle', postTitle.value)
+// 顯現、關閉留言面板
+function commentToggle(){
+    commentBlank.classList.toggle('d-none')
+    postComment.classList.toggle('d-none')
 }
-postTitle.addEventListener('input', savePostTitle)
 
-//// 內文編輯器
-postContent.innerHTML = localStorage.getItem('newPostContent')
-let postContentHTML = postContent.innerHTML
-let allContent = postContent.childNodes
-let textCursor = allContent[allContent.length - 1]
+// 擴展、縮小留言面板區域
+function commentExpandToggle(){
+    postComment.classList.toggle('expand')
+    expandBtn.classList.toggle('d-none')
+    contractBtn.classList.toggle('d-none')
+}
+expandBtn.addEventListener('click', commentExpandToggle)
+contractBtn.addEventListener('click', commentExpandToggle)
 
-// 每次輸入內文就會儲存完整html到localhost
+
+let postCommentContentHTML = postCommentContent.innerHTML
+let allContent = postCommentContent.childNodes
+let textCursor = allContent[allContent.length - 2]
+
+// 每次輸入內文就會儲存完整html
 function inputSave(){
     selectImages()
-    postContentHTML = postContent.innerHTML
-    if(postContentHTML == ''){
-        postContentHTML = '<p><br></p>'
-        localStorage.setItem('newPostContent', postContentHTML)
-        postContent.innerHTML = localStorage.getItem('newPostContent')
-        textCursor = postContent.querySelector('p')
+    postCommentContentHTML = postCommentContent.innerHTML
+    if(postCommentContentHTML == ''){
+        postCommentContent.innerHTML = '<p><br></p>'
+        textCursor = postCommentContent.querySelector('p')
     }else{
         textCursor = window.getSelection().anchorNode
         if(textCursor.nodeName == '#text'){
             textCursor = textCursor.parentNode
         }
-        localStorage.setItem('newPostContent', postContentHTML)
     }
 }
-// 在postContent內更改點擊位置可以改變textCursor元素
+// 在postCommentContent內更改點擊位置可以改變textCursor元素
 function changetextCursor(){
     tempCursor = window.getSelection().anchorNode
     if(tempCursor.nodeName == '#text' && tempCursor.parentNode.nodeName=='P'){
@@ -104,8 +146,8 @@ function pasteSave(e){
             // This item is the target node
             pasteData[i].getAsString(function (s){
                 // console.log(s)
-                // console.log(e.target)
-                const words = s.split(/\n/)
+                // textCursor = e.target.parentNode
+                const words = s.split(/\n|\r/)
                 const len = words.length
                 for(let index = 0; index < len; index++){
                     // console.log(words[index])
@@ -115,11 +157,11 @@ function pasteSave(e){
                     textCursor.insertAdjacentElement('afterend', page)
                     textCursor = page
                 }
-                localStorage.setItem('newPostContent', postContent.innerHTML)
             });
         } else if ((pasteData[i].kind == 'string') &&
                     (pasteData[i].type.match('^text/html'))) {
             // Drag pasteData item is HTML
+            console.log(e.target)
             console.log("... Drop: HTML");
         } else if ((pasteData[i].kind == 'string') &&
                     (pasteData[i].type.match('^text/uri-list'))) {
@@ -134,13 +176,13 @@ function pasteSave(e){
     }
 }
 // 每次點擊皆改動
-postContent.addEventListener('click', changetextCursor)
+postCommentContent.addEventListener('click', changetextCursor)
 // 每次輸入皆改動
-postContent.addEventListener('input', inputSave)
+postCommentContent.addEventListener('input', inputSave)
 // 每次paste是情況上傳照片或呈線文字
-postContent.addEventListener('paste', pasteSave)
+postCommentContent.addEventListener('paste', pasteSave)
 
-//// 上傳圖片到文章中
+// 上傳圖片到回覆內容中
 const imgInput = document.querySelector('#img')
 const uploadImgSpinner = document.querySelector('.upload-img-spinner')
 async function showUpload(inputImage){
@@ -175,8 +217,6 @@ async function showUpload(inputImage){
         }
         
         // 儲存到localStorage
-        postContentHTML = postContent.innerHTML
-        localStorage.setItem('newPostContent', postContentHTML);
         selectImages()   
     }else{
         modalTitle.innText = data.title
@@ -205,35 +245,32 @@ function selectImages(){
         contentImg.addEventListener('click', selectImg)
     })
 }
-// 先執行一次
-selectImages()
 
-//// 上傳貼文
-const sendPostBtn = document.querySelector('.send-post')
-async function sendPost(){
-    const postData = {
-        board: boardSelect.value,
+// 發送留言
+async function sendComment(){
+    const commentData = {
         name: nameSelect.value,
-        title: postTitle.value,
-        content: postContent.innerHTML
+        content: postCommentContent.innerHTML
     }
-    const res = await fetch(newPostAPI, {
+    const res = await fetch(commentAPI, {
         method: 'POST',
-        body: JSON.stringify(postData),
+        body: JSON.stringify(commentData),
         headers: {'Content-Type': 'application/json'}
     })
     const data = await res.json()
-    if(data.error){//出現錯誤，顯示提示Modal
+    if(data.error){
         modalTitle.innText = data.title
         modalBody.innerText = data.message
         modalHref.innerText = data.confirm
         modalHref.href = data.url
         errorModal.show()
-    }else{
-        localStorage.setItem('newPostTitle', '')
-        localStorage.setItem('newPostContent', '<p><br></p>')
-        window.location = data.url
     }
-}
+    else{
+        postCommentContent.innerHTML = ''
+        commentToggle()
+        // 加入留言到頁面
+        // 更改留言數量
+    }
 
-sendPostBtn.addEventListener('click', sendPost)
+}
+sendBtn.addEventListener('click', sendComment)

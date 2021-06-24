@@ -42,6 +42,8 @@ async function signout(){
     const toSignUpList = ['new-post', 'scard', 'message', 'my']
     if(toSignUpList.includes(userURL)){
         location = '/signup'
+    }else{
+        location.reload()
     }
     checkSign()
 }

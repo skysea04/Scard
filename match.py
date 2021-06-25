@@ -268,7 +268,7 @@ def match_user_method_3():
 # create_user()
 
 # 增加未開卡天數
-# update_no_scard_days()
+update_no_scard_days()
 
 # 建立配對(ver0.1)
 # match_user()

@@ -11,7 +11,7 @@ modalHref.addEventListener('click',()=> errorModal.hide())
 //// 匯入文章至頁面
 const thePost = document.querySelector('.the-post')
 const postAvatar = thePost.querySelector('.author-field img')
-const userName = thePost.querySelector('.author-field .user-name')
+const postUserName = thePost.querySelector('.author-field .user-name')
 const postTitle = thePost.querySelector('.post-title')
 const postBoard = thePost.querySelector('.post-board')
 const postCreateTime = thePost.querySelector('.create-time')
@@ -20,35 +20,116 @@ const postLikeCount = thePost.querySelector('.like-count')
 const postCommentCounts = document.querySelectorAll('.comment-count')
 
 const comments = document.querySelector('.comments')
+const cmtLst = comments.querySelector('#comment-list')
 
+let showCmt = true
 // 獲得文章內容
 fetch(postAPI)
-    .then(res => res.json())
-    .then(data => {
-        postAvatar.src = data.avatar
-        userName.innerText = data.userName
-        postTitle.innerText = data.title
-        postBoard.href = data.boardSrc
-        postBoard.innerText = data.boardName
-        postCreateTime.innerText = data.createTime
-        postContent.innerHTML = data.content
-        postLikeCount.innerText = data.likeCount
-        postCommentCounts.forEach( count =>{
-            count.innerText = data.commentCount
-        })
-        // if(data.commentCount == 0){
-        //     comments.classList.add('d-none')
-        //     thePost.classList.add('no-comment')
-        // }
+.then(res => res.json())
+.then(data => {
+    postAvatar.src = data.avatar
+    postUserName.innerText = data.userName
+    postTitle.innerText = data.title
+    postBoard.href = data.boardSrc
+    postBoard.innerText = data.boardName
+    postCreateTime.innerText = data.createTime
+    postContent.innerHTML = data.content
+    postLikeCount.innerText = data.likeCount
+    postCommentCounts.forEach( count =>{
+        count.innerText = data.commentCount
     })
+    // 如果留言數為0，顯示沒有留言的頁面配置
+    if(data.commentCount == 0){
+        comments.classList.add('d-none')
+        showCmt = false
+    }else{
+        // 匯入留言至頁面
+        fetch(commentAPI)
+        .then(res => res.json())
+        .then(data => {
+            data.forEach(comment => {
+                getComment(comment)
+            })
+        })
+    }
+})
 
-//// 匯入留言至頁面
+// 匯入單筆留言
+function getComment(comment){
+    const floor = document.createElement('p')
+    floor.className = 'floor'
+    floor.innerText = `B${comment.floor}`
 
+    const dot = document.createElement('p')
+    dot.innerText = '・'
+    
+    const createTime = document.createElement('p')
+    createTime.className = 'create-time'
+    createTime.innerText = comment.createTime
 
+    const cmtInfo = document.createElement('div')
+    cmtInfo.className = 'd-flex'
+    cmtInfo.append(floor, dot, createTime)
+    
+    // 使用者名稱
+    const userName = document.createElement('p')
+    userName.className = 'mb-0 user-name'
+    userName.innerText = comment.userName
 
-//// 使用者留言編輯區
+    const cmtAuthor = document.createElement('div')
+    cmtAuthor.className = 'cmt-author'
+    cmtAuthor.append(userName, cmtInfo)
+
+    // 使用者頭像
+    const avatar = document.createElement('img')
+    avatar.className = 'me-2 rounded-circle avatar'
+    avatar.src = comment.avatar
+
+    const authorField = document.createElement('div')
+    authorField.className = 'd-flex author-field'
+    authorField.append(avatar, cmtAuthor)
+
+    //// 按讚（編輯）欄位
+    const likeIcon = document.createElement('div')
+    likeIcon.className = 'me-2'
+    likeIcon.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+    </svg>
+    `
+    const likeCount = document.createElement('p')
+    likeCount.className = 'me-2'
+    likeCount.innerText = comment.likeCount
+    
+    const likeField = document.createElement('div')
+    likeField.className = 'd-flex align-items-center like'
+    likeField.append(likeIcon, likeCount)
+
+    const infoField = document.createElement('div')
+    infoField.className = 'd-flex info-field post-interact'
+    infoField.append(likeField)
+
+    //// 留言header
+    const cmtHeader = document.createElement('div')
+    cmtHeader.className = 'd-flex justify-content-between align-items-center text-black-50 fs-6 mb-2 comment-header'
+    cmtHeader.append(authorField, infoField)
+
+    //// 留言body
+    const cmtBody = document.createElement('div')
+    cmtBody.className = 'comment-body'
+    cmtBody.innerHTML = comment.content
+    
+    ////把留言全部包起來
+    const cmt = document.createElement('li')
+    cmt.className = 'list-group-item px-0 py-3 comment'
+    cmt.append(cmtHeader, cmtBody)
+    
+    cmtLst.append(cmt)
+}
+
+//// 使用者留言撰寫區
 const commentBlank = document.querySelector('.comment-blank')
-const postComment = document.querySelector('.post-comment') // 整個留言區塊
+const postComment = document.querySelector('.post-comment') // 留言撰寫區塊
 const cancelComment = postComment.querySelector('.cancel')
 const postCommentContent = postComment.querySelector('.post-comment-content') //留言內容區塊
 const postCommentAvatar = postComment.querySelector('.post-comment-avatar')
@@ -92,13 +173,13 @@ fetch(newPostAPI)
         }
     })
 
-// 顯現、關閉留言面板
+// 顯現/關閉留言面板
 function commentToggle(){
     commentBlank.classList.toggle('d-none')
     postComment.classList.toggle('d-none')
 }
 
-// 擴展、縮小留言面板區域
+// 擴展/縮小留言面板區域
 function commentExpandToggle(){
     postComment.classList.toggle('expand')
     expandBtn.classList.toggle('d-none')
@@ -269,7 +350,15 @@ async function sendComment(){
         postCommentContent.innerHTML = ''
         commentToggle()
         // 加入留言到頁面
+        getComment(data)
         // 更改留言數量
+        postCommentCounts.forEach( cmtCount => {
+            cmtCount.innerText = data.floor
+        })
+        if(!showCmt){
+            showCmt = true
+            comments.classList.remove('d-none')
+        }
     }
 
 }

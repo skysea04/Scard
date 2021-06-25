@@ -23,7 +23,7 @@ class ErrorData:
         'title': '錯誤訊息',
         'message': '伺服器內部錯誤',
         'confirm': '重新整理',
-        'url': '/new-post'
+        'url': '#'
     }
 
     error_format_data = {

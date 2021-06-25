@@ -1,5 +1,6 @@
 from flask import request, jsonify, session
 from . import api, ErrorData
+from datetime import datetime
 import sys
 sys.path.append("..")
 from models.model import Comment, Post, User, db
@@ -34,13 +35,40 @@ def post_comment(post_id):
         # 將回應更新到資料庫，增加comment_count，回傳使用者成功資訊
         post = Post.query.filter_by(id=post_id).first()
         post.comment_count += 1
-        new_comment = Comment(post_id=post_id, user_id=user_id, user_name=user_name, floor=post.comment_count, content=content)
+        new_cmt = Comment(post_id=post_id, user_id=user_id, user_name=user_name, floor=post.comment_count, content=content)
 
-        db.session.add(new_comment)
+        db.session.add(new_cmt)
         db.session.commit()
         data = {
-            'ok': True
+            'avatar': user.comment_avatar,
+            'userName': user_name,
+            'floor': post.comment_count,
+            'createTime': datetime.now().strftime('%-m月%-d日 %H:%M'),
+            'likeCount': 0,
+            'content': content
         }
         return jsonify(data), 200
         
     return jsonify(ErrorData.no_sign_data), 403
+
+@api.route('/comment/<int:post_id>', methods=["GET"])
+def get_comment(post_id):
+    try:
+        cmts = db.session.execute('SELECT user.comment_avatar, comment.user_name, comment.floor, comment.create_time, comment.like_count, comment.content\
+        FROM comment INNER JOIN user ON comment.user_id=user.id\
+        WHERE comment.post_id= :post_id',{'post_id':post_id}).all()
+        cmt_lst = []
+        for cmt in cmts:
+            cmt_data = {
+                'avatar': cmt.comment_avatar,
+                'userName': cmt.user_name,
+                'floor': cmt.floor,
+                'createTime': cmt.create_time.strftime('%-m月%-d日 %H:%M'),
+                'likeCount': cmt.like_count,
+                'content': cmt.content
+            }
+            cmt_lst.append(cmt_data)
+        
+        return jsonify(cmt_lst), 200
+    except:
+        return jsonify(ErrorData.server_error_data), 500

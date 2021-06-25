@@ -53,7 +53,7 @@
 
             </div>
         </section>
-        <section class="col-8 p-0 bg-white rounded">
+        <section class="col-8 d-flex flex-column p-0 bg-white rounded post-field">
             <!-- 主文章 -->
             <div class="p-5 the-post">
                 <div class="d-flex mb-3 author-field">
@@ -93,20 +93,26 @@
             </div>
 
             <!-- 留言區 -->
-            <div class="bg-light px-5 pt-4 comments">
+            <div class="bg-light px-5 py-4 flex-fill comments">
                 <div class="comments-field">
                     <p class="fs-5 m-0 border-bottom">共 <span class="comment-count"></span> 則回應</p>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item px-0 py-3 comment">
+                    <ul id="comment-list" class="list-group list-group-flush">
+                        <!-- <li class="list-group-item px-0 py-3 comment">
                             <div class="d-flex justify-content-between align-items-center text-black-50 fs-6 mb-2 comment-header">
                                 <div class="d-flex author-field">
-                                    <img class="me-2 rounded-circle avatar" src="/static/icons//avatar/female-mask.svg" alt="">
-                                    <div class="author">
-                                        <p class="mb-0 user-name">國立台灣師範大學</p>
+                                    <img class="me-2 rounded-circle avatar" src="/static/blank.png" alt="">
+                                    <div class="cmt-author">
+                                        <p class="mb-0 user-name">
+                                            國立台灣師範大學
+                                        </p>
                                         <div class="d-flex">
-                                            <p class="floor">B1</p>
+                                            <p class="floor">
+                                                B1
+                                            </p>
                                             <p>・</p>
-                                            <p class="comment_time">6月22日 22:58</p>
+                                            <p class="comment-time">
+                                                6月22日 22:58
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -117,7 +123,9 @@
                                                 <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
                                             </svg>
                                         </div>
-                                        <p class="me-2">2332</p>
+                                        <p class="me-2">
+                                            233
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -125,18 +133,17 @@
                                 <img class="upload-img" src="https://d2lzngk4bddvz9.cloudfront.net/image/06a6e4f9-b987-4c0f-ada5-d4b7fde47dd8.jpeg">
                                 <p>Dcard複製品，專案內容建置中，目前已完成功能：帳號系統、基本資料、自介填寫、抽卡配對、聊天系統、PO文系統(主頁瀏覽PO文功能尚未完成)。</p>
                             </div>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
             </div>
 
             <!-- 留言編輯區 -->
-            <div class="px-5 py-3 position-sticky bottom-0 bg-white w-100 border-top text-secondary comment-blank">回應...</div>
+            <div class="px-5 py-3 position-sticky bottom-0 bg-white border-top text-secondary comment-blank">回應...</div>
             <div class="px-5 py-3 position-sticky bottom-0 bg-white w-100 border-top post-comment d-none">
                 <div class="d-flex author-field">
                     <img src="/static/icons/avatar/female-mask.svg" class="rounded-circle me-2 post-comment-avatar" alt="">
                     <select class="form-select name-select">
-                        <option value='' selected>選擇發文身份</option>
                     </select>
                     <div class="spinner-border d-none upload-img-spinner" role="status">
                         <span class="visually-hidden">Loading...</span>

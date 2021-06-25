@@ -175,7 +175,7 @@ def post_image():
                 read_file = file.read()
                 img = Image.open(io.BytesIO(read_file))
                 img = img.convert('RGB')
-                img.thumbnail((1000, 1000))
+                img.thumbnail((2000, 2000))
                 file_format = 'jpeg'
 
                 in_mem_file = io.BytesIO()

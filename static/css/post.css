@@ -1,5 +1,6 @@
-.no-comment{
-    min-height: calc(100vh - 84px - 50px);
+/* post 區域 */
+section.post-field{
+    min-height: calc(100vh - 84px);
 }
 
 .author-field{
@@ -26,7 +27,7 @@
     background-color: #f8f9fa;
     height: auto;
 }
-.author{
+.cmt-author{
     font-size: 0.9rem;
 }
 
@@ -47,9 +48,6 @@
     color: #3397CF;
 }
 
-/* .like{
-    cursor: pointer;
-} */
 :is(.like:hover,.like:active)  svg{
     color: rgb(255, 81, 50);
 }
@@ -57,12 +55,20 @@
     cursor: pointer;
 }
 
+/* comment 區域 */
+.list-group-flush>.list-group-item:last-child{
+    border-bottom-width: 1px;
+}
 
 
-
+/* post comment區域 */
 .comment-blank{
     height: 50px;
     cursor:text;
+    top: calc(100vh - 50px);
+}
+.post-comment{
+    top: calc(100vh - 271px);
 }
 
 .name-select{
@@ -71,7 +77,8 @@
 }
 
 .expand{
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 58px);
+    top: 0;
 }
 
 #expand-btn, #contract-btn{
@@ -93,7 +100,7 @@
 .upload-img{
     display: block;
     max-width: 100%;
-    max-height: 30vh;
+    max-height: 40vh;
 }
 
 .upload-img-spinner{

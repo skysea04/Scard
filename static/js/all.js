@@ -4,6 +4,8 @@ const errorModal = new bootstrap.Modal(errorModalContain)
 const modalTitle = errorModalContain.querySelector('.modal-title')
 const modalBody = errorModalContain.querySelector('.modal-body')
 const modalHref = errorModalContain.querySelector('.modal-href')
+modalHref.addEventListener('click',()=> errorModal.hide())
+
 
 // api
 const userAPI = '/api/user'

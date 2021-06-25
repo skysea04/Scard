@@ -43,12 +43,11 @@ section.post-field{
 .post-interact *{
     cursor: pointer;
 }
-
-:is(.notice:hover, .notice:active) svg{
+.notice.active svg{
     color: #3397CF;
 }
 
-:is(.like:hover,.like:active)  svg{
+.like.active svg{
     color: rgb(255, 81, 50);
 }
 .report{

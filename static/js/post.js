@@ -1,12 +1,11 @@
 //網址ID
 const postID = location.pathname.split('/').pop()
-// api
+// API
 const postAPI = `/api/post/${postID}`
 const commentAPI = `/api/comment/${postID}`
+const postLikeAPI = `/api/post/${postID}/like`
 const newPostAPI = '/api/new-post'
 const postImageAPI = '/api/new-post/image'
-
-modalHref.addEventListener('click',()=> errorModal.hide())
 
 //// 匯入文章至頁面
 const thePost = document.querySelector('.the-post')
@@ -17,6 +16,7 @@ const postBoard = thePost.querySelector('.post-board')
 const postCreateTime = thePost.querySelector('.create-time')
 const postContent = thePost.querySelector('.post-content')
 const postLikeCount = thePost.querySelector('.like-count')
+const postLikeIcon = thePost.querySelector('.like')
 const postCommentCounts = document.querySelectorAll('.comment-count')
 
 const comments = document.querySelector('.comments')
@@ -38,6 +38,10 @@ fetch(postAPI)
     postCommentCounts.forEach( count =>{
         count.innerText = data.commentCount
     })
+    if(data.like){
+        postLikeIcon.classList.add('active')
+    }
+
     // 如果留言數為0，顯示沒有留言的頁面配置
     if(data.commentCount == 0){
         comments.classList.add('d-none')
@@ -103,29 +107,71 @@ function getComment(comment){
     
     const likeField = document.createElement('div')
     likeField.className = 'd-flex align-items-center like'
+    comment.like && likeField.classList.add('active')
     likeField.append(likeIcon, likeCount)
+    
 
     const infoField = document.createElement('div')
     infoField.className = 'd-flex info-field post-interact'
     infoField.append(likeField)
 
-    //// 留言header
+    // 留言header
     const cmtHeader = document.createElement('div')
     cmtHeader.className = 'd-flex justify-content-between align-items-center text-black-50 fs-6 mb-2 comment-header'
     cmtHeader.append(authorField, infoField)
 
-    //// 留言body
+    // 留言body
     const cmtBody = document.createElement('div')
     cmtBody.className = 'comment-body'
     cmtBody.innerHTML = comment.content
     
-    ////把留言全部包起來
+    // 把留言全部包起來
     const cmt = document.createElement('li')
     cmt.className = 'list-group-item px-0 py-3 comment'
     cmt.append(cmtHeader, cmtBody)
     
+    // 加入留言列表
     cmtLst.append(cmt)
+
+    //按讚API
+    const cmtLikeAPI = `/api/comment/${comment.id}/like`
+    async function cmtClickLike(){
+        const res = await fetch(cmtLikeAPI, {method: "PATCH"})
+        const data = await res.json()
+        if(data.error){
+            modalTitle.innText = data.title
+            modalBody.innerText = data.message
+            modalHref.innerText = data.confirm
+            modalHref.href = data.url
+            errorModal.show()
+        }
+        else{
+            likeCount.innerText = data.likeCount
+            likeField.classList.toggle('active')
+        }
+    }
+    likeField.addEventListener('click', cmtClickLike)
+    
 }
+
+// 對文章按讚
+async function clickLike(){
+    const res = await fetch(postLikeAPI, {method: 'PATCH'})
+    const data = await res.json()
+    if(data.error){
+        modalTitle.innText = data.title
+        modalBody.innerText = data.message
+        modalHref.innerText = data.confirm
+        modalHref.href = data.url
+        errorModal.show()
+    }
+    else{
+        postLikeCount.innerText = data.likeCount
+        postLikeIcon.classList.toggle('active')
+    }
+}
+postLikeIcon.addEventListener('click', clickLike)
+
 
 //// 使用者留言撰寫區
 const commentBlank = document.querySelector('.comment-blank')
@@ -188,7 +234,7 @@ function commentExpandToggle(){
 expandBtn.addEventListener('click', commentExpandToggle)
 contractBtn.addEventListener('click', commentExpandToggle)
 
-
+// 編輯留言的相關變數
 let postCommentContentHTML = postCommentContent.innerHTML
 let allContent = postCommentContent.childNodes
 let textCursor = allContent[allContent.length - 2]

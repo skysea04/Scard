@@ -122,6 +122,14 @@ class Post(db.Model):
     like_count = db.Column(db.Integer, server_default=text("0"), nullable=False)
     comment_count = db.Column(db.Integer, server_default=text("0"), nullable=False)
 
+class PostUserLike(db.Model):
+    __tablename__ = 'post_user_like'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+Index('post_user_index', PostUserLike.post_id, PostUserLike.user_id)
+
 class Comment(db.Model):
     __tablename__ = 'comment'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -133,5 +141,10 @@ class Comment(db.Model):
     create_time = db.Column(db.DateTime, server_default=text('NOW()'), nullable=False)
     like_count = db.Column(db.Integer, server_default=text("0"), nullable=False)
     
-    
+class CommentUserLike(db.Model):
+    __tablename__ = 'comment_user_like'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
+Index('comment_user_index', CommentUserLike.comment_id, CommentUserLike.user_id)

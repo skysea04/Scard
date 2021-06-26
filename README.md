@@ -53,8 +53,6 @@ Password : 123
 
 ![image](https://user-images.githubusercontent.com/73434165/122116836-ae33b400-ce58-11eb-90dd-b086f1c16093.png)
 
-![image](https://user-images.githubusercontent.com/73434165/122117004-e63af700-ce58-11eb-97b0-56fc8a9ceae2.png)
-
 ### 聊天機制
 
 * 成為好友的兩人可以進行送信聊天，聊天以socket.io實作，朋友的最新對話也會隨時更新至好友欄順序呈現

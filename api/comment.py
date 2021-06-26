@@ -55,33 +55,43 @@ def post_comment(post_id):
 @api.route('/comment/<int:post_id>', methods=["GET"])
 def get_comment(post_id):
     try:
+        cmt_lst = []
         if "user" in session:
             user_id = session["user"]["id"]
             cmts = db.session.execute('SELECT user.comment_avatar, comment.id, comment.user_name, comment.floor, comment.create_time, comment.like_count, comment.content, comment_user_like.user_id\
             FROM ((comment INNER JOIN user ON comment.user_id=user.id)\
             LEFT JOIN comment_user_like ON comment.id=comment_user_like.comment_id AND comment_user_like.user_id = :user_id)\
             WHERE comment.post_id = :post_id', {'user_id': user_id, 'post_id': post_id}).all()
+            for cmt in cmts:
+                like = True if cmt.user_id else False
+                cmt_data = {
+                    'id': cmt.id,
+                    'avatar': cmt.comment_avatar,
+                    'userName': cmt.user_name,
+                    'floor': cmt.floor,
+                    'createTime': cmt.create_time.strftime('%-m月%-d日 %H:%M'),
+                    'likeCount': cmt.like_count,
+                    'content': cmt.content,
+                    'like': like
+                }
+                cmt_lst.append(cmt_data)
         else:
             cmts = db.session.execute('SELECT user.comment_avatar, comment.id, comment.user_name, comment.floor, comment.create_time, comment.like_count, comment.content\
             FROM comment INNER JOIN user ON comment.user_id=user.id\
             WHERE comment.post_id= :post_id',{'post_id': post_id}).all()
-        cmt_lst = []
-        for cmt in cmts:
-            try:
-                like = True if cmt.user_id else False
-            except:
-                like = False
-            cmt_data = {
-                'id': cmt.id,
-                'avatar': cmt.comment_avatar,
-                'userName': cmt.user_name,
-                'floor': cmt.floor,
-                'createTime': cmt.create_time.strftime('%-m月%-d日 %H:%M'),
-                'likeCount': cmt.like_count,
-                'content': cmt.content,
-                'like': like
-            }
-            cmt_lst.append(cmt_data)
+            like = False
+            for cmt in cmts:
+                cmt_data = {
+                    'id': cmt.id,
+                    'avatar': cmt.comment_avatar,
+                    'userName': cmt.user_name,
+                    'floor': cmt.floor,
+                    'createTime': cmt.create_time.strftime('%-m月%-d日 %H:%M'),
+                    'likeCount': cmt.like_count,
+                    'content': cmt.content,
+                    'like': like
+                }
+                cmt_lst.append(cmt_data)
         
         return jsonify(cmt_lst), 200
     except:

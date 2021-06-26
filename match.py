@@ -1,10 +1,9 @@
 import sys, random, math, time, json
 from datetime import date, timedelta
 import threading
-# sys.path.append("..")
 from models.model import db, User, Scard, cache
-from sqlalchemy import update
-from app import app
+import mysql.connector
+from app import app, mysql_host, mysql_user, mysql_password, mysql_database
 db.__init__(app)
 
 
@@ -16,7 +15,6 @@ start_time = time.time()
 today = date.today()
 yesterday = today - timedelta(days=1)
 
-import mysql.connector
 
 '''
 測試區
@@ -25,10 +23,10 @@ import mysql.connector
 def create_user():
     def add_user(f_id, l_id):
         user_db = mysql.connector.connect(
-            host="database-scard.comdtbthwj2y.ap-northeast-1.rds.amazonaws.com",
-            user="skysea",
-            password="Rock8967",
-            database='scard'
+            host = mysql_host,
+            user = mysql_user,
+            password = mysql_password,
+            database = mysql_database
         )
         user_cursor = user_db.cursor()
         
@@ -169,10 +167,10 @@ def match_user_method_2():
 # 建立配對(多執行緒)
 def match_user_method_3():
     new_db = mysql.connector.connect(
-            host="database-scard.comdtbthwj2y.ap-northeast-1.rds.amazonaws.com",
-            user="skysea",
-            password="Rock8967",
-            database='scard'
+            host = mysql_host,
+            user = mysql_user,
+            password = mysql_password,
+            database = mysql_database
         )
     new_cursor = new_db.cursor()
     # 刪掉昨天沒有成為朋友的配對
@@ -203,10 +201,10 @@ def match_user_method_3():
         # print(first_index, end_index)
         
         scard_db = mysql.connector.connect(
-            host="database-scard.comdtbthwj2y.ap-northeast-1.rds.amazonaws.com",
-            user="skysea",
-            password="Rock8967",
-            database='scard'
+            host = mysql_host,
+            user = mysql_user,
+            password = mysql_password,
+            database = mysql_database
         )
         cursor = scard_db.cursor()
 

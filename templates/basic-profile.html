@@ -30,15 +30,21 @@
             </div>
             <div class="mb-3">
                 <label for="collage" class="form-label">學校</label>
-                <input type="text" class="form-control" id="collage" name="collage" placeholder="輸入學校" required>
+                <!-- <input type="text" class="form-control" id="collage" name="collage" placeholder="輸入學校" required> -->
+                <select class="form-select" name="collage" id="collage">
+                    <option value=' ' selected>選擇學校</option>
+                </select>
             </div>
             <div class="mb-3">
                 <label for="department" class="form-label">系所</label>
-                <input type="text" class="form-control" id="department" name="department" placeholder="輸入系所" required>
+                <!-- <input type="text" class="form-control" id="department" name="department" placeholder="輸入系所" required> -->
+                <select class="form-select" name="department" id="department" disabled>
+                    <option value='' selected>選擇系所</option>
+                </select>
             </div>
             <p class="message"></p>
             <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-info text-white">送出</button>
+                <button type="submit" class="btn text-white bg-scard-l">送出</button>
             </div>
         </form>
     </main>

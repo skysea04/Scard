@@ -51,9 +51,9 @@ saveAvatarBtn.addEventListener('click', saveAvatar)
 //// 查看、編輯個人資訊
 const profileForm = document.querySelector('form.profile')
 const avatar = document.querySelector('.avatar-container img')
-const name = document.querySelector('input[name="name"]')
-const collage = document.querySelector('input[name="collage"]')
-const department = document.querySelector('input[name="department"]')
+const name = document.querySelector('.name')
+const collage = document.querySelector('.collage')
+const department = document.querySelector('.department')
 const relationship = document.querySelector('select[name="relationship"]')
 const interest = document.querySelector('textarea[name="interest"]')
 const club = document.querySelector('textarea[name="club"]')
@@ -93,9 +93,9 @@ async function getProfile(){
             }
         }
         avatar.src = data.avatar
-        name.value = data.name
-        collage.value = data.collage
-        department.value = data.department
+        name.innerText = data.name
+        collage.innerText = data.collage
+        department.innerText = data.department
         select('relationship', data.relationship)
         interest.value = data.interest
         club.value = data.club
@@ -112,8 +112,6 @@ async function updateProfile(e){
     e.preventDefault()
 
     const profileData = {
-        collage: collage.value,
-        department: department.value,
         relationship: relationship.value,
         interest: interest.value,
         club: club.value,

@@ -1,3 +1,5 @@
+from enum import unique
+from re import T
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import expression
 from flask_migrate import Migrate
@@ -51,6 +53,18 @@ class User(db.Model):
 
 Index('email_pwd_index', User.email, User.password)
 Index('no_open_index', User.days_no_open_scard)
+
+
+class Collage(db.Model):
+    __tablename__ = 'collage'
+    id = db.Column(db.String(255), primary_key=True)
+    name = db.Column(db.String(255), unique=True, nullable=False)
+
+class CollageDepartment(db.Model):
+    __tablename__ = 'collage_department'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    collage_id = db.Column(db.String(255), db.ForeignKey('collage.id'), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
 
 class Scard(db.Model):
     __tablename__ = 'scard'

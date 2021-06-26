@@ -34,6 +34,11 @@ class ErrorData:
         'url': '/new-post'
     }
 
+    wrong_collage_data = {
+        "error": True,
+        "disable": True
+    }
+
     wrong_board_data = {
         "error": True,
         'title': '看板選擇錯誤',

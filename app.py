@@ -1,10 +1,8 @@
-from logging import debug
 from flask import *
 from flask_socketio import SocketIO, join_room, send
 import os
 from datetime import datetime
 from dotenv import load_dotenv
-from sqlalchemy.engine import url
 load_dotenv()
 mysql_user = os.getenv("MYSQL_USER")
 mysql_password = os.getenv("MYSQL_PASSWORD")

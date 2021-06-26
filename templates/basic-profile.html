@@ -30,15 +30,21 @@
             </div>
             <div class="mb-3">
                 <label for="collage" class="form-label">學校</label>
-                <input type="text" class="form-control" id="collage" name="collage" placeholder="輸入學校" required>
+                <!-- <input type="text" class="form-control" id="collage" name="collage" placeholder="輸入學校" required> -->
+                <select class="form-select" name="collage" id="collage">
+                    <option value=' ' selected>選擇學校</option>
+                </select>
             </div>
             <div class="mb-3">
                 <label for="department" class="form-label">系所</label>
-                <input type="text" class="form-control" id="department" name="department" placeholder="輸入系所" required>
+                <!-- <input type="text" class="form-control" id="department" name="department" placeholder="輸入系所" required> -->
+                <select class="form-select" name="department" id="department" disabled>
+                    <option value='' selected>選擇系所</option>
+                </select>
             </div>
             <p class="message"></p>
             <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-info text-white">送出</button>
+                <button type="submit" class="btn text-white bg-scard-l">送出</button>
             </div>
         </form>
     </main>
@@ -59,6 +65,22 @@
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
             <a href="/signup" class="btn bg-scard-l text-white">登入</a>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- 處理各式Error訊息的Modal -->
+    <div class="modal fade" id="error-modal" tabindex="-1" aria-labelledby="error-modal" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="error-modal"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <a href="/basicprofile" class="btn bg-scard-l text-white modal-href"></a>
             </div>
         </div>
         </div>

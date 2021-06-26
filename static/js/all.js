@@ -1,3 +1,13 @@
+// errorModal相關變數
+const errorModalContain = document.getElementById('error-modal')
+const errorModal = new bootstrap.Modal(errorModalContain)
+const modalTitle = errorModalContain.querySelector('.modal-title')
+const modalBody = errorModalContain.querySelector('.modal-body')
+const modalHref = errorModalContain.querySelector('.modal-href')
+modalHref.addEventListener('click',()=> errorModal.hide())
+
+
+// api
 const userAPI = '/api/user'
 const profileAPI = '/api/profile'
 
@@ -34,8 +44,36 @@ async function signout(){
     const toSignUpList = ['new-post', 'scard', 'message', 'my']
     if(toSignUpList.includes(userURL)){
         location = '/signup'
+    }else{
+        location.reload()
     }
     checkSign()
 }
 
 signoutBtn.addEventListener('click', signout)
+
+
+// 確認使用者的權限是否可以進入某個頁面
+const links = navUser.querySelectorAll('a')
+
+async function verifyUser(e){
+    e.preventDefault()
+    // console.log(this.id)
+    const verifyAPI = `/api/verify?a=${this.id}`
+    const res = await fetch(verifyAPI)
+    const data = await res.json()
+    if(data.ok){
+        location.assign(data.url)
+    }else{
+        modalTitle.innText = data.title
+        modalBody.innerText = data.message
+        modalHref.innerText = data.confirm
+        modalHref.href = data.url
+        errorModal.show()
+    }
+
+}
+
+links.forEach(link => {
+    link.addEventListener('click', verifyUser)
+})

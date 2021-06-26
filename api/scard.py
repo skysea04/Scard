@@ -6,8 +6,6 @@ import sys
 sys.path.append("..")
 from models.model import Messages, db, User, Scard, cache
 
-yesterday = date.today() - timedelta(days=1)
-
 no_sign_data = {
     "error": True,
     'title': '您尚未登入',
@@ -63,7 +61,8 @@ def get_scard():
             # 若是自我介紹還沒填完scard為false，建議使用者轉移到my_profile填寫頁面
             if user_scard == False:
                 return jsonify(my_profile_data), 403
-                                
+
+            yesterday = date.today() - timedelta(days=1)
             scard_1 = Scard.view_scard_1(user_id, yesterday)
             scard_2 = Scard.view_scard_2(user_id, yesterday)
             
@@ -114,6 +113,7 @@ def invite_friend():
         message = data['message']
 
         user_id = session['user']['id']
+        yesterday = date.today() - timedelta(days=1)
         scard_1 = Scard.query.filter_by(user_1=user_id, create_date=yesterday).first()
         scard_2 = Scard.query.filter_by(user_2=user_id, create_date=yesterday).first()
 
@@ -128,11 +128,11 @@ def invite_friend():
                 db.session.add_all([message_1, message_2])
 
                 # 刪除舊的卡友資訊快取，建立新快取
-                cache.delete_memoized(Scard.view_scard_2, Scard, scard_1.user_2, yesterday)    
+                cache.delete_memoized(Scard.view_scard_2, scard_1.user_2, yesterday)    
                 scard = Scard.view_scard_2(scard_1.user_2, yesterday)
 
             # 刪除舊的卡友資訊快取，建立新快取
-            cache.delete_memoized(Scard.view_scard_1, Scard, user_id, yesterday)    
+            cache.delete_memoized(Scard.view_scard_1, user_id, yesterday)    
             scard = Scard.view_scard_1(user_id, yesterday)
             
             data = {
@@ -150,11 +150,11 @@ def invite_friend():
                 message_2 = Messages(scard_id=scard_2.id, user_id=scard_2.user_2, message=scard_2.user_2_message)
                 db.session.add_all([message_1, message_2])
                 # 刪除舊的卡友資訊快取，建立新快取
-                cache.delete_memoized(Scard.view_scard_1, Scard, scard_2.user_1, yesterday)    
+                cache.delete_memoized(Scard.view_scard_1, scard_2.user_1, yesterday)    
                 scard = Scard.view_scard_1(scard_2.user_1, yesterday)
 
             # 刪除舊的卡友資訊快取，建立新快取
-            cache.delete_memoized(Scard.view_scard_2, Scard, user_id, yesterday)    
+            cache.delete_memoized(Scard.view_scard_2, user_id, yesterday)    
             scard = Scard.view_scard_2(user_id, yesterday)
 
             data = {

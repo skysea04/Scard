@@ -16,7 +16,7 @@
             </select>
 
             <div class="mb-3 d-flex">
-                <img src="https://d2lzngk4bddvz9.cloudfront.net/avatar/default_avatar.jpeg" class="rounded-circle mx-2 post-avatar" alt="">
+                <img src="/static/blank.png" class="rounded-circle mx-2 post-avatar" alt="">
                 <select class="form-select name-select">
                     <option value='' selected>選擇發文身份</option>
                 </select>
@@ -25,7 +25,7 @@
             <textarea class="form-control form-control-lg mb-3 post-title" rows="1" placeholder="文章標題"></textarea>
 
             <div class="form-control border rounded mb-3 p-3 post-content" contenteditable="true">
-                <div id="content-line"><br></div>
+                <p><br></p>
             </div>
 
             <div class="d-flex justify-content-between">
@@ -42,12 +42,16 @@
                 </div>
             </div>
         </div>
+        <!-- 讀取圈圈for 載入圖片用 -->
+        <div class="spinner-border d-none upload-img-spinner" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
     </main>
     {% endblock %}
     
     {% block modal %}
     <!-- 處理各式Error訊息的Modal -->
-    <div class="modal fade" id="error-modal" tabindex="-1" aria-labelledby="error-modal" aria-hidden="true">
+    <!-- <div class="modal fade" id="error-modal" tabindex="-1" aria-labelledby="error-modal" aria-hidden="true">
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -61,7 +65,7 @@
             </div>
         </div>
         </div>
-    </div>
+    </div> -->
     {% endblock %}
 
     {% block JS %}

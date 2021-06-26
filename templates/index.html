@@ -1,5 +1,6 @@
 {% extends "basic.html" %}
     {% block CSS %}
+    <link rel="stylesheet" href="/static/css/index.css">
     {% endblock %}
 
     {% block title %}
@@ -7,11 +8,91 @@
     {% endblock %}
 
     {% block main %}
-    <main class="container mx-auto row mt-4">
-        
+    <main class="container mx-auto row px-0 mt-4">
+        <div class="col-2 blank"></div>
+        <section class="boards col-2 position-fixed">
+            <h3 class="text-white">看板列表</h3>
+            <div class="list-group mt-2">
+                <a href="/b/COVID-19" class="board pe-3 d-flex text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/COVID-19.svg" alt="">
+                    <p class="my-auto">COVID-19</p>
+                </a>
+                <a href="/b/relationship" class="board pe-3 d-flex text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/relationship.svg" alt="">
+                    <p class="my-auto">感情</p>
+                </a>
+                <a href="/b/trending" class="board pe-3 d-flex text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/trending.svg" alt="">
+                    <p class="my-auto">時事</p>
+                </a>
+                <a href="/b/talk" class="board pe-3 d-flex text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/talk.svg" alt="">
+                    <p class="my-auto">閒聊</p>
+                </a>
+                <a href="/b/mood" class="board pe-3 d-flex text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/mood.svg" alt="">
+                    <p class="my-auto">心情</p>
+                </a>
+                <a href="/b/job" class="board pe-3 d-flex text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/job.svg" alt="">
+                    <p class="my-auto">工作</p>
+                </a>
+                <a href="/b/youtuber" class="board pe-3 d-flex text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/youtuber.svg" alt="">
+                    <p class="my-auto">Youtuber</p>
+                </a>
+                <a href="/b/tvepisode" class="board pe-3 d-flex text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/tvepisode.svg" alt="">
+                    <p class="my-auto">戲劇綜藝</p>
+                </a>
+                <a href="/b/music" class="board pe-3 d-flex text-white" aria-current="true">
+                    <img class="my-auto me-2" src="/static/icons/music.svg" alt="">
+                    <p class="my-auto">音樂</p>
+                </a>
+
+            </div>
+        </section>
+        <section class="col-8 bg-white rounded px-0">
+            <ul class="nav position-sticky border-bottom w-100 px-3 post-nav">
+                <li class="nav-item">
+                    <a class="nav-link latest-nav active" href="/b">最新</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link hot-nav" href="/b?popular=true">熱門</a>
+                </li>
+            </ul>
+            <div class="list-group px-3 py-0 posts">
+                <!-- 範例文章 -->
+                <!-- <a href="/b/COVID-19" class="pe-2 w-100 border-bottom post" aria-current="true">
+                    <div class="d-flex text-black-50 fs-6 mb-2 author-field">
+                        <img class="me-2 rounded-circle avatar" src="/static/icons//avatar/female-mask.svg" alt="">
+                        <p class="board-name">COVID-19</p>
+                        <p>・</p>
+                        <p class="user-name">國立台灣師範大學</p>
+                    </div>
+                    <div class="d-flex">
+                        <div class="flex-fill post-container">
+                            <h4 class="fs-5 mb-1 fw-normal post-title">範例Title</h4>
+                            <p class="mb-3 post-content">最近待在家裡防疫做好做滿！我家親愛的，我可是一眼都見不到TT</p>
+                            <div class="post-info d-flex text-black-50">
+                                <img class="me-2" src="/static/icons/like.svg" alt="">
+                                <p class="me-2 like-count">3322</p>
+                                <img class="me-2" src="/static/icons/comment.svg" alt="">
+                                <p class="me-2 comment-count">566</p>
+                            </div>
+                        </div>
+                        <div class="ms-2">
+                            <img class="rounded post-img" src="/static/default_avatar.jpeg" alt="">
+                        </div>
+                    </div>
+                </a> -->
+                
+            </div>
+        </section>
     </main>
     {% endblock %}
     
     {% block JS %}
+    <script src="/static/js/index.js"></script>
     {% endblock %}
 

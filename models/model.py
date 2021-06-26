@@ -1,3 +1,5 @@
+from enum import unique
+from re import T
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import expression
 from flask_migrate import Migrate
@@ -5,8 +7,10 @@ from sqlalchemy import Index, text
 from redis import Redis
 from flask_caching import Cache
 import os
-redis_host = os.getenv("REDIS_HOST")
+from dotenv import load_dotenv
+load_dotenv()
 
+redis_host = os.getenv("REDIS_HOST")
 
 redis = Redis()
 cache = Cache(config={"CACHE_TYPE": "RedisCache", "CACHE_REDIS_HOST": redis_host})
@@ -37,6 +41,7 @@ class User(db.Model):
     want_to_try = db.Column(db.Text)
     days_no_open_scard = db.Column(db.Integer, server_default=text("3"), nullable=False)
     match_list = db.Column(db.JSON, server_default=text('(JSON_ARRAY())'))
+    comment_avatar = db.Column(db.String(255))
 
     def as_dict(self):
         return{c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -48,6 +53,18 @@ class User(db.Model):
 
 Index('email_pwd_index', User.email, User.password)
 Index('no_open_index', User.days_no_open_scard)
+
+
+class Collage(db.Model):
+    __tablename__ = 'collage'
+    id = db.Column(db.String(255), primary_key=True)
+    name = db.Column(db.String(255), unique=True, nullable=False)
+
+class CollageDepartment(db.Model):
+    __tablename__ = 'collage_department'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    collage_id = db.Column(db.String(255), db.ForeignKey('collage.id'), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
 
 class Scard(db.Model):
     __tablename__ = 'scard'
@@ -62,13 +79,13 @@ class Scard(db.Model):
     def as_dict(self):
         return{c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-    @classmethod
+    # @classmethod
     @cache.memoize(86400)
-    def view_scard_1(cls, user_id, create_date):
+    def view_scard_1(user_id, create_date):
         return Scard.query.filter_by(user_1=user_id, create_date=create_date).first()
-    @classmethod
+    # @classmethod
     @cache.memoize(86400)
-    def view_scard_2(cls, user_id, create_date):
+    def view_scard_2(user_id, create_date):
         return Scard.query.filter_by(user_2=user_id, create_date=create_date).first()
     
     @classmethod
@@ -99,7 +116,12 @@ class PostBoard(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     sys_name = db.Column(db.String(255), unique=True, nullable=False)
     show_name = db.Column(db.String(255), unique=True, nullable=False)
+    icon = db.Column(db.String(255), unique=True, nullable=False)
     rule = db.Column(db.Text)
+
+    @cache.memoize(9999999999999)
+    def view_board(board_id):
+        return PostBoard.query.filter_by(id=board_id).first()
 
 class Post(db.Model):
     __tablename__ = 'post'
@@ -108,6 +130,35 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user_name = db.Column(db.String(255), nullable=False)
     title = db.Column(db.String(255), nullable=False)
-    content = db.Column(db.String(255), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    first_img = db.Column(db.String(255))
     create_time = db.Column(db.DateTime, server_default=text('NOW()'))
     like_count = db.Column(db.Integer, server_default=text("0"), nullable=False)
+    comment_count = db.Column(db.Integer, server_default=text("0"), nullable=False)
+
+class PostUserLike(db.Model):
+    __tablename__ = 'post_user_like'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+Index('post_user_index', PostUserLike.post_id, PostUserLike.user_id)
+
+class Comment(db.Model):
+    __tablename__ = 'comment'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_name = db.Column(db.String(255), nullable=False)
+    floor = db.Column(db.Integer, nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    create_time = db.Column(db.DateTime, server_default=text('NOW()'), nullable=False)
+    like_count = db.Column(db.Integer, server_default=text("0"), nullable=False)
+    
+class CommentUserLike(db.Model):
+    __tablename__ = 'comment_user_like'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+Index('comment_user_index', CommentUserLike.comment_id, CommentUserLike.user_id)

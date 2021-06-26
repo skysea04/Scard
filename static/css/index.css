@@ -1,0 +1,95 @@
+.f-14{
+    font-size: 14px;
+}
+
+.boards{
+    height: calc(100vh - 59px - 24px - 30px);
+    max-width: 200px;
+}
+
+.list-group{
+    height: calc(100% - 40px);
+    overflow-y: auto;
+    border: none;
+    border-radius: 0;
+}
+
+.board{
+    height: 40px;
+}
+.board:hover{
+    background-color: rgba(255, 255, 255, 0.2)
+}
+
+.board img{
+    display: block;
+    padding: 3px;
+    width: 30px;
+    height: 30px;
+    object-fit: cover;    
+}
+
+.posts{
+    z-index: 2;
+}
+
+.post-nav{
+    background-color: white;
+    top: 55px;
+    padding-top: 45px;
+    z-index: 2;
+}
+.post-nav .nav-link{
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.5);
+}
+.post-nav .nav-link:hover{
+    color: black;
+}
+.post-nav .nav-link.active{
+    color: black;
+    border-bottom:2px solid rgb(51, 151, 207);
+}
+
+
+.post{
+    padding: 15px 0;
+}
+
+.post .author-field{
+    height: 30px;
+    line-height: 30px;
+}
+/* 
+.author-field .avatar{
+    width: 30px;
+    height: 30px;
+} */
+
+.post-container{
+    width: calc(100% - 84px);
+}
+
+.post-title, .post-content{
+    overflow : hidden;
+    text-overflow : ellipsis;
+    white-space : nowrap;
+}
+.post-title{
+    color: black;
+}
+
+.post-content{
+    color: rgba(0, 0, 0, 0.65);
+}
+
+.post-info{
+    height: 20px;
+    line-height: 20px;
+}
+
+.post-img{
+    width: 84px;
+    height: 84px;
+    object-fit: cover; 
+}

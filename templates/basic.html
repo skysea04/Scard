@@ -19,7 +19,7 @@
     <div class="top-blank"></div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid container">
-            <a class="navbar-brand home-page" href="/">Scard</a>
+            <a class="navbar-brand home-page" href="/b">Scard</a>
             <form class="d-flex me-auto flex-lg-fill">
                 <input class="form-control border-info me-auto" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-info search" type="submit"><i class="bi bi-search"></i></button>
@@ -30,19 +30,19 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 nav-user show">
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/new-post"><i class="bi bi-pencil-fill"></i></a>
+                        <a id="new-post" class="nav-link" aria-current="page" href="/new-post"><i class="bi bi-pencil-fill"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-bell-fill"></i></a>
+                        <span class="nav-link"><i class="bi bi-bell-fill"></i></span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/scard"><i class="bi bi-wallet2"></i></a>
+                        <a id="scard" class="nav-link" href="/scard"><i class="bi bi-wallet2"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/message"><i class="bi bi-envelope-fill"></i></a>
+                        <a id="message" class="nav-link" href="/message"><i class="bi bi-envelope-fill"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/my/profile"><i class="bi bi-person-fill"></i></a>
+                        <a id="my/profile" class="nav-link" href="/my/profile"><i class="bi bi-person-fill"></i></a>
                     </li>
                     <li class="nav-item">
                         <span class="nav-link signout">登出</span>
@@ -60,6 +60,24 @@
     {% block main %}
     {% endblock %}
     <!-- 特殊跳出視窗 -->
+    <!-- 處理各式Error訊息的Modal -->
+    <div class="modal fade" id="error-modal" tabindex="-1" aria-labelledby="error-modal" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="error-modal"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <a href="" class="btn bg-scard-l text-white modal-href"></a>
+            </div>
+        </div>
+        </div>
+    </div>
     {% block modal %}
     {% endblock %}
 

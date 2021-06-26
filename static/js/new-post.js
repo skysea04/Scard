@@ -1,9 +1,9 @@
 //// errorModal相關變數
-const errorModalContain = document.getElementById('error-modal')
-const errorModal = new bootstrap.Modal(errorModalContain)
-const modalTitle = errorModalContain.querySelector('.modal-title')
-const modalBody = errorModalContain.querySelector('.modal-body')
-const modalHref = errorModalContain.querySelector('.modal-href')
+// const errorModalContain = document.getElementById('error-modal')
+// const errorModal = new bootstrap.Modal(errorModalContain)
+// const modalTitle = errorModalContain.querySelector('.modal-title')
+// const modalBody = errorModalContain.querySelector('.modal-body')
+// const modalHref = errorModalContain.querySelector('.modal-href')
 
 modalHref.addEventListener('click',()=> errorModal.hide())
 
@@ -16,7 +16,7 @@ const boardSelect = document.querySelector('.board-select')
 const nameSelect = document.querySelector('.name-select')
 const postTitle = document.querySelector('.post-title')
 const postContent = document.querySelector('.post-content')
-
+const postAvatar = document.querySelector('.post-avatar')
 //// 將看版資訊與個人名稱資訊匯入
 fetch(newPostAPI)
     .then(res => res.json())
@@ -40,6 +40,9 @@ fetch(newPostAPI)
             anonymous.value = '匿名'
             anonymous.innerText = '匿名'
             nameSelect.append(fullName, collageName, anonymous)
+
+            // 新增發文頭像
+            postAvatar.src = data.avatar
 
             // 新增發文看板選項
             data.boardList.forEach(board => {
@@ -66,6 +69,7 @@ let textCursor = allContent[allContent.length - 1]
 
 // 每次輸入內文就會儲存完整html到localhost
 function inputSave(){
+    selectImages()
     postContentHTML = postContent.innerHTML
     if(postContentHTML == ''){
         postContentHTML = '<p><br></p>'
@@ -85,21 +89,110 @@ function changetextCursor(){
     tempCursor = window.getSelection().anchorNode
     if(tempCursor.nodeName == '#text' && tempCursor.parentNode.nodeName=='P'){
         textCursor = window.getSelection().anchorNode.parentElement
-    }else if(tempCursor.nodeName == 'p'){
+    }else if(tempCursor.nodeName == 'P'){
         textCursor = window.getSelection().anchorNode
-    }else if(tempCursor.firstChild && tempCursor.firstChild.classList){
-        if(tempCursor.firstChild.classList.contains('upload-img')){
-            textCursor = window.getSelection().anchorNode
+    }
+}
+// 滿足貼上內容的情境，將文字與單一貼上的圖片留下
+function pasteSave(e){
+    e.preventDefault()
+    const cp = e.clipboardData
+    const pasteData = cp.items
+    for (var i = 0; i < pasteData.length; i += 1) {
+        if ((pasteData[i].kind == 'string') && 
+            (pasteData[i].type.match('^text/plain'))) {
+            // This item is the target node
+            pasteData[i].getAsString(function (s){
+                // console.log(s)
+                // console.log(e.target)
+                const words = s.split(/\n/)
+                const len = words.length
+                for(let index = 0; index < len; index++){
+                    // console.log(words[index])
+                    if(words[index] == '') continue
+                    const page = document.createElement('p')
+                    page.innerText = words[index]
+                    textCursor.insertAdjacentElement('afterend', page)
+                    textCursor = page
+                }
+                localStorage.setItem('newPostContent', postContent.innerHTML)
+            });
+        } else if ((pasteData[i].kind == 'string') &&
+                    (pasteData[i].type.match('^text/html'))) {
+            // Drag pasteData item is HTML
+            console.log("... Drop: HTML");
+        } else if ((pasteData[i].kind == 'string') &&
+                    (pasteData[i].type.match('^text/uri-list'))) {
+            // Drag pasteData item is URI
+            console.log("... Drop: URI");
+        } else if ((pasteData[i].kind == 'file') &&
+                    (pasteData[i].type.match('^image/'))) {
+            var f = pasteData[i].getAsFile();
+            // 上傳圖片返回內容
+            showUpload(f)
         }
     }
 }
 // 每次點擊皆改動
+postContent.addEventListener('click', changetextCursor)
+// 每次輸入皆改動
 postContent.addEventListener('input', inputSave)
-document.addEventListener('selectionchange', changetextCursor)
+// 每次paste是情況上傳照片或呈線文字
+postContent.addEventListener('paste', pasteSave)
 
-// 點選上傳圖片時，可以整個選取
+//// 上傳圖片到文章中
+const imgInput = document.querySelector('#img')
+const uploadImgSpinner = document.querySelector('.upload-img-spinner')
+async function showUpload(inputImage){
+    // 讀取圈圈轉起來
+    uploadImgSpinner.classList.remove('d-none')
+    
+    const imgData = new FormData();
+    console.log(imgData)
+    imgData.append('image', inputImage) 
+    console.log(imgInput)
+    const res = await fetch(postImageAPI, {
+        method: 'POST',
+        body: imgData
+    })
+    const data = await res.json()
+    
+    // 得到結果，讀取圈圈消失
+    uploadImgSpinner.classList.add('d-none')
+
+    if(data.ok){
+        const imgSelf = document.createElement('img')
+        imgSelf.className = 'upload-img'
+        imgSelf.src = data.src
+        if(textCursor.innerHTML == '<br>'){
+            textCursor.innerHTML = ''
+            textCursor.append(imgSelf)
+        }else{
+            const imgContainer = document.createElement('p')
+            imgContainer.appendChild(imgSelf)
+            textCursor.insertAdjacentElement('afterend', imgContainer)
+            textCursor = imgContainer
+        }
+        
+        // 儲存到localStorage
+        postContentHTML = postContent.innerHTML
+        localStorage.setItem('newPostContent', postContentHTML);
+        selectImages()   
+    }else{
+        modalTitle.innText = data.title
+        modalBody.innerText = data.message
+        modalHref.innerText = data.confirm
+        modalHref.href = data.url
+        errorModal.show()
+    }    
+}
+imgInput.addEventListener('change',()=>{
+    showUpload(imgInput.files[0])
+})
+
+// 點選上傳圖片時，可以選取整張圖
 function selectImages(){
-    let contentImgs = document.querySelectorAll('div .upload-img')
+    let contentImgs = document.querySelectorAll('p .upload-img')
     contentImgs.forEach(contentImg => {
         function selectImg(){
             let selection = window.getSelection()
@@ -114,39 +207,6 @@ function selectImages(){
 }
 // 先執行一次
 selectImages()
-
-//// 上傳圖片到文章中
-const imgInput = document.querySelector('#img')
-async function showUpload(){
-    const imgData = new FormData();
-    imgData.append('image', imgInput.files[0]) 
-    const res = await fetch(postImageAPI, {
-        method: 'POST',
-        body: imgData
-    })
-    const data = await res.json()
-    if(data.ok){
-        const imgContainer = document.createElement('div')
-        const imgSelf = document.createElement('img')
-        imgSelf.className = 'upload-img'
-        imgSelf.src = data.src
-        imgContainer.appendChild(imgSelf)
-        textCursor.insertAdjacentElement('afterend', imgContainer)
-        textCursor = imgContainer
-        
-
-        postContentHTML = postContent.innerHTML
-        localStorage.setItem('newPostContent', postContentHTML);
-        selectImages()   
-    }else{
-        modalTitle.innText = data.title
-        modalBody.innerText = data.message
-        modalHref.innerText = data.confirm
-        modalHref.href = data.url
-        errorModal.show()
-    }    
-}
-imgInput.addEventListener('change', showUpload)
 
 //// 上傳貼文
 const sendPostBtn = document.querySelector('.send-post')

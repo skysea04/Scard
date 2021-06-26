@@ -1,3 +1,6 @@
+// API
+collageAPI = '/api/profile/collage'
+
 // 使可填寫日期永遠在18年以前
 const birthdayInput = document.querySelector('#birthday')
 let maxDate = new Date()
@@ -10,9 +13,60 @@ if(dd < 10){
 if(mm < 10){
     mm = '0' + mm
 } 
-
 maxDate = yyyy + '-' + mm + '-' + dd
 birthdayInput.setAttribute('max', maxDate)
+
+
+// 匯入學校/系所資訊
+const collSelect = document.querySelector('#collage')
+const dptSelect = document.querySelector('#department')
+
+// 匯入學校資訊
+fetch(collageAPI)
+.then(res => res.json())
+.then(data => {
+    if(data.error){
+        console.log('伺服器錯誤')
+    }else{
+        data.data.forEach(coll => {
+            const collOption = document.createElement('option')
+            collOption.value = coll.id
+            collOption.innerText = coll.name
+            collSelect.appendChild(collOption)
+        })
+    }
+})
+
+// 當使用者選擇學校時，列出系所資訊
+async function showDepartment(){
+    // console.log(this.value)
+    // 重置系所選項
+    dptSelect.innerHTML = `<option value='' selected>選擇系所</option>`
+    const dptAPI = `/api/profile/${this.value}/department`
+    const res = await fetch(dptAPI)
+    const data = await res.json()
+    if(data.error){
+        if(data.url){ //顯示伺服器錯誤訊息
+            modalTitle.innText = data.title
+            modalBody.innerText = data.message
+            modalHref.innerText = data.confirm
+            modalHref.href = data.url
+            errorModal.show()
+        }
+        dptSelect.setAttribute('disabled', true)
+    }
+    else{
+        data.data.forEach(dpt => {
+            const dptOption = document.createElement('option')
+            dptOption.value = dpt.id
+            dptOption.innerText = dpt.name
+            dptSelect.appendChild(dptOption)
+        })
+        dptSelect.removeAttribute('disabled')
+    }
+}
+collSelect.addEventListener('change', showDepartment)
+
 
 // 送出basicprofile表單
 const basicProfileForm = document.querySelector('form.basic-profile')
@@ -23,8 +77,8 @@ async function postProfile(e){
         name : this.querySelector('input[name="name"]').value,
         gender : this.querySelector('select[name="gender"]').value,
         birthday : this.querySelector('input[name="birthday"]').value,
-        collage : this.querySelector('input[name="collage"]').value,
-        department : this.querySelector('input[name="department"]').value
+        collage : this.querySelector('select[name="collage"]').value,
+        department : this.querySelector('select[name="department"]').value
     }
     const res = await fetch(profileAPI, {
         method: 'POST',

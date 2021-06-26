@@ -3,12 +3,18 @@ from flask_socketio import SocketIO, join_room, send
 import os
 from datetime import datetime
 from dotenv import load_dotenv
-from sqlalchemy.engine import url
 load_dotenv()
 mysql_user = os.getenv("MYSQL_USER")
 mysql_password = os.getenv("MYSQL_PASSWORD")
 mysql_host = os.getenv("MYSQL_HOST")
 mysql_database = os.getenv("MYSQL_DATABASE")
+
+'''test area'''
+
+'''test area'''
+
+
+
 
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"]=False
@@ -19,7 +25,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_user}:{mysql_pa
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping":True}
 
 socketio = SocketIO(app)
-from models.model import Messages, db, migrate, cache
+from models.model import Messages, Post, PostBoard, db, migrate, cache
 db.init_app(app)
 migrate.init_app(app, db)
 
@@ -31,10 +37,34 @@ app.register_blueprint(api, url_prefix="/api")
 
 @app.route('/')
 def index():
-	return render_template('index.html')
+	return redirect(url_for('show_board'))
+
+@app.route('/b')
+@app.route('/b/<board>')
+def show_board(board=None):
+	boards = PostBoard.query.all()
+	board_list = []
+	for post_board in boards:
+		board_list.append(post_board.sys_name)
+	if board == None or board in board_list:
+		return render_template('index.html')
+	abort(404)
+
+@app.route('/b/<board>/p/<post_id>')
+def view_post(board, post_id):
+	post = Post.query.filter_by(id=post_id).first()
+	if post:
+		right_board = PostBoard.view_board(post.board_id)
+		if right_board.sys_name == board:
+			return render_template('post.html')
+		else:
+			return redirect(f'/b/{right_board.sys_name}/p/{post_id}')
+	else:
+		return render_template('post-not-exist.html')
+			
 
 @app.route('/new-post')
-def post():
+def new_post():
 	if 'user' in session:
 		return render_template('new-post.html')
 	return redirect(url_for('signup'))
@@ -105,6 +135,10 @@ def handle_send_message(data):
 	db.session.add(message)
 	db.session.commit()
 
+@app.errorhandler(404)
+def page_not_found(e):
+    # note that we set the 404 status explicitly
+    return render_template('404.html'), 404
 
 if __name__ == '__main__':
-	socketio.run(app, host='0.0.0.0',port=8000, debug=True)
+	socketio.run(app, host='0.0.0.0', port=8000)

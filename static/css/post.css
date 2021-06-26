@@ -1,0 +1,111 @@
+/* post 區域 */
+section.post-field{
+    min-height: calc(100vh - 84px);
+}
+
+.author-field{
+    height: 40px;
+    align-items: center;
+}
+
+.author-field img{
+    width: 40px;
+    height: 40px;
+}
+
+.post-title, .post-content{
+    overflow : initial;
+    text-overflow : initial;
+    white-space : initial;
+}
+
+.post-content, .comment-body{
+    text-align: justify;
+}
+
+.comment{
+    background-color: #f8f9fa;
+    height: auto;
+}
+.cmt-author{
+    font-size: 0.9rem;
+}
+
+.info-field{
+    height: 30px;
+}
+
+.post-count img{
+    height: 24px;
+    width: 24px;
+}
+
+.post-interact *{
+    cursor: pointer;
+}
+.notice.active svg{
+    color: #3397CF;
+}
+
+.like.active svg{
+    color: rgb(255, 81, 50);
+}
+.report{
+    cursor: pointer;
+}
+
+/* comment 區域 */
+.list-group-flush>.list-group-item:last-child{
+    border-bottom-width: 1px;
+}
+
+
+/* post comment區域 */
+.comment-blank{
+    height: 50px;
+    cursor:text;
+    top: calc(100vh - 50px);
+}
+.post-comment{
+    top: calc(100vh - 271px);
+}
+
+.name-select{
+    width: auto;
+    border: none;
+}
+
+.expand{
+    min-height: calc(100vh - 58px);
+    top: 0;
+}
+
+#expand-btn, #contract-btn{
+    cursor: pointer;
+}
+
+.post-comment-content{
+    height: 150px;
+}
+.expand .post-comment-content{
+    height: calc(100vh - 190px);
+}
+.post-comment-content p img{
+    border: 3px solid white;
+}
+.upload-img-field label{
+    cursor: pointer;
+}
+.upload-img{
+    display: block;
+    max-width: 100%;
+    max-height: 40vh;
+}
+
+.upload-img-spinner{
+    position: absolute;
+    top: 45%;
+    left: 45%;
+    width: 50px;
+    height: 50px;
+}

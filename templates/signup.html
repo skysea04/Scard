@@ -85,6 +85,14 @@
             FB.getLoginStatus(function(response) {   // Called after the JS SDK has been initialized.
                 statusChangeCallback(response);        // Returns the login status.
             });
+            FB.login(function(response) {
+                if (response.status === 'connected') {
+                    // Logged into your webpage and Facebook.
+                    console.log('login!!!!')
+                } else {
+                    // The person is not logged into your webpage or we are unable to tell. 
+                }
+            });
         };
         
         

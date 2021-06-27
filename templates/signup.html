@@ -1,5 +1,7 @@
 {% extends "basic.html" %}
     {% block title %}
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v11.0&appId=201932648371956&autoLogAppEvents=1" nonce="tRCLLQrM"></script>
     <title>註冊 / Scard</title>
     {% endblock %}
 
@@ -21,8 +23,6 @@
             </div>
         </form>
         <div class="fb-login-button" data-width="" data-size="large" data-button-type="login_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false"></div>
-        <div id="fb-root"></div>
-        <script async defer crossorigin="anonymous" src="https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v11.0&appId=201932648371956&autoLogAppEvents=1" nonce="tRCLLQrM"></script>
     </main>
     {% endblock %}
     
@@ -85,6 +85,9 @@
             FB.getLoginStatus(function(response) {   // Called after the JS SDK has been initialized.
                 statusChangeCallback(response);        // Returns the login status.
             });
+
+            fbBtn = document.querySelector('.fb-login-button')
+            fb
             FB.login(function(response) {
                 if (response.status === 'connected') {
                     // Logged into your webpage and Facebook.

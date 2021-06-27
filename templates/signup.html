@@ -39,7 +39,7 @@
             console.log('statusChangeCallback');
             console.log(response);                   // The current login status of the person.
             if (response.status === 'connected') {
-                testAPI()   
+                getFBUserData() 
                 // Logged into your webpage and Facebook.
             } else {                                 // Not logged into your webpage or we are unable to tell.
                 testAPI();  

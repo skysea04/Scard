@@ -1,8 +1,8 @@
-# [Scard](http://54.249.129.189:8000/b)
+# [Scard](https://scard.skysea.fun/b)
 
 本專案為Dcard複製品，專案內容還在建置中，目前已完成功能：帳號系統、基本資料、自介填寫、抽卡配對、聊天系統、PO文系統(瀏覽熱門文章、重新編輯功能尚未完成)。
 ## Demo
-點擊該網址即可前往Scard登入頁面 : http://54.249.129.189:8000/b
+點擊該網址即可前往Scard登入頁面 : https://scard.skysea.fun/b
 
 已開通所有權限的Test帳號：</br>
 Account : test1@test.com ~ test1000@test.com</br>

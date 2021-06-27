@@ -24,7 +24,7 @@
         </form>
         
         <div class="fb-login-button" data-width="" data-size="large" data-button-type="login_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false" scope="public_profile,email"
-        onlogin="checkLoginState();">></div>
+        onlogin="checkLoginState();"></div>
     </main>
     {% endblock %}
     
@@ -103,9 +103,9 @@
             });
             FB.AppEvents.logPageView();
 
-            FB.getLoginStatus(function(response) {
-                statusChangeCallback(response);
-            });
+            // FB.getLoginStatus(function(response) {
+            //     statusChangeCallback(response);
+            // });
         };
       
         (function(d, s, id){

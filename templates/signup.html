@@ -86,8 +86,9 @@
                 statusChangeCallback(response);        // Returns the login status.
             });
 
-            fbBtn = document.querySelector('.fb-login-button')
-            fb
+        }
+        const fbBtn = document.querySelector('.fb-login-button')
+        fbBtn.addEventListener('click', ()=>{
             FB.login(function(response) {
                 if (response.status === 'connected') {
                     // Logged into your webpage and Facebook.
@@ -96,7 +97,7 @@
                     // The person is not logged into your webpage or we are unable to tell. 
                 }
             });
-        };
+        })
         
         
         // (function(d, s, id){

@@ -46,7 +46,7 @@
     </script>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/zh_TW/sdk.js"></script> -->
 
-    <!-- <script>
+    <script>
         window.fbAsyncInit = function() {
         FB.init({
             appId      : '201932648371956',
@@ -57,9 +57,9 @@
             
         FB.AppEvents.logPageView();   
         
-        // FB.getLoginStatus(function(response) {
-        //     statusChangeCallback(response);
-        // });
+        FB.getLoginStatus(function(response) {
+            statusChangeCallback(response);
+        });
 
         function statusChangeCallback(response) {
                 console.log('statusChangeCallback');
@@ -95,6 +95,7 @@
             js.src = "https://connect.facebook.net/zh_TW/sdk.js";
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
-    </script> -->
+    </script>
+    
     <script src="/static/js/signup.js"></script>
     {% endblock %}

@@ -54,13 +54,43 @@
             });
         }
 
-        function testAPI() {                      // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
-            console.log('Welcome!  Fetching your information.... ');
-            FB.api('/me?fields=id,email', function(res) {
-                console.log('Successful login for: ' + res.id + res.email);
-                // document.getElementById('status').innerHTML =
-                //     'Thanks for logging in, ' + response.name + '!';
-            });
+        function testAPI() {
+        // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
+        // console.log("Welcome!  Fetching your information.... ");
+            FB.login(response => {
+                // console.log(response);
+                FB.api("/me", "GET", { fields: "id,email" }, user => {
+                    if (user.error) {
+                        console.log('error')
+                    } 
+                    else {
+                        // pro.src = user.picture.data.url
+                        // window.localStorage["url"] = user.picture.data.url
+                        // fetch("/api/FB/user", {
+                        //     headers: { "Content-Type": "application/json" },
+                        //     method: "PATCH",
+                        //     body: JSON.stringify({
+                        //         // "name": user.name,
+                        //         // "url": user.picture.data.url
+                        //         "FB_ID": user.id,
+                        //         "email": user.email,
+                        //     })
+                        // }).then((res) => {
+                        //     return res.json()
+                        // }).then((data) => {
+                        //     if (data.id) {
+                        //         // login_board.classList.remove("open");
+                        //         // document.getElementById("message_for_error_login").innerHTML = ""
+                        //         // get_user()
+                        //         // after_login()
+                        //         console.log()
+                        //     }
+                        // })
+                        console.log(user.id, user.email)
+                    }
+                }
+                );
+            },{ scope: "public_profile,email" })
         }
 
         window.fbAsyncInit = function() {

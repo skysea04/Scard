@@ -38,7 +38,8 @@
         function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
             console.log('statusChangeCallback');
             console.log(response);                   // The current login status of the person.
-            if (response.status === 'connected') {   
+            if (response.status === 'connected') {
+                testAPI()   
                 // Logged into your webpage and Facebook.
             } else {                                 // Not logged into your webpage or we are unable to tell.
                 testAPI();  
@@ -48,6 +49,16 @@
             }
         }
 
+        function getFBUserData(){
+            FB.api("/me", "GET", { fields: "id,email" }, user => {
+                if (user.error) {
+                    console.log('error')
+                } 
+                else {
+                    console.log(user.id, user.email)
+                }
+            })
+        }
 
         function checkLoginState() {               // Called when a person is finished with the Login Button.
             FB.getLoginStatus(function(response) {   // See the onlogin handler
@@ -89,8 +100,7 @@
                         // })
                         console.log(user.id, user.email)
                     }
-                }
-                );
+                });
             },{ scope: "public_profile,email" })
         }
 

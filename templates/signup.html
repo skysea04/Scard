@@ -20,10 +20,8 @@
                 <button type="submit" class="btn bg-scard-l text-white">註冊 / 登入</button>
             </div>
         </form>
-        <fb:login-button 
-            scope="public_profile,email"
-            onlogin="checkLoginState();">
-        </fb:login-button>
+        <div id="fb-root"></div>
+        <script async defer crossorigin="anonymous" src="https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v11.0&appId=201932648371956&autoLogAppEvents=1" nonce="tRCLLQrM"></script>
     </main>
     {% endblock %}
     
@@ -47,8 +45,7 @@
     </script>
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/zh_TW/sdk.js"></script> -->
 
-
-    <script>
+    <!-- <script>
         window.fbAsyncInit = function() {
         FB.init({
             appId      : '201932648371956',
@@ -59,9 +56,9 @@
             
         FB.AppEvents.logPageView();   
         
-        FB.getLoginStatus(function(response) {
-            statusChangeCallback(response);
-        });
+        // FB.getLoginStatus(function(response) {
+        //     statusChangeCallback(response);
+        // });
 
         function statusChangeCallback(response) {
                 console.log('statusChangeCallback');
@@ -97,6 +94,6 @@
             js.src = "https://connect.facebook.net/zh_TW/sdk.js";
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
-    </script>
+    </script> -->
     <script src="/static/js/signup.js"></script>
     {% endblock %}

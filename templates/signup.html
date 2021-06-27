@@ -1,7 +1,7 @@
 {% extends "basic.html" %}
     {% block title %}
     <div id="fb-root"></div>
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v11.0&appId=201932648371956&autoLogAppEvents=1" nonce="tRCLLQrM"></script>
+    <!-- <script async defer crossorigin="anonymous" src="https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v11.0&appId=201932648371956&autoLogAppEvents=1" nonce="tRCLLQrM"></script> -->
     <title>註冊 / Scard</title>
     {% endblock %}
 
@@ -23,18 +23,24 @@
             </div>
         </form>
         
-        <div class="fb-login-button" data-width="" data-size="large" data-button-type="login_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false"></div>
+        <div class="fb-login-button" data-width="" data-size="large" data-button-type="login_with" data-layout="default" data-auto-logout-link="false" data-use-continue-as="false" onc></div>
     </main>
     {% endblock %}
     
     {% block JS %}
     <script>
+        const fbBtn = document.querySelector('.fb-login-button')
+        fbBtn.addEventListener("click", function (e) {
+            e.preventDefault()
+            checkLoginState()
+        })
         function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
             console.log('statusChangeCallback');
             console.log(response);                   // The current login status of the person.
-            if (response.status === 'connected') {   // Logged into your webpage and Facebook.
-            testAPI();  
+            if (response.status === 'connected') {   
+                // Logged into your webpage and Facebook.
             } else {                                 // Not logged into your webpage or we are unable to tell.
+                testAPI();  
                 console.log('沒有連上 笑死')
                 // document.getElementById('status').innerHTML = 'Please log ' +
             //     'into this webpage.';
@@ -50,8 +56,8 @@
 
         function testAPI() {                      // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
             console.log('Welcome!  Fetching your information.... ');
-            FB.api('/me', function(response) {
-                console.log('Successful login for: ' + response.name);
+            FB.api('/me?fields=id,email', function(res) {
+                console.log('Successful login for: ' + res.id + res.email);
                 // document.getElementById('status').innerHTML =
                 //     'Thanks for logging in, ' + response.name + '!';
             });

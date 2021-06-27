@@ -20,6 +20,10 @@
                 <button type="submit" class="btn bg-scard-l text-white">註冊 / 登入</button>
             </div>
         </form>
+        <fb:login-button 
+            scope="public_profile,email"
+            onlogin="checkLoginState();">
+        </fb:login-button>
     </main>
     {% endblock %}
     
@@ -81,6 +85,11 @@
                 }
             }
         };
+        function checkLoginState() {
+            FB.getLoginStatus(function(response) {
+                statusChangeCallback(response);
+            });
+        }
         (function(d, s, id){
             var js, fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) {return;}

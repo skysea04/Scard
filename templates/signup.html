@@ -5,11 +5,32 @@
     <title>註冊 / Scard</title>
     {% endblock %}
 
+    {% block CSS %}
+    <style>
+        .google-signin{
+            cursor: pointer;
+            width: 227px;
+            height: 40px;
+        }
+        .google-signin img{
+            width: 20px;
+            height: 20px;
+        }
+        .google-signin div{
+            font-size: 18px;
+        }
+    </style>
+    {% endblock %}
+
     {% block main %}
     <main class="container mx-auto row mt-5">
         <form class="col-10 col-md-8 col-lg-6 p-4 bg-white rounded mx-auto signup"> 
             <h3 class="mb-3 text-center">註冊 / 登入</h3>
             <div class="mb-3 fb-login-button w-100 text-center" data-width="" data-size="large" data-button-type="login_with"  data-auto-logout-link="false" data-use-continue-as="false" scope="public_profile,email" onlogin="checkLoginState()">Facebook 註冊 / 登入</div>
+            <div class="bg-white mx-auto d-flex align-items-center justify-content-around border rounded google-signin">
+                <img class="google-icon"  src="/static/icons/google.png" alt="">
+                <div class="fw-bolder">Google 註冊 / 登入&nbsp;&nbsp;</div>
+            </div>
             <div class="mb-3">
                 <label for="email" class="form-label">常用信箱</label>
                 <input type="email" class="form-control" id="email" name="email" required>
@@ -29,5 +50,5 @@
     {% block JS %}
     
     <script src="/static/js/signup.js"></script>
-    <script src="/static/js/fb-login.js"></script>
+    <script src="/static/js/fb-google-signin.js"></script>
     {% endblock %}

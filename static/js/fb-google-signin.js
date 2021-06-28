@@ -1,3 +1,4 @@
+// FB login
 const fbBtn = document.querySelector('.fb-login-button')
 fbBtn.addEventListener("click", function (e) {
     e.preventDefault()
@@ -36,7 +37,7 @@ function getFBUserData(){
         else {
             console.log(user.id, user.email)
             const signupData = {
-                email : user.email,
+                email : `FB_${user.email}`,
                 password : user.id
             }
             fetch(userAPI, {
@@ -56,4 +57,67 @@ function getFBUserData(){
             })
         }
     })
+}
+
+// Google Signin
+function handleClientLoad() {
+    // Load the API's client and auth2 modules.
+    // Call the initClient function after the modules load.
+    gapi.load('client:auth2', initClient);
+}
+function initClient() {
+    gapi.client.init({
+        'clientId': '46769118537-mq0m5m2589ea8euptnha9903r2a85l18.apps.googleusercontent.com',
+        'cookiepolicy': "single_host_origin",
+        'scope': SCOPE
+    }).then(function () {
+        GoogleAuth = gapi.auth2.getAuthInstance();
+        
+        // Listen for sign-in state changes.
+        GoogleAuth.isSignedIn.listen(updateSigninStatus);
+        
+        // Handle initial sign-in state. (Determine if user is already signed in.)
+        // var user = GoogleAuth.currentUser.get();
+        // setSigninStatus();
+        
+        googleBtn.addEventListener('click', ()=>{
+            GoogleAuth.signIn()
+            setSigninStatus()
+        })
+    });
+}
+const googleBtn = document.querySelector('.google-signin')
+
+
+function setSigninStatus() {
+    var user = GoogleAuth.currentUser.get();
+    var isAuthorized = user.hasGrantedScopes(SCOPE);
+    if (isAuthorized) {
+        console.log(user.dt.Nt, user.dt.LS)
+        const signupData = {
+            email : `GOOGLE_${user.dt.Nt}`,
+            password : user.dt.LS
+        }
+        fetch(userAPI, {
+            method: 'POST',
+            body: JSON.stringify(signupData),
+            headers: {'Content-Type': 'application/json'}
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.ok){
+                window.location.replace('/')
+            }
+            else{
+                const message = this.querySelector('.message')
+                message.innerText = data.message
+            }
+        })
+
+    } else {
+        console.log('not login')
+    }
+}
+function updateSigninStatus() {
+    setSigninStatus();
 }

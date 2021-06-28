@@ -62,6 +62,9 @@ function savePostTitle(){
 postTitle.addEventListener('input', savePostTitle)
 
 //// 內文編輯器
+if(!localStorage.getItem('newPostContent')){
+    localStorage.setItem('newPostContent', '<p><br></p>')
+}
 postContent.innerHTML = localStorage.getItem('newPostContent')
 let postContentHTML = postContent.innerHTML
 let allContent = postContent.childNodes

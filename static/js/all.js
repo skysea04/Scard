@@ -42,12 +42,13 @@ async function signout(){
     await fetch(userAPI, {method: 'DELETE'})
     const userURL = location.pathname.split('/')[1]
     const toSignUpList = ['new-post', 'scard', 'message', 'my']
+    fbLogout()
     if(toSignUpList.includes(userURL)){
         location = '/signup'
     }else{
         location.reload()
     }
-    checkSign()
+    // checkSign()
 }
 
 signoutBtn.addEventListener('click', signout)
@@ -77,3 +78,31 @@ async function verifyUser(e){
 links.forEach(link => {
     link.addEventListener('click', verifyUser)
 })
+
+
+// fb登出
+function fbLogout() {
+    FB.logout(res => {
+        // Person is now logged out
+        // console.log("logout!!!!");
+    });
+} 
+
+// FaceBook SDK 初始化
+window.fbAsyncInit = function() {
+    FB.init({
+        appId      : '164377919057019',
+        cookie     : true,  
+        xfbml      : true,
+        version    : 'v11.0'
+    });
+    FB.AppEvents.logPageView();
+};
+
+(function(d, s, id){
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {return;}
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/zh_TW/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));

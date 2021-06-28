@@ -1,12 +1,15 @@
 {% extends "basic.html" %}
     {% block title %}
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v11.0&appId=164377919057019&autoLogAppEvents=1" nonce="tRCLLQrM"></script>
     <title>註冊 / Scard</title>
     {% endblock %}
 
     {% block main %}
     <main class="container mx-auto row mt-5">
         <form class="col-10 col-md-8 col-lg-6 p-4 bg-white rounded mx-auto signup"> 
-            <h3>註冊 / 登入</h3>
+            <h3 class="mb-3 text-center">註冊 / 登入</h3>
+            <div class="mb-3 fb-login-button w-100 text-center" data-width="" data-size="large" data-button-type="login_with"  data-auto-logout-link="false" data-use-continue-as="false" scope="public_profile,email" onlogin="checkLoginState()">Facebook 註冊 / 登入</div>
             <div class="mb-3">
                 <label for="email" class="form-label">常用信箱</label>
                 <input type="email" class="form-control" id="email" name="email" required>
@@ -24,5 +27,7 @@
     {% endblock %}
     
     {% block JS %}
+    
     <script src="/static/js/signup.js"></script>
+    <script src="/static/js/fb-login.js"></script>
     {% endblock %}

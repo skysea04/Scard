@@ -10,9 +10,7 @@ async function signup(e){
     const res = await fetch(userAPI, {
                     method: 'POST',
                     body: JSON.stringify(signupData),
-                    headers: {
-                    'Content-Type': 'application/json'
-                    }
+                    headers: {'Content-Type': 'application/json'}
                 })
     const data =await res.json()
     if(data.ok){

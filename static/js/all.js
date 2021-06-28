@@ -48,7 +48,7 @@ async function signout(){
     }else{
         location.reload()
     }
-    checkSign()
+    // checkSign()
 }
 
 signoutBtn.addEventListener('click', signout)
@@ -80,8 +80,7 @@ links.forEach(link => {
 })
 
 
-
-
+// fb登出
 function fbLogout() {
     FB.logout(res => {
         // Person is now logged out
@@ -89,43 +88,7 @@ function fbLogout() {
     });
 } 
 
-// function testAPI() {
-// // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
-// // console.log("Welcome!  Fetching your information.... ");
-//     FB.login(response => {
-//         // console.log(response);
-//         FB.api("/me", "GET", { fields: "id,email" }, user => {
-//             if (user.error) {
-//                 console.log('error')
-//             } 
-//             else {
-//                 // pro.src = user.picture.data.url
-//                 // window.localStorage["url"] = user.picture.data.url
-//                 const signupData = {
-//                     email : user.email,
-//                     password : user.id
-//                 }
-//                 fetch(userAPI, {
-//                     method: 'POST',
-//                     body: JSON.stringify(signupData),
-//                     headers: {'Content-Type': 'application/json'}
-//                 })
-//                 .then(res => res.json())
-//                 .then(data => {
-//                     if(data.ok){
-//                         window.location.replace('/')
-//                     }
-//                     else{
-//                         const message = this.querySelector('.message')
-//                         message.innerText = data.message
-//                     }
-//                 })
-//                 console.log(user.id, user.email)
-//             }
-//         });
-//     },{ scope: "public_profile,email" })
-// }
-
+// FaceBook SDK 初始化
 window.fbAsyncInit = function() {
     FB.init({
         appId      : '164377919057019',
@@ -134,9 +97,6 @@ window.fbAsyncInit = function() {
         version    : 'v11.0'
     });
     FB.AppEvents.logPageView();
-    // FB.getLoginStatus(function(response) {
-    //     statusChangeCallback(response);
-    // });
 };
 
 (function(d, s, id){
@@ -145,4 +105,4 @@ window.fbAsyncInit = function() {
     js = d.createElement(s); js.id = id;
     js.src = "https://connect.facebook.net/zh_TW/sdk.js";
     fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
+}(document, 'script', 'facebook-jssdk'));

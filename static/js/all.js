@@ -39,21 +39,18 @@ checkSign()
 const signoutBtn = document.querySelector('.signout')
 
 async function signout(){
-    FB.logout(function(response) {
-        // Person is now logged out
-        FB.getLoginStatus(function(response) {
-            // 檢查登入狀態
-            if (response.status === "connected") {
-              // 移除授權
-              FB.api("/me/permissions", "DELETE", function(res) {
-                // 用戶登出
-                FB.logout();
-              });
-            } else {
-              // do something
-            }
-        });
-     });
+    FB.getLoginStatus(function(response) {
+        // 檢查登入狀態
+        if (response.status === "connected") {
+            // 移除授權
+            FB.api("/me/permissions", "DELETE", function(res) {
+            // 用戶登出
+            FB.logout();
+            });
+        } else {
+            // do something
+        }
+    });
     await fetch(userAPI, {method: 'DELETE'})
     const userURL = location.pathname.split('/')[1]
     const toSignUpList = ['new-post', 'scard', 'message', 'my']
@@ -191,9 +188,9 @@ window.fbAsyncInit = function() {
         version    : 'v11.0'
     });
     FB.AppEvents.logPageView();
-    // FB.getLoginStatus(function(response) {
-    //     statusChangeCallback(response);
-    // });
+    FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+    });
 };
 
 (function(d, s, id){

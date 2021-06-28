@@ -15,8 +15,7 @@ Password : 123
 * Socket.io
 * AWS EC2 RDS S3 CDN ElastiCache
 * BootStrap5
-* Responsive Web Design(聊天頁面除外)
-
+* FaceBook Login
 ## 功能介紹
 
 ### 瀏覽首頁

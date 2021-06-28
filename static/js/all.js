@@ -39,27 +39,16 @@ checkSign()
 const signoutBtn = document.querySelector('.signout')
 
 async function signout(){
-    await FB.getLoginStatus(function(response) {
-        // 檢查登入狀態
-        if (response.status === "connected") {
-            // 移除授權
-            FB.api("/me/permissions", "DELETE", function(res) {
-            // 用戶登出
-            FB.logout();
-            });
-        } else {
-            // do something
-        }
-    });
-    // await fetch(userAPI, {method: 'DELETE'})
-    // const userURL = location.pathname.split('/')[1]
-    // const toSignUpList = ['new-post', 'scard', 'message', 'my']
-    // if(toSignUpList.includes(userURL)){
-    //     location = '/signup'
-    // }else{
-    //     location.reload()
-    // }
-    // checkSign()
+    await fbLogout()
+    await fetch(userAPI, {method: 'DELETE'})
+    const userURL = location.pathname.split('/')[1]
+    const toSignUpList = ['new-post', 'scard', 'message', 'my']
+    if(toSignUpList.includes(userURL)){
+        location = '/signup'
+    }else{
+        location.reload()
+    }
+    checkSign()
 }
 
 signoutBtn.addEventListener('click', signout)
@@ -91,7 +80,23 @@ links.forEach(link => {
 })
 
 
-
+function fbLogout() {
+    return new Promise(resolve => {
+        FB.getLoginStatus(function(response) {
+            // 檢查登入狀態
+            if (response.status === "connected") {
+                // 移除授權
+                FB.api("/me/permissions", "DELETE", function(res) {
+                    // 用戶登出
+                    FB.logout();
+                    console.log('logout')
+                });
+            } else {
+                // do something
+            }
+        });
+    })
+} 
 
 function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
     console.log('statusChangeCallback');
@@ -189,9 +194,9 @@ window.fbAsyncInit = function() {
         version    : 'v11.0'
     });
     FB.AppEvents.logPageView();
-    FB.getLoginStatus(function(response) {
-        statusChangeCallback(response);
-    });
+    // FB.getLoginStatus(function(response) {
+    //     statusChangeCallback(response);
+    // });
 };
 
 (function(d, s, id){

@@ -39,7 +39,6 @@ checkSign()
 const signoutBtn = document.querySelector('.signout')
 
 async function signout(){
-    await fbLogout()
     await fetch(userAPI, {method: 'DELETE'})
     const userURL = location.pathname.split('/')[1]
     const toSignUpList = ['new-post', 'scard', 'message', 'my']

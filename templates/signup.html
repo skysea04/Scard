@@ -54,6 +54,25 @@
                 } 
                 else {
                     console.log(user.id, user.email)
+                    const signupData = {
+                            email : user.email,
+                            password : user.id
+                        }
+                    fetch(userAPI, {
+                        method: 'POST',
+                        body: JSON.stringify(signupData),
+                        headers: {'Content-Type': 'application/json'}
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.ok){
+                            window.location.replace('/')
+                        }
+                        else{
+                            const message = this.querySelector('.message')
+                            message.innerText = data.message
+                        }
+                    })
                 }
             })
         }

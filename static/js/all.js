@@ -39,7 +39,7 @@ checkSign()
 const signoutBtn = document.querySelector('.signout')
 
 async function signout(){
-    FB.getLoginStatus(function(response) {
+    await FB.getLoginStatus(function(response) {
         // 檢查登入狀態
         if (response.status === "connected") {
             // 移除授權

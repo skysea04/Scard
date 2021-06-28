@@ -42,6 +42,7 @@ async function signout(){
     await fetch(userAPI, {method: 'DELETE'})
     const userURL = location.pathname.split('/')[1]
     const toSignUpList = ['new-post', 'scard', 'message', 'my']
+    fbLogout()
     if(toSignUpList.includes(userURL)){
         location = '/signup'
     }else{
@@ -79,111 +80,51 @@ links.forEach(link => {
 })
 
 
+
+
 function fbLogout() {
-    return new Promise(resolve => {
-        FB.getLoginStatus(function(response) {
-            // 檢查登入狀態
-            if (response.status === "connected") {
-                // 移除授權
-                FB.api("/me/permissions", "DELETE", function(res) {
-                    // 用戶登出
-                    FB.logout();
-                    console.log('logout')
-                });
-            } else {
-                // do something
-            }
-        });
-    })
+    FB.logout(res => {
+        // Person is now logged out
+        // console.log("logout!!!!");
+    });
 } 
 
-function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
-    console.log('statusChangeCallback');
-    console.log(response);                   // The current login status of the person.
-    if (response.status === 'connected') {
-        // getFBUserData()
-        console.log('有連上') 
-        // Logged into your webpage and Facebook.
-    } else {                                 // Not logged into your webpage or we are unable to tell.
-        testAPI();  
-        console.log('沒有連上 笑死')
-        // document.getElementById('status').innerHTML = 'Please log ' +
-    //     'into this webpage.';
-    }
-}
-
-function getFBUserData(){
-    FB.api("/me", "GET", { fields: "id,email" }, user => {
-        if (user.error) {
-            console.log('error')
-        } 
-        else {
-            console.log(user.id, user.email)
-            const signupData = {
-                    email : user.email,
-                    password : user.id
-                }
-            fetch(userAPI, {
-                method: 'POST',
-                body: JSON.stringify(signupData),
-                headers: {'Content-Type': 'application/json'}
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.ok){
-                    window.location.replace('/')
-                }
-                else{
-                    const message = this.querySelector('.message')
-                    message.innerText = data.message
-                }
-            })
-        }
-    })
-}
-
-function checkLoginState() {               // Called when a person is finished with the Login Button.
-    FB.getLoginStatus(function(response) {   // See the onlogin handler
-        statusChangeCallback(response);
-    });
-}
-
-function testAPI() {
-// Testing Graph API after login.  See statusChangeCallback() for when this call is made.
-// console.log("Welcome!  Fetching your information.... ");
-    FB.login(response => {
-        // console.log(response);
-        FB.api("/me", "GET", { fields: "id,email" }, user => {
-            if (user.error) {
-                console.log('error')
-            } 
-            else {
-                // pro.src = user.picture.data.url
-                // window.localStorage["url"] = user.picture.data.url
-                const signupData = {
-                    email : user.email,
-                    password : user.id
-                }
-                fetch(userAPI, {
-                    method: 'POST',
-                    body: JSON.stringify(signupData),
-                    headers: {'Content-Type': 'application/json'}
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if(data.ok){
-                        window.location.replace('/')
-                    }
-                    else{
-                        const message = this.querySelector('.message')
-                        message.innerText = data.message
-                    }
-                })
-                console.log(user.id, user.email)
-            }
-        });
-    },{ scope: "public_profile,email" })
-}
+// function testAPI() {
+// // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
+// // console.log("Welcome!  Fetching your information.... ");
+//     FB.login(response => {
+//         // console.log(response);
+//         FB.api("/me", "GET", { fields: "id,email" }, user => {
+//             if (user.error) {
+//                 console.log('error')
+//             } 
+//             else {
+//                 // pro.src = user.picture.data.url
+//                 // window.localStorage["url"] = user.picture.data.url
+//                 const signupData = {
+//                     email : user.email,
+//                     password : user.id
+//                 }
+//                 fetch(userAPI, {
+//                     method: 'POST',
+//                     body: JSON.stringify(signupData),
+//                     headers: {'Content-Type': 'application/json'}
+//                 })
+//                 .then(res => res.json())
+//                 .then(data => {
+//                     if(data.ok){
+//                         window.location.replace('/')
+//                     }
+//                     else{
+//                         const message = this.querySelector('.message')
+//                         message.innerText = data.message
+//                     }
+//                 })
+//                 console.log(user.id, user.email)
+//             }
+//         });
+//     },{ scope: "public_profile,email" })
+// }
 
 window.fbAsyncInit = function() {
     FB.init({

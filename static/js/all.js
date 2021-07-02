@@ -6,6 +6,13 @@ const modalBody = errorModalContain.querySelector('.modal-body')
 const modalHref = errorModalContain.querySelector('.modal-href')
 modalHref.addEventListener('click',()=> errorModal.hide())
 
+function showErrorModal(data){
+    modalTitle.innText = data.title
+    modalBody.innerText = data.message
+    modalHref.innerText = data.confirm
+    modalHref.href = data.url
+    errorModal.show()
+}
 
 // api
 const userAPI = '/api/user'
@@ -43,9 +50,9 @@ async function signout(){
     const userURL = location.pathname.split('/')[1]
     const toSignUpList = ['new-post', 'scard', 'message', 'my']
     // google登出
-    googleSignout()
+    try{googleSignout()}catch{}
     // FB登出
-    fbLogout()
+    try{fbLogout()}catch{}
 
     if(toSignUpList.includes(userURL)){
         location = '/signup'

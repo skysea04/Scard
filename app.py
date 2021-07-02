@@ -1,5 +1,6 @@
+from logging import debug
 from flask import *
-from flask_socketio import SocketIO, join_room, send
+from flask_socketio import SocketIO, join_room, send, emit
 import os
 from datetime import datetime
 from dotenv import load_dotenv
@@ -8,9 +9,10 @@ mysql_user = os.getenv("MYSQL_USER")
 mysql_password = os.getenv("MYSQL_PASSWORD")
 mysql_host = os.getenv("MYSQL_HOST")
 mysql_database = os.getenv("MYSQL_DATABASE")
-
+redis_host = os.getenv("REDIS_HOST")
 '''test area'''
-
+from redis import Redis
+r = Redis(host=redis_host, port=6379)
 '''test area'''
 
 
@@ -98,12 +100,11 @@ def redirect_message():
 	if "user" in session:
 		user_id = session["user"]["id"]
 		# 找尋最近期通信過的朋友
-		message_id = db.session.execute("SELECT scard_id\
-			FROM (SELECT * FROM messages ORDER BY id DESC LIMIT 9999) friend , scard \
-			WHERE friend.scard_id = scard.id AND (scard.user_1=:id OR scard.user_2=:id) \
-			GROUP BY scard_id \
-			LIMIT 1",
-			{"id":user_id}).first()
+		message_id = db.session.execute("SELECT messages.scard_id\
+		FROM messages INNER JOIN scard ON messages.scard_id = scard.id\
+		WHERE scard.user_1 = :id or scard.user_2 = :id\
+		ORDER BY messages.id DESC\
+		LIMIT 1", {"id":user_id}).first()
 		# 如果有朋友，轉移到該位朋友的頻道
 		if message_id:
 			message_id = message_id[0]
@@ -122,18 +123,40 @@ def handle_message(msg):
     print('get message:'+ msg)
     send(msg, broadcast=True)
 
-@socketio.on('join_room')
-def handle_join_room(room_id):
-	join_room(room_id)
-	send(room_id)
+# @socketio.on('join_room')
+# def handle_join_room(room_id):
+# 	join_room(room_id)
+# 	# send(room_id)
+
+# @socketio.on('send_message')
+# def handle_send_message(data):
+# 	data["time"] = datetime.now().strftime("%-m月%-d日 %H:%M")
+# 	socketio.emit('receive_message', data, room=data["room"])
+# 	message = Messages(scard_id=data["room"], user_id=data["id"], message=data["message"])
+# 	db.session.add(message)
+# 	db.session.commit()
 
 @socketio.on('send_message')
 def handle_send_message(data):
-	data["time"] = datetime.now().strftime("%-m月%-d日 %H:%M")
-	socketio.emit('receive_message', data, room=data["room"])
+	# print('send_message',data)
+	r.publish(data["room"], json.dumps(data))
 	message = Messages(scard_id=data["room"], user_id=data["id"], message=data["message"])
 	db.session.add(message)
 	db.session.commit()
+
+p = r.pubsub()
+sub_lst = []
+@socketio.on('join_room')
+def handle_join_room(room_id):
+	join_room(room_id)
+	if room_id not in sub_lst:
+		p.subscribe(room_id)
+	for message in p.listen():
+		if isinstance(message.get('data'), bytes):
+			msg = json.loads(message['data'])
+			msg["time"] = datetime.now().strftime("%-m月%-d日 %H:%M")
+			# print(msg, msg["room"])
+			emit('receive_message', msg, to=msg["room"])
 
 @app.errorhandler(404)
 def page_not_found(e):

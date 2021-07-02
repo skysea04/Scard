@@ -1,5 +1,5 @@
-from flask import request, jsonify, session
-from . import api
+from flask import json, request, jsonify, session
+from . import ErrorData, api
 import sys
 sys.path.append("..")
 from models.model import Messages, db, User, Scard
@@ -35,6 +35,19 @@ server_error_data = {
     'confirm': '返回首頁',
     'url': '/'
 }
+@api.route('/message_room', methods=['GET'])
+def get_message_room():
+    if 'user' in session:
+        user_id = session['user']['id']
+        rooms = db.session.execute('SELECT id FROM scard WHERE (user_1=:id OR user_2=:id) AND is_friend IS true', {"id": user_id}).all()
+        room_list = []
+        for room in rooms:
+            room_list.append(room.id)
+        data = {
+            "data": room_list
+        }
+        return jsonify(data), 200
+    return jsonify(ErrorData.no_sign_data), 403
 
 @api.route('/friendlist', methods=["GET"])
 def get_friendlist():
@@ -46,8 +59,7 @@ def get_friendlist():
                 FROM (SELECT * FROM messages ORDER BY id DESC LIMIT 9999) friend , scard \
                 WHERE friend.scard_id = scard.id AND (scard.user_1=:id OR scard.user_2=:id) \
                 GROUP BY scard_id \
-                ORDER BY create_time DESC",
-                {"id":user_id})
+                ORDER BY create_time DESC", {"id":user_id})
 
             # 半個朋友都沒有的狀況
             if not last_messages:

@@ -1,10 +1,7 @@
-from enum import unique
-from re import T
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import expression
 from flask_migrate import Migrate
 from sqlalchemy import Index, text
-from redis import Redis
 from flask_caching import Cache
 import os
 from dotenv import load_dotenv
@@ -12,7 +9,6 @@ load_dotenv()
 
 redis_host = os.getenv("REDIS_HOST")
 
-redis = Redis()
 cache = Cache(config={"CACHE_TYPE": "RedisCache", "CACHE_REDIS_HOST": redis_host})
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)

@@ -94,7 +94,7 @@ def get_friendlist():
     #     return jsonify(server_error_data), 500
     
 
-@api.route('/message/<id>', methods=["GET"])
+@api.route('/message/<int:id>', methods=["GET"])
 def get_message(id):
     # try:
         if request.args.get('page'):
@@ -107,6 +107,7 @@ def get_message(id):
             
             message_room_1 = Scard.scard_from_1(id, user_id)
             message_room_2 = Scard.scard_from_2(id, user_id)
+            # print(message_room_1, message_room_2)
 
             if message_room_1: # 如果user_1 == user_id，
                 user = User.view_user(message_room_1.user_1)

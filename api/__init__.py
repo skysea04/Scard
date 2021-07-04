@@ -63,4 +63,4 @@ class ErrorData:
         'url': '#'
     }
 
-from . import user, profile, scard, message, new_post, index, post, comment
+from . import user, profile, scard, message, new_post, index, post, comment, notification

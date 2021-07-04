@@ -43,7 +43,7 @@ async function getFriends(){
     }
 }
 
-// 獲取朋友最新聊天資訊
+// 獲取好友列表最新聊天內容
 function getFriend(friend){
     // 朋友姓名
     const friendName = document.createElement('h6')
@@ -118,8 +118,8 @@ observer.observe(messageLoadIcon)
 ///////////////
 
 // 定義使用者ID, 姓名, 頭像 變數
-let usrID, usrName, usrAvatar
-
+let usrID, usrName, usrAvatar, friendID, friendName
+// 獲取朋友自介資訊與聊天訊息
 async function getMessages(){
     const res = await fetch(messageAPI+messagePage)
     const data = await res.json()
@@ -129,7 +129,8 @@ async function getMessages(){
         usrID = user.id
         usrName = user.name 
         usrAvatar= user.avatar
-        
+        friendName = friend.name
+        friendID = friend.id
         // 更動messagePage判斷有沒有下一頁
         messagePage = data.nextPage
         if(messagePage == null){
@@ -232,13 +233,61 @@ async function getMessages(){
     }
 }
 
-function getMessage(){
-    
+//// 刪除好友
+const delFriendAPI = `/api/scard/${messageRoomId}`
+const delDot = document.querySelector('.del-dots')
+const delBtn = document.createElement('a')
+delBtn.className = 'btn  text-danger '
+delBtn.innerText = '刪除好友'
+const delPopover = new bootstrap.Popover(delDot, {
+    container: 'body',
+    placement: "bottom",
+    html: true,
+    trigger: 'manual',
+    content: delBtn
+})
+
+delDot.addEventListener('click', ()=>{
+    delPopover.toggle()
+})
+delDot.addEventListener('blur', ()=>{
+    delPopover.hide()
+})
+
+// delModal變數
+const delModalContain = document.getElementById('del-modal')
+const delModal = new bootstrap.Modal(delModalContain)
+const delModalTitle = delModalContain.querySelector('.modal-title')
+const delModalBody = delModalContain.querySelector('.modal-body')
+const delModalHref = delModalContain.querySelector('.modal-href')
+
+// 請使用者確認是否刪除好友
+function showDelModal(){
+    delModalBody.innerText = `確定要刪除卡友「${friendName}」嗎？`
+    delModal.show()
 }
+// 執行刪除好友動作
+async function delFriend(){
+    const friendData = {
+        friendID: friendID
+    }
+    const res = await fetch(delFriendAPI, {
+        method: 'DELETE',
+        body: JSON.stringify(friendData),
+        headers: {'content-type': 'application/json'}
+    })
+    const data = await res.json()
+    // console.log(data)
+    data.ok ? location = '/message' : showErrorModal(data)
+    delModal.hide()
+}
+
+delBtn.addEventListener('click', showDelModal)
+delModalHref.addEventListener('click', delFriend)
 
 
 //// 傳送訊息
-const socket = io()
+// const socket = io()
 socket.on('connect', function(){
     fetch(messageRoomAPI)
     .then(res => res.json())

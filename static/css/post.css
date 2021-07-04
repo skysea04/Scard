@@ -43,7 +43,7 @@ section.post-field{
 .post-interact *{
     cursor: pointer;
 }
-.notice.active svg{
+.follow.active svg{
     color: #3397CF;
 }
 

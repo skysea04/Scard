@@ -8,7 +8,7 @@ from . import api
 s3 = boto3.client('s3')
 
 sys.path.append("..")
-from models.model import Post, PostBoard, User, db, cache
+from models.model import Notification, Post, PostBoard, User, db, cache
 
 no_sign_data = {
     "error": True,
@@ -117,14 +117,16 @@ def post_new_post():
         post_content = req_data["content"]
 
         # 查看使用者是否有正確選擇board
-        board_list = []
-        post_boards = PostBoard.query.all()
-        for board in post_boards:
-            board_list.append(board.id)
-            
-        board_id
-        if board_id not in board_list:
+        board = PostBoard.view_board(board_id)
+        if not board:
             return jsonify(wrong_board_data), 400
+        # board_list = []
+        # post_boards = PostBoard.query.all()
+        # for board in post_boards:
+        #     board_list.append(board.id)
+            
+        # if board_id not in board_list:
+        #     return jsonify(wrong_board_data), 400
         
         # 查看使用者是否有正確選擇發文名稱
         user = User.view_user(user_id)
@@ -146,9 +148,12 @@ def post_new_post():
         if imgs == []:
         # 將文章更新到資料庫，回傳使用者成功資訊
             new_post = Post(board_id=board_id, user_id=user_id, user_name=user_name, title=post_title, content=post_content)
-        elif imgs[0]:
+        else:
             new_post = Post(board_id=board_id, user_id=user_id, user_name=user_name, title=post_title, content=post_content, first_img = imgs[0])
         db.session.add(new_post)
+        db.session.commit()
+        new_note = Notification(id=f'post{new_post.id}', href=f'b/{board.sys_name}/p/{new_post.id}')
+        db.session.add(new_note)
         db.session.commit()
         data = {
             'ok': True,

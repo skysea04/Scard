@@ -1,10 +1,10 @@
 from flask import request, jsonify, session
 from . import api, ErrorData
 from datetime import datetime
-import sys
+import sys, json
 sys.path.append("..")
-from models.model import Comment, CommentUserLike, Post, User, db
-
+from app import r
+from models.model import Comment, CommentUserLike, Notification, Post, PostBoard, PostUserFollow, User, db
 @api.route('/comment/<int:post_id>', methods=["POST"])
 def post_comment(post_id):
     if "user" in session:
@@ -34,8 +34,21 @@ def post_comment(post_id):
 
         # 將回應更新到資料庫，增加comment_count，回傳使用者成功資訊
         post = Post.query.filter_by(id=post_id).first()
+        board = PostBoard.view_board(post.board_id)
         post.comment_count += 1
         new_cmt = Comment(post_id=post_id, user_id=user_id, user_name=user_name, floor=post.comment_count, content=content)
+
+        user_follow = PostUserFollow.query.filter_by(user_id=user_id, post_id=post_id).first()
+        add_follow = False
+        if not user_follow:
+            user_follow = PostUserFollow(user_id=user_id, post_id=post_id)
+            db.session.add(user_follow)
+            add_follow = True
+
+        post_note = Notification.query.filter_by(id = f'post{post_id}').first()
+        if post_note.content is None:
+            post_note.content = f'你追蹤的文章<b>「{post.title}」</b>有新的回應。'
+        post_note.update_time = datetime.now()
         
         db.session.add(new_cmt)
         db.session.commit()
@@ -46,8 +59,17 @@ def post_comment(post_id):
             'floor': post.comment_count,
             'createTime': datetime.now().strftime('%-m月%-d日 %H:%M'),
             'likeCount': 0,
-            'content': content
+            'content': content,
+            'addFollow': add_follow
         }
+        note_data = {
+            'room': f'post{post_id}',
+            'msg': f'你追蹤的文章<b>「{post.title}」</b>有新的回應。',
+            'href': f'/b/{board.sys_name}/p/{post_id}',
+            'time': datetime.now().strftime("%-m月%-d日 %H:%M")
+        }
+        # print(note_data)
+        r.publish(note_data['room'], json.dumps(note_data))
         return jsonify(data), 200
         
     return jsonify(ErrorData.no_sign_data), 403

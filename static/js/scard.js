@@ -63,7 +63,7 @@ fetch(scardAPI)
     })
 
 function scardZeroing(){
-    fetch(scardZeroingAPI)
+    fetch(scardZeroingAPI, {method: 'PATCH'})
 }
 
 // 加好友

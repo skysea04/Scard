@@ -8,9 +8,9 @@
     {% endblock %}
 
     {% block main %}
-    <main class="container mx-auto row mt-4 justify-content-evenly">
+    <main class="container mx-0 row mt-4 justify-content-evenly message-page">
         <!-- 朋友欄 -->
-        <section class="friends col-3 flex-shrink-0">
+        <section class="friends col-2 flex-shrink-0">
             <div class="text-white">最新信件</div>
             <div class="list-group mt-3">
                 <!-- <a href="/message/6" class="friend  p-3 d-flex w-100" aria-current="true">
@@ -29,7 +29,7 @@
         </section>
         <!-- 訊息、朋友資訊欄 -->
         <section class="messages-and-friends-info col-7 row">
-            <div class="p-2 bg-white rounded mx-auto scard-friend h-100"> 
+            <div class="p-2 bg-white rounded mx-auto scard-friend h-100 position-relative"> 
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
                         <a id="nav-message" class="nav-link active" aria-current="page" href="">&nbsp;</a>
@@ -38,6 +38,11 @@
                         <a id="nav-friend-info" class="nav-link" href="">&nbsp;</a>
                     </li>      
                 </ul>
+                <button class="position-absolute del-dots">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                    </svg>
+                </button>
                 <div class="messages d-block">
                     <ul class="list-group list-group-flush old-messages d-flex flex-column-reverse border-0">
                         <!-- 一條訊息的html -->
@@ -135,22 +140,24 @@
     {% endblock %}
     
     {% block modal %}
-    <!-- 處理各式Error訊息的Modal -->
-    <!-- <div class="modal fade" id="error-modal" tabindex="-1" aria-labelledby="error-modal" aria-hidden="true">
+    <!-- 刪除好友的Modal -->
+    <div class="modal fade" id="del-modal" tabindex="-1" aria-labelledby="del-modal" aria-hidden="true">
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="error-modal"></h5>
+            <h5 class="modal-title" id="del-modal">確認刪除？</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body"></div>
+            <div class="modal-body">
+                
+            </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-            <a href="/basicprofile" class="btn bg-scard-l text-white modal-href"></a>
+            <button class="btn btn-danger text-white modal-href">刪除</button>
             </div>
         </div>
         </div>
-    </div> -->
+    </div>
     {% endblock %}
 
     {% block JS %}

@@ -1,26 +1,10 @@
 from flask import request, jsonify, session
 from sqlalchemy import or_
-from . import api
+from . import ErrorData, api
 from datetime import date, timedelta
 import sys
 sys.path.append("..")
 from models.model import Messages, db, User, Scard, cache
-
-no_sign_data = {
-    "error": True,
-    'title': '您尚未登入',
-    'message': '想一起加入討論，要先登入 Scard 唷！',
-    'confirm': '登入',
-    'url': '/signup'
-}
-
-basic_profile_data = {
-    'error': True, 
-    'title': '您尚未填寫基本資料',
-    'message': '想一起加入討論，要先填完基本資料唷！',
-    'confirm': '填資料去',
-    'url': '/basicprofile'
-}
 
 my_profile_data = {
     'error': True,
@@ -38,14 +22,6 @@ tomorrow_scard_data = {
     'url': '/'
 }
 
-server_error_data = {
-    "error": True,
-    'title': '錯誤訊息',
-    'message': '伺服器內部錯誤',
-    'confirm': '返回首頁',
-    'url': '/'
-}
-
 @api.route('/scard', methods=["GET"])
 def get_scard():
     try:
@@ -56,7 +32,7 @@ def get_scard():
 
             # 若User欄位的verify為false，建議使用者轉移到basic_profile填寫頁面
             if user_verify == False:
-                return jsonify(basic_profile_data), 403
+                return jsonify(ErrorData.basic_profile_data), 403
                 
             # 若是自我介紹還沒填完scard為false，建議使用者轉移到my_profile填寫頁面
             if user_scard == False:
@@ -100,10 +76,10 @@ def get_scard():
             }
             return jsonify(data), 200
         # 沒有登入
-        return jsonify(no_sign_data), 403
+        return jsonify(ErrorData.no_sign_data), 403
     # 伺服器錯誤
     except:
-        return jsonify(server_error_data), 500
+        return jsonify(ErrorData.server_error_data), 500
 
 
 @api.route('/scard', methods=["POST"])
@@ -166,9 +142,9 @@ def invite_friend():
 
         return jsonify(data), 200
         
-    return jsonify(no_sign_data), 403
+    return jsonify(ErrorData.no_sign_data), 403
 
-@api.route('/scard/zeroing', methods=["GET"])
+@api.route('/scard/zeroing', methods=["PATCH"])
 def zeroing_scard():
     try:
         if 'user' in session:
@@ -181,4 +157,30 @@ def zeroing_scard():
             }
             return jsonify(data), 200
     except:
-        return jsonify(server_error_data), 500
+        return jsonify(ErrorData.server_error_data), 500
+
+
+@api.route('/scard/<int:scard_id>', methods=["DELETE"])
+def delete_friend(scard_id):
+    if 'user' in session:
+        data = request.json
+        friend_id = data['friendID']
+        user_id = session['user']['id']
+        # print(user_id, friend_id, type(user_id), type(friend_id),scard_id ,type(scard_id))
+        if user_id < friend_id:
+            db.session.execute('DELETE FROM scard\
+            WHERE id=:scard_id AND user_1=:user_id AND user_2=:friend_id', {
+                'scard_id': scard_id, 'user_id': user_id, 'friend_id': friend_id
+            })
+            cache.delete_memoized(Scard.scard_from_1, Scard, scard_id, user_id)
+        else:
+            db.session.execute('DELETE FROM scard\
+            WHERE id=:scard_id AND user_1=:friend_id AND user_2=:user_id', {
+                'scard_id': scard_id, 'user_id': user_id, 'friend_id': friend_id
+            })
+            cache.delete_memoized(Scard.scard_from_2, Scard, scard_id, user_id)
+        db.session.commit()
+        data = {"ok": True}
+        return jsonify(data), 200
+        
+    return jsonify(ErrorData.no_sign_data), 403

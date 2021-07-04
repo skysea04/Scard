@@ -118,10 +118,10 @@ def message(id):
 		return render_template('message.html')
 	return redirect(url_for('signup'))
 
-@socketio.on('message')
-def handle_message(msg):
-    print('get message:'+ msg)
-    send(msg, broadcast=True)
+# @socketio.on('message')
+# def handle_message(msg):
+#     print('get message:'+ msg)
+#     send(msg, broadcast=True)
 
 # @socketio.on('join_room')
 # def handle_join_room(room_id):
@@ -144,19 +144,36 @@ def handle_send_message(data):
 	db.session.add(message)
 	db.session.commit()
 
-p = r.pubsub()
-sub_lst = []
+msg_p = r.pubsub()
+msg_room_lst = []
 @socketio.on('join_room')
 def handle_join_room(room_id):
 	join_room(room_id)
-	if room_id not in sub_lst:
-		p.subscribe(room_id)
-	for message in p.listen():
+	if room_id not in msg_room_lst:
+		msg_p.subscribe(room_id)
+	for message in msg_p.listen():
 		if isinstance(message.get('data'), bytes):
 			msg = json.loads(message['data'])
 			msg["time"] = datetime.now().strftime("%-m月%-d日 %H:%M")
-			# print(msg, msg["room"])
+			print(msg, msg["room"])
 			emit('receive_message', msg, to=msg["room"])
+
+post_p = r.pubsub()
+post_room_lst = []
+@socketio.on('follow_post')
+def handle_follow_post(post_id):
+	print('link', post_id)
+	post_room = f'post{post_id}'
+	join_room(post_room)
+	if post_room not in post_room_lst:
+		post_p.subscribe(post_room)
+	for note in post_p.listen():
+		# print('listen')
+		if isinstance(note.get('data'), bytes):
+			msg = json.loads(note['data'])
+			# msg["time"] = datetime.now().strftime("%-m月%-d日 %H:%M")
+			# print(type(msg), msg)
+			emit('receive_post_note', msg, to=msg['room'])
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -164,4 +181,4 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 if __name__ == '__main__':
-	socketio.run(app, host="0.0.0.0",port=8000)
+	socketio.run(app, host="0.0.0.0",port=8000, debug=True)

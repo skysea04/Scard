@@ -59,14 +59,14 @@ class Collage(db.Model):
 class CollageDepartment(db.Model):
     __tablename__ = 'collage_department'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    collage_id = db.Column(db.String(255), db.ForeignKey('collage.id'), nullable=False)
+    collage_id = db.Column(db.String(255), db.ForeignKey('collage.id', ondelete='CASCADE'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
 
 class Scard(db.Model):
     __tablename__ = 'scard'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_1 = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user_2 = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_1 = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    user_2 = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     create_date = db.Column(db.Date, server_default=text('(NOW())'))
     user_1_message = db.Column(db.String(255))
     user_2_message = db.Column(db.String(255))
@@ -99,8 +99,8 @@ Index('user2_date_index', Scard.user_2, Scard.create_date)
 class Messages(db.Model):
     __tablename__ = 'messages'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    scard_id = db.Column(db.Integer, db.ForeignKey('scard.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    scard_id = db.Column(db.Integer, db.ForeignKey('scard.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     message = db.Column(db.Text, nullable=False)
     create_time = db.Column(db.DateTime, server_default=text('NOW()'))
 
@@ -122,8 +122,8 @@ class PostBoard(db.Model):
 class Post(db.Model):
     __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    board_id = db.Column(db.Integer, db.ForeignKey('postboard.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    board_id = db.Column(db.Integer, db.ForeignKey('postboard.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     user_name = db.Column(db.String(255), nullable=False)
     title = db.Column(db.String(255), nullable=False)
     content = db.Column(db.Text, nullable=False)
@@ -135,16 +135,25 @@ class Post(db.Model):
 class PostUserLike(db.Model):
     __tablename__ = 'post_user_like'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id', ondelete='CASCADE'), nullable=False)
 
-Index('post_user_index', PostUserLike.post_id, PostUserLike.user_id)
+Index('user_post_index', PostUserLike.user_id, PostUserLike.post_id)
+
+class PostUserFollow(db.Model):
+    __tablename__ = 'post_user_follow'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id', ondelete='CASCADE'), nullable=False)
+    note_id = db.Column(db.String(255), db.ForeignKey('notification.id', ondelete='CASCADE'))
+
+Index('user_post_index', PostUserFollow.user_id, PostUserFollow.post_id)
 
 class Comment(db.Model):
     __tablename__ = 'comment'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     user_name = db.Column(db.String(255), nullable=False)
     floor = db.Column(db.Integer, nullable=False)
     content = db.Column(db.Text, nullable=False)
@@ -154,7 +163,14 @@ class Comment(db.Model):
 class CommentUserLike(db.Model):
     __tablename__ = 'comment_user_like'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    comment_id = db.Column(db.Integer, db.ForeignKey('comment.id', ondelete='CASCADE'), nullable=False)
 
 Index('comment_user_index', CommentUserLike.comment_id, CommentUserLike.user_id)
+
+class Notification(db.Model):
+    __tablename__ = 'notification'
+    id = db.Column(db.String(255), primary_key=True)
+    content = db.Column(db.String(255))
+    href = db.Column(db.String(255))
+    update_time = db.Column(db.DateTime, server_default=text('NOW()'), nullable=False)

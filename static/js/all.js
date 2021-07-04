@@ -7,7 +7,7 @@ const modalHref = errorModalContain.querySelector('.modal-href')
 modalHref.addEventListener('click',()=> errorModal.hide())
 
 function showErrorModal(data){
-    modalTitle.innText = data.title
+    modalTitle.innerText = data.title
     modalBody.innerText = data.message
     modalHref.innerText = data.confirm
     modalHref.href = data.url

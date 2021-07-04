@@ -4,6 +4,7 @@ const postID = location.pathname.split('/').pop()
 const postAPI = `/api/post/${postID}`
 const commentAPI = `/api/comment/${postID}`
 const postLikeAPI = `/api/post/${postID}/like`
+const postFollowAPI = `/api/post/${postID}/follow`
 const newPostAPI = '/api/new-post'
 const postImageAPI = '/api/new-post/image'
 
@@ -17,6 +18,7 @@ const postCreateTime = thePost.querySelector('.create-time')
 const postContent = thePost.querySelector('.post-content')
 const postLikeCount = thePost.querySelector('.like-count')
 const postLikeIcon = thePost.querySelector('.like')
+const postFollowIcon = thePost.querySelector('.follow')
 const postCommentCounts = document.querySelectorAll('.comment-count')
 
 const comments = document.querySelector('.comments')
@@ -40,6 +42,9 @@ fetch(postAPI)
     })
     if(data.like){
         postLikeIcon.classList.add('active')
+    }
+    if(data.follow){
+        postFollowIcon.classList.add('active')
     }
 
     // 如果留言數為0，顯示沒有留言的頁面配置
@@ -171,6 +176,22 @@ async function clickLike(){
     }
 }
 postLikeIcon.addEventListener('click', clickLike)
+// 追蹤文章
+async function clickFollow(){
+    const res = await fetch(postFollowAPI, {method: 'PATCH'})
+    const data = await res.json()
+    if(data.error){
+        modalTitle.innText = data.title
+        modalBody.innerText = data.message
+        modalHref.innerText = data.confirm
+        modalHref.href = data.url
+        errorModal.show()
+    }
+    else{
+        postFollowIcon.classList.toggle('active')
+    }
+}
+postFollowIcon.addEventListener('click', clickFollow)
 
 
 //// 使用者留言撰寫區
@@ -394,16 +415,25 @@ async function sendComment(){
     }
     else{
         postCommentContent.innerHTML = ''
+        // 關閉留言編輯區
         commentToggle()
+
         // 加入留言到頁面
         getComment(data)
+
         // 更改留言數量
         postCommentCounts.forEach( cmtCount => {
             cmtCount.innerText = data.floor
         })
-        if(!showCmt){
+
+        if(!showCmt){ // 過去沒有留言，秀出留言區
             showCmt = true
             comments.classList.remove('d-none')
+        }
+        // 如果使用者還沒有追蹤該貼文，幫使用者自動追蹤
+        if(data.addFollow){
+            postFollowIcon.classList.add('active')
+            socket.emit('follow_post', postID)
         }
     }
 

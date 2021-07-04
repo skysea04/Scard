@@ -2,11 +2,15 @@
     font-size: 14px;
 }
 
+.message-page{
+    --bs-gutter-x:0;
+}
+
 .friends, .messages-and-friends-info{
     height: calc(100vh - 59px - 24px - 30px);
 }
 .friends{
-    flex-basis: 350px;
+    flex-basis: 300px;
     flex-shrink: 0;
 }
 .messages-and-friends-info{
@@ -57,6 +61,14 @@
 .friend-info, .messages{
     height: calc(100% - 60px);
     display: none;
+}
+
+.del-dots{
+    border: 0;
+    background-color: #ffffff00;
+    cursor: pointer;
+    top: 15px;
+    right: 10px;
 }
 
 

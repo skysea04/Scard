@@ -46,6 +46,14 @@ a{
     background-color: #00324E;
 }
 
+.modal-dialog{
+    top:200px;
+}
+
+.popover-body{
+    padding: 0 0;
+}
+
 .bi-wallet2::before{
     transform: rotate(270deg);
 }

@@ -83,10 +83,7 @@ async function getPosts(){
         
         const content = document.createElement('p')
         content.className = 'mb-3 post-content'
-        const postContent =  post.content.replace(/<[^>]+>/g, ' ');
-        // console.log(postContent)
-        content.append(postContent)
-        // console.log(htmlToElem(post.content))
+        content.innerHTML = post.content.replace(/<[^>]+>/g, ' ')
 
         const postField = document.createElement('div')
         postField.className = 'flex-fill post-container'

@@ -44,7 +44,7 @@ def post_comment(post_id):
         user_follow = PostUserFollow.query.filter_by(user_id=user_id, post_id=post_id).first()
         add_follow = False
         if not user_follow:
-            user_follow = PostUserFollow(user_id=user_id, post_id=post_id)
+            user_follow = PostUserFollow(user_id=user_id, post_id=post_id, note_id=f'post{post_id}')
             db.session.add(user_follow)
             add_follow = True
 

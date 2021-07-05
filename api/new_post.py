@@ -144,7 +144,7 @@ def post_new_post():
             new_post = Post(board_id=board_id, user_id=user_id, user_name=user_name, title=post_title, content=post_content, first_img = imgs[0])
         db.session.add(new_post)
         db.session.commit()
-        new_note = Notification(id=f'post{new_post.id}', href=f'b/{board.sys_name}/p/{new_post.id}')
+        new_note = Notification(id=f'post{new_post.id}', href=f'/b/{board.sys_name}/p/{new_post.id}')
         db.session.add(new_note)
         db.session.commit()
         data = {

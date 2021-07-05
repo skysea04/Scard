@@ -106,6 +106,7 @@
 <script src="https://cdn.socket.io/4.1.1/socket.io.min.js" integrity="sha384-cdrFIqe3RasCMNE0jeFG9xJHog/tgOVC1E9Lzve8LQN1g5WUHo0Kvk1mawWjxX7a" crossorigin="anonymous"></script>
 <script>
     const myFollowPostAPI = '/api/post/my-follow'
+    const noteAPI = '/api/notification'
     const socket = io()
     socket.on('connect', function(){
         fetch(myFollowPostAPI)
@@ -130,7 +131,24 @@
     noteHeader.className = 'mb-3'
     noteHeader.innerText = '通知'
     noteContainer.append(noteHeader, noteLst)
-
+    
+    // 匯入過去通知
+    fetch(noteAPI)
+    .then(res => res.json())
+    .then(data => {
+        if(data.data){
+            data.data.forEach(note => {
+                createNote(note)
+            })
+        }
+    })
+    
+    // 當新通知來時直接更新
+    socket.on('receive_post_note', data => {
+        console.log(data)
+        createNote(data)
+    })
+    
     function createNote(data){
         const oldNote = noteLst.querySelector(`a[href="${data.href}"]`)
         if(oldNote){ //如果之前就有相同文章的通知，直接更改資訊即可
@@ -155,11 +173,6 @@
             noteLst.prepend(note)
         }
     }
-    socket.on('receive_post_note', data => {
-        console.log(data)
-        createNote(data)
-    })
-
 
     const noteBtn = document.querySelector('#notification')
     const notePopover = new bootstrap.Popover(noteBtn, {
@@ -173,9 +186,9 @@
     noteBtn.addEventListener('click', ()=>{
         notePopover.toggle()
     })
-    // noteBtn.addEventListener('blur', ()=>{
-    //     notePopover.hide()
-    // })
+    noteBtn.addEventListener('blur', ()=>{
+        notePopover.hide()
+    })
 </script>
 <script src="/static/js/all.js"></script>
 {% block JS %}

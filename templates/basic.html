@@ -19,6 +19,12 @@
             width: 320px;
             height: calc(100vh - 150px);
         }
+        .note{
+            display: block;
+        }
+        .note:hover{
+            background-color: rgba(0, 16, 32, 0.06);
+        }
         .note>p{
             text-align: justify;
         }
@@ -122,13 +128,13 @@
 
     // 通知
     const noteContainer = document.createElement('div')
-    noteContainer.className = 'note-container overflow-auto p-3'
+    noteContainer.className = 'note-container overflow-auto py-3'
 
     const noteLst = document.createElement('div')
     noteLst.className = 'note-lst'
 
     const noteHeader = document.createElement('h5')
-    noteHeader.className = 'mb-3'
+    noteHeader.className = 'mb-3 ms-3'
     noteHeader.innerText = '通知'
     noteContainer.append(noteHeader, noteLst)
     
@@ -158,15 +164,15 @@
         }
         else{ //創造新的通知訊息
             const note = document.createElement('a')
-            note.className = 'note'
+            note.className = 'note py-2'
             note.href = data.href
     
             const noteContent = document.createElement('p')
-            noteContent.className = 'note-content mb-1 text-body'
+            noteContent.className = 'note-content mx-3 pb-1 text-body'
             noteContent.innerHTML = data.msg
     
             const noteTime = document.createElement('p')
-            noteTime.className = 'note-time mb-3'
+            noteTime.className = 'note-time mx-3'
             noteTime.innerText = data.time
             
             note.append(noteContent, noteTime)

@@ -10,9 +10,17 @@ mysql_password = os.getenv("MYSQL_PASSWORD")
 mysql_host = os.getenv("MYSQL_HOST")
 mysql_database = os.getenv("MYSQL_DATABASE")
 redis_host = os.getenv("REDIS_HOST")
-'''test area'''
+mail_username = os.getenv('MAIL_USERNAME')
+mail_password = os.getenv('MAIL_PASSWORD')
 from redis import Redis
 r = Redis(host=redis_host, port=6379)
+
+
+'''test area'''
+# import smtplib
+# mail_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+# mail_server.login(mail_username, mail_password)
+# import email.message
 '''test area'''
 
 
@@ -26,11 +34,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}:3306/{mysql_database}'
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping":True}
 
+
 socketio = SocketIO(app)
-from models.model import Messages, Post, PostBoard, db, migrate, cache
+from models.model import Messages, Post, PostBoard, User, db, migrate, cache
 db.init_app(app)
 migrate.init_app(app, db)
-
 cache.init_app(app)
 
 # 向app註冊api的藍圖
@@ -76,6 +84,14 @@ def signup():
 	if 'user' in session:
 		return redirect(url_for('index'))
 	return render_template('signup.html')
+
+@app.route('/mailverify/<mail>')
+def mail_verify(mail):
+	verified_user = User.query.filter_by(email=mail).first()
+	if verified_user.verify_status == 'stranger':
+		verified_user.verify_status = 'mail'
+	db.session.commit()
+	return render_template('mail-verified.html')
 
 @app.route('/basicprofile')
 def basic_profile():
@@ -155,7 +171,7 @@ def handle_join_room(room_id):
 		if isinstance(message.get('data'), bytes):
 			msg = json.loads(message['data'])
 			msg["time"] = datetime.now().strftime("%-m月%-d日 %H:%M")
-			print(msg, msg["room"])
+			# print(msg, msg["room"])
 			emit('receive_message', msg, to=msg["room"])
 
 post_p = r.pubsub()
@@ -181,4 +197,4 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 if __name__ == '__main__':
-	socketio.run(app, host="0.0.0.0",port=8000)
+	socketio.run(app, host="0.0.0.0",port=3000, debug=True)

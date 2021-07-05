@@ -38,7 +38,8 @@ function getFBUserData(){
             console.log(user.id, user.email)
             const signupData = {
                 email : `FB_${user.email}`,
-                password : user.id
+                password : user.id,
+                fromAPI: true
             }
             fetch(userAPI, {
                 method: 'POST',
@@ -96,7 +97,8 @@ function setSigninStatus() {
         console.log(user.dt.Nt, user.dt.LS)
         const signupData = {
             email : `GOOGLE_${user.dt.Nt}`,
-            password : user.dt.LS
+            password : user.dt.LS,
+            fromAPI: true 
         }
         fetch(userAPI, {
             method: 'POST',

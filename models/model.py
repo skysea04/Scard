@@ -38,6 +38,7 @@ class User(db.Model):
     days_no_open_scard = db.Column(db.Integer, server_default=text("3"), nullable=False)
     match_list = db.Column(db.JSON, server_default=text('(JSON_ARRAY())'))
     comment_avatar = db.Column(db.String(255))
+    verify_status = db.Column(db.Enum("stranger", "mail", 'basic', 'scard', 'admin'), server_default="stranger",  nullable=False)
 
     def as_dict(self):
         return{c.name: getattr(self, c.name) for c in self.__table__.columns}

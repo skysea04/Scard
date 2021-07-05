@@ -3,12 +3,12 @@ import io, sys, boto3
 from uuid import uuid4
 from PIL import Image
 
-from . import api, ErrorData
+from . import api, ErrorData, Collage, CollageDepartment, User, db, cache
 
 s3 = boto3.client('s3')
 
-sys.path.append("..")
-from models.model import Collage, CollageDepartment, User, db, cache
+# sys.path.append("..")
+# from models.model import Collage, CollageDepartment, User, db, cache
 
 
 @api.route('/profile', methods=["GET"])

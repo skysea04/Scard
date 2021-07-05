@@ -1,10 +1,10 @@
 from flask import request, jsonify, session
-from . import api, ErrorData
+from . import api, ErrorData, Comment, CommentUserLike, Notification, Post, PostBoard, PostUserFollow, User, db
 from datetime import datetime
 import sys, json
 sys.path.append("..")
 from app import r
-from models.model import Comment, CommentUserLike, Notification, Post, PostBoard, PostUserFollow, User, db
+# from models.model import Comment, CommentUserLike, Notification, Post, PostBoard, PostUserFollow, User, db
 @api.route('/comment/<int:post_id>', methods=["POST"])
 def post_comment(post_id):
     if "user" in session:

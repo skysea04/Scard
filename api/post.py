@@ -1,8 +1,8 @@
 from flask import request, jsonify, session
-from . import api, ErrorData
-import sys, json
-sys.path.append("..")
-from models.model import Post, PostBoard, PostUserFollow, PostUserLike, db
+from . import api, ErrorData, Post, PostUserFollow , PostUserLike, db
+# import sys, json
+# sys.path.append("..")
+# from models.model import Post, PostBoard, PostUserFollow, PostUserLike, db
 
 # 獲取文章資訊
 @api.route('/post/<int:post_id>', methods=["GET"])

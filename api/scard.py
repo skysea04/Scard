@@ -1,10 +1,10 @@
 from flask import request, jsonify, session
 from sqlalchemy import or_
-from . import ErrorData, api
+from . import ErrorData, api, Messages, db, User, Scard, cache
 from datetime import date, timedelta
-import sys
-sys.path.append("..")
-from models.model import Messages, db, User, Scard, cache
+# import sys
+# sys.path.append("..")
+# from models.model import Messages, db, User, Scard, cache
 
 my_profile_data = {
     'error': True,

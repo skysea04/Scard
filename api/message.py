@@ -1,8 +1,8 @@
 from flask import json, request, jsonify, session
-from . import ErrorData, api
-import sys
-sys.path.append("..")
-from models.model import Messages, db, User, Scard
+from . import ErrorData, api, db, User, Scard
+# import sys
+# sys.path.append("..")
+# from models.model import Messages, db, User, Scard
 
 no_sign_data = {
     "error": True,

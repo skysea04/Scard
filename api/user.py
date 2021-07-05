@@ -1,8 +1,13 @@
 from flask import request, jsonify, session
-from . import api
-import sys
+from . import ErrorData, api, User, db
+import sys, smtplib, email.message
+
 sys.path.append("..")
-from models.model import db, User
+# from models.model import db, User
+from app import mail_username, mail_password
+
+mail_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+mail_server.login(mail_username, mail_password)
 
 no_sign_data = {
     "error": True,
@@ -49,11 +54,29 @@ def post_user():
         data = request.json
         email = data['email']
         password = data['password']
+        from_api = data['fromAPI']
         exist_user = User.query.filter_by(email=email).first()
 
         # 註冊成功 順便登入
         if not exist_user:
-            new_user = User(email=email, password=password)
+            if from_api:
+                new_user = User(email=email, password=password, verify_status='mail')
+            else:
+                new_user = User(email=email, password=password)
+
+                mail_msg = email.message.EmailMessage()
+                mail_msg["From"] = mail_username
+                mail_msg["To"] = email
+                mail_msg["Subject"] = 'Scard驗證信箱'
+                href = f'https://scard.skysea.fun/mailverify/{email}'
+                mail_msg.add_alternative(f'\
+                <h3>立即啟用你的Scard帳號</h3>\
+                <p>感謝你/妳的註冊，我們想確認你所輸入的註冊信箱是正確的。</p>\
+                <p>點擊下方網址完成信箱驗證，即可馬上啟用Scard帳號喔！</p>\
+                <a href="{href}">{href}</a>\
+                    ', subtype='html')
+                mail_server.send_message(mail_msg)
+
             db.session.add(new_user)
             db.session.commit()
             exist_user = User.query.filter_by(email=email).first()
@@ -61,6 +84,7 @@ def post_user():
                 "id": exist_user.id,
                 "verify": exist_user.verify,
                 "scard": exist_user.scard,
+                "verify_status": exist_user.verify_status,
                 "collage": exist_user.collage,
                 "department": exist_user.department,
                 "commentAvatar": exist_user.comment_avatar
@@ -78,6 +102,7 @@ def post_user():
                     "id": exist_user.id,
                     "verify": exist_user.verify,
                     "scard": exist_user.scard,
+                    "verify_status": exist_user.verify_status,
                     "collage": exist_user.collage,
                     "department": exist_user.department,
                     "commentAvatar": exist_user.comment_avatar
@@ -112,13 +137,16 @@ def delete_user():
 @api.route('/verify', methods=["GET"])
 def verify_user():
     if 'user' in session:
-        verify = session["user"]["verify"]
-        scard = session["user"]["scard"]
+        # verify = session["user"]["verify"]
+        # scard = session["user"]["scard"]
         href = request.args.get('a')
-        if verify == False:
-            return jsonify(basic_profile_data), 403
-        if href == 'scard' or href == 'message':
-            if scard == False:
+        verify = session['user']['verify_status']
+        if verify == 'stranger':
+            return jsonify(ErrorData.verify_mail_data), 403
+        elif verify == 'mail':
+            return jsonify(ErrorData.basic_profile_data), 403
+        elif verify == 'basic':
+            if href == 'scard' or href == 'message':
                 return jsonify(my_profile_data), 403
         data = {
             "ok": True,

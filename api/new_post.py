@@ -3,12 +3,12 @@ import io, sys, boto3, re
 from uuid import uuid4
 from PIL import Image
 
-from . import api
+from . import api, Notification, Post, PostBoard, User, db
 
 s3 = boto3.client('s3')
 
-sys.path.append("..")
-from models.model import Notification, Post, PostBoard, User, db, cache
+# sys.path.append("..")
+# from models.model import Notification, Post, PostBoard, User, db
 
 no_sign_data = {
     "error": True,

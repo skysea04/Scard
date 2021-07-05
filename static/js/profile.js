@@ -70,11 +70,7 @@ async function getProfile(){
     const res = await fetch(profileAPI)
     const data = await res.json()
     if(data.error){
-        modalTitle.innText = data.title
-        modalBody.innerText = data.message
-        modalHref.innerText = data.confirm
-        modalHref.href = data.url
-        errorModal.show()
+        showErrorModal(data)
     }else{
         // 改變select option的函式
         function select(selectId, optionValToSelect){

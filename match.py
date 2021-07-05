@@ -14,7 +14,7 @@ db.__init__(app)
 start_time = time.time()
 today = date.today()
 yesterday = today - timedelta(days=1)
-
+dby = yesterday - timedelta(days=1)
 
 '''
 測試區
@@ -31,8 +31,8 @@ def create_user():
         user_cursor = user_db.cursor()
         
         for i in range(f_id, l_id):
-            sql = 'INSERT INTO user (email, password, name, collage, department, gender, birthday, verify, scard, days_no_open_scard) VALUES (%s, %s, %s, %s, %s, %s, %s ,%s ,%s ,%s)'
-            val = (f'test{i}@test.com', '123', f'測試人員{i}', 'test collage', 'test department', 'male', date(1996,5,23), True, True, 0)
+            sql = 'INSERT INTO user (email, password, name, collage, department, gender, birthday, verify_status, days_no_open_scard) VALUES (%s, %s, %s, %s, %s, %s, %s ,%s ,%s ,%s)'
+            val = (f'test{i}@test.com', '123', f'測試人員{i}', 'test collage', 'test department', 'male', date(1996,5,23), 'scard', 0)
             user_cursor.execute(sql, val)
             print(i)
 
@@ -110,7 +110,7 @@ def match_user():
 
 # 建立配對(比對user的match_list)
 def match_user_method_2():
-    db.session.execute('DELETE FROM scard WHERE is_friend IS Null')
+    db.session.execute('DELETE FROM scard WHERE is_friend IS Null AND create_date = :dby', {"dby": dby})
 
     # 建立本次要抽卡的使用者清單, 第一位測試帳號永遠開放抽卡
     user_list = []
@@ -174,13 +174,13 @@ def match_user_method_3():
         )
     new_cursor = new_db.cursor()
     # 刪掉昨天沒有成為朋友的配對
-    new_cursor.execute('DELETE FROM scard WHERE is_friend IS False AND create_date=%s', (yesterday,))
+    new_cursor.execute('DELETE FROM scard WHERE is_friend IS False AND create_date=%s', (dby,))
 
     # 建立本次要抽卡的使用者清單, 第一位測試帳號永遠開放抽卡
     new_cursor.execute('UPDATE user SET days_no_open_scard=0 WHERE id=1')
     new_db.commit()
     user_list, matches_list = [], []
-    new_cursor.execute('SELECT id, match_list FROM user WHERE scard IS True AND days_no_open_scard <= 3')
+    new_cursor.execute('SELECT id, match_list FROM user WHERE verify_status="scard" AND days_no_open_scard <= 3')
     all_users = new_cursor.fetchall()
     for user in all_users:
         user_list.append(user[0])

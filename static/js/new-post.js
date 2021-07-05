@@ -22,11 +22,7 @@ fetch(newPostAPI)
     .then(res => res.json())
     .then(data => {
         if(data.error){ //出現錯誤，顯示提示Modal
-            modalTitle.innText = data.title
-            modalBody.innerText = data.message
-            modalHref.innerText = data.confirm
-            modalHref.href = data.url
-            errorModal.show()
+            showErrorModal(data)
         }
         else{
             // 新增發文身份名稱選項
@@ -182,11 +178,7 @@ async function showUpload(inputImage){
         localStorage.setItem('newPostContent', postContentHTML);
         selectImages()   
     }else{
-        modalTitle.innText = data.title
-        modalBody.innerText = data.message
-        modalHref.innerText = data.confirm
-        modalHref.href = data.url
-        errorModal.show()
+        showErrorModal(data)
     }    
 }
 imgInput.addEventListener('change',()=>{
@@ -227,11 +219,7 @@ async function sendPost(){
     })
     const data = await res.json()
     if(data.error){//出現錯誤，顯示提示Modal
-        modalTitle.innText = data.title
-        modalBody.innerText = data.message
-        modalHref.innerText = data.confirm
-        modalHref.href = data.url
-        errorModal.show()
+        showErrorModal(data)
     }else{
         localStorage.setItem('newPostTitle', '')
         localStorage.setItem('newPostContent', '<p><br></p>')

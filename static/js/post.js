@@ -144,11 +144,7 @@ function getComment(comment){
         const res = await fetch(cmtLikeAPI, {method: "PATCH"})
         const data = await res.json()
         if(data.error){
-            modalTitle.innText = data.title
-            modalBody.innerText = data.message
-            modalHref.innerText = data.confirm
-            modalHref.href = data.url
-            errorModal.show()
+            showErrorModal(data)
         }
         else{
             likeCount.innerText = data.likeCount
@@ -164,11 +160,7 @@ async function clickLike(){
     const res = await fetch(postLikeAPI, {method: 'PATCH'})
     const data = await res.json()
     if(data.error){
-        modalTitle.innText = data.title
-        modalBody.innerText = data.message
-        modalHref.innerText = data.confirm
-        modalHref.href = data.url
-        errorModal.show()
+        showErrorModal(data)
     }
     else{
         postLikeCount.innerText = data.likeCount
@@ -181,11 +173,7 @@ async function clickFollow(){
     const res = await fetch(postFollowAPI, {method: 'PATCH'})
     const data = await res.json()
     if(data.error){
-        modalTitle.innText = data.title
-        modalBody.innerText = data.message
-        modalHref.innerText = data.confirm
-        modalHref.href = data.url
-        errorModal.show()
+        showErrorModal(data)
     }
     else{
         postFollowIcon.classList.toggle('active')
@@ -212,11 +200,7 @@ fetch(newPostAPI)
         if(data.error){ 
             //點擊時出現錯誤，顯示提示Modal
             commentBlank.addEventListener('click',()=>{
-                modalTitle.innText = data.title
-                modalBody.innerText = data.message
-                modalHref.innerText = data.confirm
-                modalHref.href = data.url
-                errorModal.show()
+                showErrorModal(data)
             })
         }
         else{
@@ -367,11 +351,7 @@ async function showUpload(inputImage){
         // 儲存到localStorage
         selectImages()   
     }else{
-        modalTitle.innText = data.title
-        modalBody.innerText = data.message
-        modalHref.innerText = data.confirm
-        modalHref.href = data.url
-        errorModal.show()
+        showErrorModal(data)
     }    
 }
 imgInput.addEventListener('change',()=>{
@@ -407,11 +387,7 @@ async function sendComment(){
     })
     const data = await res.json()
     if(data.error){
-        modalTitle.innText = data.title
-        modalBody.innerText = data.message
-        modalHref.innerText = data.confirm
-        modalHref.href = data.url
-        errorModal.show()
+        showErrorModal(data)
     }
     else{
         postCommentContent.innerHTML = ''

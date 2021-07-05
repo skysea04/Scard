@@ -2,27 +2,22 @@ from flask import jsonify, request, session
 import io, sys, boto3
 from uuid import uuid4
 from PIL import Image
-
 from . import api, ErrorData, Collage, CollageDepartment, User, db, cache
 
 s3 = boto3.client('s3')
-
-# sys.path.append("..")
-# from models.model import Collage, CollageDepartment, User, db, cache
-
 
 @api.route('/profile', methods=["GET"])
 def get_profile():
     # 查看是否登入
     if "user" in session:
         user_id = session["user"]["id"]
-        user_verify = session["user"]["verify"]
-        # 檢查使用者是否通過基本驗證
-        if user_verify == False:
-            return jsonify(ErrorData.basic_profile_data), 400
+        user_verify = session["user"]["verify_status"]
+        if user_verify == 'stranger':
+            return jsonify(ErrorData.verify_mail_data), 403
+        elif user_verify == 'mail':
+            return jsonify(ErrorData.basic_profile_data), 403
 
         user = User.view_user(user_id)
-        # user = User.query.filter_by(id=user_id).first()
         data = {
             "avatar": user.avatar,
             "name": user.name,
@@ -69,7 +64,8 @@ def post_profile():
         
         # 將資料添入資料庫，回傳ok資訊
         user = User.query.filter_by(id=user_id).first()
-        user.verify = True
+        # user.verify = True
+        user.verify_status = 'basic'
         user.name = name
         user.gender = gender
         user.birthday = birthday
@@ -86,8 +82,7 @@ def post_profile():
         session["user"]= False
         session["user"] = {
                     "id": user.id,
-                    "verify": user.verify,
-                    "scard": user.scard,
+                    "verify_status": user.verify_status,
                     "collage": user.collage,
                     "department": user.department,
                     "commentAvatar": user.comment_avatar
@@ -132,7 +127,8 @@ def patch_profile():
         user.swap = swap
         user.want_to_try = want_to_try
         # 填寫過後就可以抽卡了
-        user.scard = True
+        # user.scard = True
+        user.verify_status = 'scard'
         db.session.commit()
         data = {"ok": True}
 
@@ -142,8 +138,7 @@ def patch_profile():
         session["user"]= False
         session["user"] = {
                     "id": user.id,
-                    "verify": user.verify,
-                    "scard": user.scard,
+                    "verify_status": user.verify_status,
                     "collage": user.collage,
                     "department": user.department,
                     "commentAvatar": user.comment_avatar

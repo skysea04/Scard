@@ -85,12 +85,30 @@ def signup():
 		return redirect(url_for('index'))
 	return render_template('signup.html')
 
-@app.route('/mailverify/<mail>')
-def mail_verify(mail):
-	verified_user = User.query.filter_by(email=mail).first()
-	if verified_user.verify_status == 'stranger':
-		verified_user.verify_status = 'mail'
-	db.session.commit()
+@app.route('/mailverify')
+def go_to_verify_mail():
+	if 'user' in session:
+		user_email = session['user']['email']
+		return render_template('verify-my-mail.html',mail=user_email)
+	return redirect(url_for('show_board'))
+		
+
+@app.route('/mailverify/<email>')
+def mail_verify(email):
+	user = User.query.filter_by(email=email).first()
+	if not user:
+		abort(404)
+	if user.verify_status == 'stranger':
+		user.verify_status = 'mail'
+		session["user"] = False
+		session["user"] = {
+			"id": user.id,
+			"verify_status": user.verify_status,
+			"collage": user.collage,
+			"department": user.department,
+			"commentAvatar": user.comment_avatar
+		}
+		db.session.commit()
 	return render_template('mail-verified.html')
 
 @app.route('/basicprofile')
@@ -126,7 +144,7 @@ def redirect_message():
 			message_id = message_id[0]
 			return redirect(url_for('message', id=message_id))
 
-	return redirect(url_for('index'))
+	return redirect(url_for('show_board'))
 
 @app.route('/message/<id>')
 def message(id):
@@ -134,23 +152,6 @@ def message(id):
 		return render_template('message.html')
 	return redirect(url_for('signup'))
 
-# @socketio.on('message')
-# def handle_message(msg):
-#     print('get message:'+ msg)
-#     send(msg, broadcast=True)
-
-# @socketio.on('join_room')
-# def handle_join_room(room_id):
-# 	join_room(room_id)
-# 	# send(room_id)
-
-# @socketio.on('send_message')
-# def handle_send_message(data):
-# 	data["time"] = datetime.now().strftime("%-m月%-d日 %H:%M")
-# 	socketio.emit('receive_message', data, room=data["room"])
-# 	message = Messages(scard_id=data["room"], user_id=data["id"], message=data["message"])
-# 	db.session.add(message)
-# 	db.session.commit()
 
 @socketio.on('send_message')
 def handle_send_message(data):
@@ -178,7 +179,7 @@ post_p = r.pubsub()
 post_room_lst = []
 @socketio.on('follow_post')
 def handle_follow_post(post_id):
-	print('link', post_id)
+	# print('link', post_id)
 	post_room = f'post{post_id}'
 	join_room(post_room)
 	if post_room not in post_room_lst:
@@ -187,7 +188,6 @@ def handle_follow_post(post_id):
 		# print('listen')
 		if isinstance(note.get('data'), bytes):
 			msg = json.loads(note['data'])
-			# msg["time"] = datetime.now().strftime("%-m月%-d日 %H:%M")
 			# print(type(msg), msg)
 			emit('receive_post_note', msg, to=msg['room'])
 

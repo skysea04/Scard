@@ -1,6 +1,6 @@
 from flask import request, jsonify, session
 from . import ErrorData, api, User, db
-import sys, smtplib, email.message
+import sys, smtplib, email.message as email_message
 
 sys.path.append("..")
 # from models.model import db, User
@@ -64,7 +64,7 @@ def post_user():
             else:
                 new_user = User(email=email, password=password)
 
-                mail_msg = email.message.EmailMessage()
+                mail_msg = email_message.EmailMessage()
                 mail_msg["From"] = mail_username
                 mail_msg["To"] = email
                 mail_msg["Subject"] = 'Scard驗證信箱'
@@ -82,6 +82,7 @@ def post_user():
             exist_user = User.query.filter_by(email=email).first()
             session["user"] = {
                 "id": exist_user.id,
+                "email": exist_user.email,
                 "verify": exist_user.verify,
                 "scard": exist_user.scard,
                 "verify_status": exist_user.verify_status,
@@ -100,6 +101,7 @@ def post_user():
             if exist_user.password == password:
                 session["user"] = {
                     "id": exist_user.id,
+                    "email": exist_user.email,
                     "verify": exist_user.verify,
                     "scard": exist_user.scard,
                     "verify_status": exist_user.verify_status,
@@ -150,8 +152,8 @@ def verify_user():
                 return jsonify(my_profile_data), 403
         data = {
             "ok": True,
-            "url": f'/{href}'    
+            "url": f'/{href}'
         }
         return jsonify(data), 200
     
-    return jsonify(no_sign_data), 403
+    return jsonify(ErrorData.no_sign_data), 403

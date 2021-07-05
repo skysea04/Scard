@@ -1,16 +1,8 @@
-from flask import json, request, jsonify, session
+from flask import request, jsonify, session
 from . import ErrorData, api, db, User, Scard
 # import sys
 # sys.path.append("..")
 # from models.model import Messages, db, User, Scard
-
-no_sign_data = {
-    "error": True,
-    'title': '您尚未登入',
-    'message': '想一起加入討論，要先登入 Scard 唷！',
-    'confirm': '登入',
-    'url': '/signup'
-}
 
 have_no_friends_data = {
     "error": True,
@@ -28,13 +20,6 @@ not_friend_data = {
     'url': '/'
 }
 
-server_error_data = {
-    "error": True,
-    'title': '錯誤訊息',
-    'message': '伺服器內部錯誤',
-    'confirm': '返回首頁',
-    'url': '/'
-}
 @api.route('/message_room', methods=['GET'])
 def get_message_room():
     if 'user' in session:
@@ -51,7 +36,7 @@ def get_message_room():
 
 @api.route('/friendlist', methods=["GET"])
 def get_friendlist():
-    # try:
+    try:
         if 'user' in session:
             user_id = session['user']['id']
             # 根據使用者最後傳送或收到訊息的時間排續好友資訊
@@ -88,15 +73,15 @@ def get_friendlist():
             return jsonify(data), 200
             
         # 沒有登入
-        return jsonify(no_sign_data), 403
+        return jsonify(ErrorData.no_sign_data), 403
     # 伺服器錯誤
-    # except:
-    #     return jsonify(server_error_data), 500
+    except:
+        return jsonify(ErrorData.server_error_data), 500
     
 
 @api.route('/message/<int:id>', methods=["GET"])
 def get_message(id):
-    # try:
+    try:
         if request.args.get('page'):
             page = int(request.args.get('page'))
             render_num = 30
@@ -163,8 +148,8 @@ def get_message(id):
             }
             return jsonify(data), 200
         # 沒有登入
-        return jsonify(no_sign_data), 403
+        return jsonify(ErrorData.no_sign_data), 403
     # 伺服器錯誤
-    # except:
-    #     return jsonify(server_error_data), 500
+    except:
+        return jsonify(ErrorData.server_error_data), 500
 

@@ -30,11 +30,7 @@ fetch(scardAPI)
     .then(res => res.json())
     .then(data => {
         if(data.error){
-            modalTitle.innText = data.title
-            modalBody.innerText = data.message
-            modalHref.innerText = data.confirm
-            modalHref.href = data.url
-            errorModal.show()
+            showErrorModal(data)
         }else{
             if(data.isFriend){
                 addFriendBtn.innerText = '已成為卡友'
@@ -101,11 +97,7 @@ async function addFriend(e){
         }
         addModal.hide()
     }else{
-        modalTitle.innText = data.title
-        modalBody.innerText = data.message
-        modalHref.innerText = data.confirm
-        modalHref.href = data.url
-        errorModal.show()
+        showErrorModal(data)
     }
     
 }

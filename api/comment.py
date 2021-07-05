@@ -9,8 +9,11 @@ from app import r
 def post_comment(post_id):
     if "user" in session:
         user_id = session["user"]["id"]
-        user_verify = session["user"]["verify"]
-        if user_verify == False:
+        # user_verify = session["user"]["verify"]
+        user_verify = session["user"]["verify_status"]
+        if user_verify == 'stranger':
+            return jsonify(ErrorData.verify_mail_data), 403
+        elif user_verify == 'mail':
             return jsonify(ErrorData.basic_profile_data), 403
         
         req_data = request.json
@@ -123,6 +126,10 @@ def get_comment(post_id):
 def patch_comment_like(comment_id):
     if 'user' in session:
         user_id = session["user"]["id"]
+        user_verify = session["user"]["verify_status"]
+        if user_verify == 'stranger':
+            return jsonify(ErrorData.verify_mail_data), 403
+
         like = CommentUserLike.query.filter_by(comment_id=comment_id, user_id=user_id).first()
         if like:
             db.session.delete(like)

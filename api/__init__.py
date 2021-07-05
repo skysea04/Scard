@@ -1,6 +1,6 @@
 from flask import Blueprint
 # from app import r
-from models.model import Comment, CommentUserLike, Notification, Post, PostBoard, PostUserFollow, PostUserLike, User, Scard, Messages, Collage, CollageDepartment,  cache, db
+from models.model import Comment, CommentUserLike, Notification, Post, PostBoard, PostUserFollow, PostUserLike, User, Scard, Messages, Collage, CollageDepartment, cache, db
 api = Blueprint('api', __name__)
 class ErrorData:
     no_sign_data = {
@@ -16,7 +16,7 @@ class ErrorData:
         'title': '帳號尚未啟用',
         'message': '請至信箱收取驗證信，並點擊驗證連結完成帳號啟用。',
         'confirm': '確認',
-        'url': '/'
+        'url': '/mailverify'
     }
 
     basic_profile_data = {

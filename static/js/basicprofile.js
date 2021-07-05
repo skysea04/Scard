@@ -47,11 +47,7 @@ async function showDepartment(){
     const data = await res.json()
     if(data.error){
         if(data.url){ //顯示伺服器錯誤訊息
-            modalTitle.innText = data.title
-            modalBody.innerText = data.message
-            modalHref.innerText = data.confirm
-            modalHref.href = data.url
-            errorModal.show()
+            showErrorModal(data)
         }
         dptSelect.setAttribute('disabled', true)
     }

@@ -1,14 +1,10 @@
 from flask import jsonify, request, session
-import io, sys, boto3, re
+import io, boto3, re
 from uuid import uuid4
 from PIL import Image
-
-from . import api, Notification, Post, PostBoard, User, db
+from . import api, ErrorData, Notification, Post, PostBoard, User, db
 
 s3 = boto3.client('s3')
-
-# sys.path.append("..")
-# from models.model import Notification, Post, PostBoard, User, db
 
 no_sign_data = {
     "error": True,
@@ -70,10 +66,11 @@ wrong_content_data = {
 def get_new_post():
     if "user" in session:
         # print(session)
-        user_id = session["user"]["id"]
-        user_verify = session["user"]["verify"]
-        if user_verify == False:
-            return jsonify(basic_profile_data), 403
+        user_verify = session["user"]["verify_status"]
+        if user_verify == 'stranger':
+            return jsonify(ErrorData.verify_mail_data), 403
+        elif user_verify == 'mail':
+            return jsonify(ErrorData.basic_profile_data), 403
         
         user_collage = session["user"]["collage"]
         user_department = session["user"]["department"]
@@ -103,9 +100,11 @@ def get_new_post():
 def post_new_post():
     if "user" in session:
         user_id = session["user"]["id"]
-        user_verify = session["user"]["verify"]
-        if user_verify == False:
-            return jsonify(basic_profile_data), 403
+        user_verify = session["user"]["verify_status"]
+        if user_verify == 'stranger':
+            return jsonify(ErrorData.verify_mail_data), 403
+        elif user_verify == 'mail':
+            return jsonify(ErrorData.basic_profile_data), 403
         
         req_data = request.json
         try:
@@ -120,13 +119,6 @@ def post_new_post():
         board = PostBoard.view_board(board_id)
         if not board:
             return jsonify(wrong_board_data), 400
-        # board_list = []
-        # post_boards = PostBoard.query.all()
-        # for board in post_boards:
-        #     board_list.append(board.id)
-            
-        # if board_id not in board_list:
-        #     return jsonify(wrong_board_data), 400
         
         # 查看使用者是否有正確選擇發文名稱
         user = User.view_user(user_id)
@@ -166,9 +158,11 @@ def post_new_post():
 @api.route('/new-post/image', methods=["POST"])
 def post_image():
     if "user" in session:
-        user_verify = session["user"]["verify"]
-        if user_verify == False:
-            return jsonify(basic_profile_data), 403
+        user_verify = session["user"]["verify_status"]
+        if user_verify == 'stranger':
+            return jsonify(ErrorData.verify_mail_data), 403
+        elif user_verify == 'mail':
+            return jsonify(ErrorData.basic_profile_data), 403
 
         file = request.files["image"]
         allow_file = ['png', 'jpg', 'jpeg', 'gif']

@@ -1,8 +1,6 @@
-from flask import request, jsonify, session
+from flask import jsonify, session
 from . import api, ErrorData, Post, PostUserFollow , PostUserLike, db
-# import sys, json
-# sys.path.append("..")
-# from models.model import Post, PostBoard, PostUserFollow, PostUserLike, db
+
 
 # 獲取文章資訊
 @api.route('/post/<int:post_id>', methods=["GET"])
@@ -46,6 +44,10 @@ def get_post(post_id):
 def patch_post_like(post_id):
     if 'user' in session:
         user_id = session["user"]["id"]
+        user_verify = session["user"]["verify_status"]
+        if user_verify == 'stranger':
+            return jsonify(ErrorData.verify_mail_data), 403
+
         like = PostUserLike.query.filter_by(user_id=user_id, post_id=post_id).first()
         if like:
             db.session.delete(like)
@@ -69,6 +71,10 @@ def patch_post_like(post_id):
 def patch_post_follow(post_id):
     if 'user' in session:
         user_id = session['user']['id']
+        user_verify = session["user"]["verify_status"]
+        if user_verify == 'stranger':
+            return jsonify(ErrorData.verify_mail_data), 403
+
         follow = PostUserFollow.query.filter_by(user_id=user_id, post_id=post_id).first()
         if follow:
             db.session.delete(follow)

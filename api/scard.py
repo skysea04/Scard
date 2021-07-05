@@ -27,16 +27,22 @@ def get_scard():
     try:
         if 'user' in session:
             user_id = session["user"]["id"]
-            user_verify = session["user"]["verify"]
-            user_scard = session["user"]["scard"]
-
-            # 若User欄位的verify為false，建議使用者轉移到basic_profile填寫頁面
-            if user_verify == False:
+            user_verify = session["user"]["verify_status"]
+            if user_verify == 'stranger':
+                return jsonify(ErrorData.verify_mail_data), 403
+            elif user_verify == 'mail':
                 return jsonify(ErrorData.basic_profile_data), 403
-                
-            # 若是自我介紹還沒填完scard為false，建議使用者轉移到my_profile填寫頁面
-            if user_scard == False:
+            elif user_verify == 'basic':
                 return jsonify(my_profile_data), 403
+            # user_scard = session["user"]["scard"]
+
+            # # 若User欄位的verify為false，建議使用者轉移到basic_profile填寫頁面
+            # if user_verify == False:
+            #     return jsonify(ErrorData.basic_profile_data), 403
+                
+            # # 若是自我介紹還沒填完scard為false，建議使用者轉移到my_profile填寫頁面
+            # if user_scard == False:
+            #     return jsonify(my_profile_data), 403
 
             yesterday = date.today() - timedelta(days=1)
             scard_1 = Scard.view_scard_1(user_id, yesterday)

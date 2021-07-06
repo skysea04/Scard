@@ -12,8 +12,8 @@ Password : 123
 
 ## 使用技術
 * Python Flask
-* Socket.io
-* AWS EC2 RDS S3 CDN ElastiCache
+* Socket.io + Redis(ElastiCache) Pub/Sub + ELB
+* AWS EC2 RDS S3 CDN ELB ElastiCache
 * BootStrap5
 * FaceBook Login
 ## 功能介紹

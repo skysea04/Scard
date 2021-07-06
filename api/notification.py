@@ -1,10 +1,11 @@
 from logging import debug
 from flask import jsonify, session
 from . import ErrorData, api, db
-
+from datetime import datetime
 # 這邊待捕啦 做不完ㄏ
 @api.route('/notification', methods=["GET"])
 def get_notification():
+    print('get_notification', datetime.now().strftime("%H:%M"))
     if 'user' in session:
         user_id = session['user']['id']
         notes = db.session.execute('SELECT href, content, update_time\

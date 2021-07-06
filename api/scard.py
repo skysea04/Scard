@@ -1,7 +1,7 @@
 from flask import request, jsonify, session
 from sqlalchemy import or_
 from . import ErrorData, api, Messages, db, User, Scard, cache
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 # import sys
 # sys.path.append("..")
 # from models.model import Messages, db, User, Scard, cache
@@ -24,6 +24,7 @@ tomorrow_scard_data = {
 
 @api.route('/scard', methods=["GET"])
 def get_scard():
+    print('get_scard', datetime.now().strftime("%H:%M"))
     try:
         if 'user' in session:
             user_id = session["user"]["id"]
@@ -90,6 +91,7 @@ def get_scard():
 
 @api.route('/scard', methods=["POST"])
 def invite_friend():
+    print('invite_friend', datetime.now().strftime("%H:%M"))
     if 'user' in session:
         data = request.json
         message = data['message']
@@ -152,6 +154,7 @@ def invite_friend():
 
 @api.route('/scard/zeroing', methods=["PATCH"])
 def zeroing_scard():
+    print('zeroing_scard', datetime.now().strftime("%H:%M"))
     try:
         if 'user' in session:
             user_id = session["user"]["id"]
@@ -168,6 +171,7 @@ def zeroing_scard():
 
 @api.route('/scard/<int:scard_id>', methods=["DELETE"])
 def delete_friend(scard_id):
+    print('delete_friend', datetime.now().strftime("%H:%M"))
     if 'user' in session:
         data = request.json
         friend_id = data['friendID']

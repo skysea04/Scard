@@ -13,6 +13,7 @@ cache = Cache(config={"CACHE_TYPE": "RedisCache", "CACHE_REDIS_HOST": redis_host
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
 
+from datetime import datetime
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -41,11 +42,13 @@ class User(db.Model):
     verify_status = db.Column(db.Enum("stranger", "mail", 'basic', 'scard', 'admin'), server_default="stranger",  nullable=False)
 
     def as_dict(self):
+        print('as_dict', datetime.now().strftime("%H:%M"))
         return{c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     @classmethod
     @cache.memoize(259200)
     def view_user(cls, user_id):
+        print('view_user', datetime.now().strftime("%H:%M"))
         return User.query.filter_by(id=user_id).first()
 
 Index('email_pwd_index', User.email, User.password)
@@ -79,19 +82,23 @@ class Scard(db.Model):
     # @classmethod
     @cache.memoize(86400)
     def view_scard_1(user_id, create_date):
+        print('view_scard_1', datetime.now().strftime("%H:%M"))
         return Scard.query.filter_by(user_1=user_id, create_date=create_date).first()
     # @classmethod
     @cache.memoize(86400)
     def view_scard_2(user_id, create_date):
+        print('view_scard_2', datetime.now().strftime("%H:%M"))
         return Scard.query.filter_by(user_2=user_id, create_date=create_date).first()
     
     @classmethod
     @cache.memoize(259200)
     def scard_from_1(cls, id, user_id):
+        print('scard_from_1', datetime.now().strftime("%H:%M"))
         return Scard.query.filter_by(id=id, user_1=user_id).first()
     @classmethod
     @cache.memoize(259200)
     def scard_from_2(cls, id, user_id):
+        print('scard_from_2', datetime.now().strftime("%H:%M"))
         return Scard.query.filter_by(id=id, user_2=user_id).first()
 
 Index('user1_date_index', Scard.user_1, Scard.create_date)
@@ -118,6 +125,7 @@ class PostBoard(db.Model):
 
     @cache.memoize(9999999999999)
     def view_board(board_id):
+        print('view_board', datetime.now().strftime("%H:%M"))
         return PostBoard.query.filter_by(id=board_id).first()
 
 class Post(db.Model):

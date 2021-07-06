@@ -7,6 +7,7 @@ from app import r
 # from models.model import Comment, CommentUserLike, Notification, Post, PostBoard, PostUserFollow, User, db
 @api.route('/comment/<int:post_id>', methods=["POST"])
 def post_comment(post_id):
+    print('post_comment', datetime.now().strftime("%H:%M"))
     if "user" in session:
         user_id = session["user"]["id"]
         # user_verify = session["user"]["verify"]
@@ -79,6 +80,7 @@ def post_comment(post_id):
 
 @api.route('/comment/<int:post_id>', methods=["GET"])
 def get_comment(post_id):
+    print('get_comment', datetime.now().strftime("%H:%M"))
     try:
         cmt_lst = []
         if "user" in session:
@@ -124,6 +126,7 @@ def get_comment(post_id):
 
 @api.route('/comment/<int:comment_id>/like', methods=["PATCH"])
 def patch_comment_like(comment_id):
+    print('patch_comment_like', datetime.now().strftime("%H:%M"))
     if 'user' in session:
         user_id = session["user"]["id"]
         user_verify = session["user"]["verify_status"]

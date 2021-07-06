@@ -3,7 +3,7 @@ import io, boto3, re
 from uuid import uuid4
 from PIL import Image
 from . import api, ErrorData, Notification, Post, PostBoard, User, db
-
+from datetime import datetime
 s3 = boto3.client('s3')
 
 no_sign_data = {
@@ -64,6 +64,7 @@ wrong_content_data = {
 
 @api.route('/new-post', methods=["GET"])
 def get_new_post():
+    print('get_new_post', datetime.now().strftime("%H:%M"))
     if "user" in session:
         # print(session)
         user_verify = session["user"]["verify_status"]
@@ -98,6 +99,7 @@ def get_new_post():
 
 @api.route('/new-post', methods=["POST"])
 def post_new_post():
+    print('post_new_post', datetime.now().strftime("%H:%M"))
     if "user" in session:
         user_id = session["user"]["id"]
         user_verify = session["user"]["verify_status"]
@@ -157,6 +159,7 @@ def post_new_post():
 
 @api.route('/new-post/image', methods=["POST"])
 def post_image():
+    print('post_image', datetime.now().strftime("%H:%M"))
     if "user" in session:
         user_verify = session["user"]["verify_status"]
         if user_verify == 'stranger':

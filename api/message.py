@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import request, jsonify, session
 from . import ErrorData, api, db, User, Scard
 # import sys
@@ -22,6 +23,7 @@ not_friend_data = {
 
 @api.route('/message_room', methods=['GET'])
 def get_message_room():
+    print('get_message_room', datetime.now().strftime("%H:%M"))
     if 'user' in session:
         user_id = session['user']['id']
         rooms = db.session.execute('SELECT id FROM scard WHERE (user_1=:id OR user_2=:id) AND is_friend IS true', {"id": user_id}).all()
@@ -36,6 +38,7 @@ def get_message_room():
 
 @api.route('/friendlist', methods=["GET"])
 def get_friendlist():
+    print('get_friendlist', datetime.now().strftime("%H:%M"))
     try:
         if 'user' in session:
             user_id = session['user']['id']
@@ -81,6 +84,7 @@ def get_friendlist():
 
 @api.route('/message/<int:id>', methods=["GET"])
 def get_message(id):
+    print('get_message', datetime.now().strftime("%H:%M"))
     try:
         if request.args.get('page'):
             page = int(request.args.get('page'))

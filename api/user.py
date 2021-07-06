@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import request, jsonify, session
 from . import ErrorData, api, User, db
 import sys, smtplib, email.message as email_message
@@ -36,6 +37,7 @@ my_profile_data = {
 @api.route('/user', methods=["GET"])
 def get_user():
     # 驗證使用者是否有登入
+    print('get_user', datetime.now().strftime("%H:%M"))
     if 'user' in session:
         data = {
             "id": session["user"]["id"],
@@ -50,6 +52,7 @@ def get_user():
 
 @api.route('/user', methods=["POST"])
 def post_user():
+    print('post_user', datetime.now().strftime("%H:%M"))
     try:
         data = request.json
         email = data['email']
@@ -131,6 +134,7 @@ def post_user():
 
 @api.route('/user', methods=["DELETE"])
 def delete_user():
+    print('delete_user', datetime.now().strftime("%H:%M"))
     # 登出
     session.pop('user')
     data = {"ok": True}
@@ -138,6 +142,7 @@ def delete_user():
 
 @api.route('/verify', methods=["GET"])
 def verify_user():
+    print('verify_user', datetime.now().strftime("%H:%M"))
     if 'user' in session:
         # verify = session["user"]["verify"]
         # scard = session["user"]["scard"]

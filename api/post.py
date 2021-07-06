@@ -1,10 +1,11 @@
 from flask import jsonify, session
 from . import api, ErrorData, Post, PostUserFollow , PostUserLike, db
-
+from datetime import datetime
 
 # 獲取文章資訊
 @api.route('/post/<int:post_id>', methods=["GET"])
 def get_post(post_id):
+    print('get_post', datetime.now().strftime("%H:%M"))
     try:
         post = db.session.execute('SELECT user.comment_avatar, postboard.sys_name, postboard.show_name, post.user_name, post.title, post.content, post.create_time, post.like_count, post.comment_count\
         FROM ((post INNER JOIN postboard ON post.board_id = postboard.id)\
@@ -42,6 +43,7 @@ def get_post(post_id):
 # 使用者更動對特定文章的按讚
 @api.route('/post/<int:post_id>/like', methods=["PATCH"])
 def patch_post_like(post_id):
+    print('patch_post_like', datetime.now().strftime("%H:%M"))
     if 'user' in session:
         user_id = session["user"]["id"]
         user_verify = session["user"]["verify_status"]
@@ -69,6 +71,7 @@ def patch_post_like(post_id):
 # 使用者更動對特定文章的追蹤
 @api.route('/post/<int:post_id>/follow', methods=["PATCH"])
 def patch_post_follow(post_id):
+    print('patch_post_follow', datetime.now().strftime("%H:%M"))
     if 'user' in session:
         user_id = session['user']['id']
         user_verify = session["user"]["verify_status"]
@@ -96,6 +99,7 @@ def patch_post_follow(post_id):
 # 獲取使用者追蹤中的文章
 @api.route('/post/my-follow', methods=['GET'])
 def get_myfollow_post():
+    print('get_myfollow_post', datetime.now().strftime("%H:%M"))
     if 'user' in session:
         user_id = session['user']['id']
         posts = PostUserFollow.query.filter_by(user_id=user_id).all()

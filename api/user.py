@@ -152,7 +152,7 @@ def verify_user():
                 return jsonify(my_profile_data), 403
         data = {
             "ok": True,
-            "url": f'/{href}'
+            "url": f'/{href}'    
         }
         return jsonify(data), 200
     

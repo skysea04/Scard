@@ -50,6 +50,10 @@ a{
     top:200px;
 }
 
+.popover{
+    padding: 0 0;
+    max-width: 400px;
+}
 .popover-body{
     padding: 0 0;
 }
@@ -70,9 +74,7 @@ a{
     font-size: 1.8rem;
 }
 
-/* .navbar{
-    background-color: #006AA6;
-} */
+
 
 .navbar input{
     border-radius: 5px 0 0 5px;
@@ -104,6 +106,29 @@ i{
 .message{
     color: red;
 }
+
+/* 通知相關 */
+.note-container{
+    width: 320px;
+    height: calc(100vh - 150px);
+}
+.note{
+    display: block;
+}
+.note:hover{
+    background-color: rgba(0, 16, 32, 0.06);
+}
+.note>p{
+    text-align: justify;
+}
+.note>.note-time{
+    font-size: 12px;
+    color: #8c9399;
+}
+.note:last-child>.note-time{
+    margin-bottom: 0;
+}
+
 
 @media(max-width:1200px){
     .container{

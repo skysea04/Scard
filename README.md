@@ -15,7 +15,7 @@ Password : 123
 * Socket.io + Redis(ElastiCache) Pub/Sub + ELB
 * AWS EC2 RDS S3 CDN ELB ElastiCache
 * BootStrap5
-* FaceBook/Google Login
+* Facebook/Google Login
 ## 功能介紹
 
 ### 瀏覽首頁

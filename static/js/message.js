@@ -68,7 +68,7 @@ function getFriend(friend){
 
     // 朋友資訊外框
     const outerContainer = document.createElement('div')
-    outerContainer.classList.add('w-240', 'p-2')
+    outerContainer.classList.add('w-240', 'py-2', 'ps-2')
 
     outerContainer.append(innerContainer, lastestMessage)
     

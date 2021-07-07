@@ -31,8 +31,8 @@ class ErrorData:
         "error": True,
         'title': '錯誤訊息',
         'message': '伺服器內部錯誤',
-        'confirm': '重新整理',
-        'url': '#'
+        'confirm': '回到首頁',
+        'url': '/b'
     }
 
     error_format_data = {
@@ -40,7 +40,7 @@ class ErrorData:
         'title': '錯誤格式',
         'message': '你上傳的不是圖片喔，重新確認一下吧',
         'confirm': '確認',
-        'url': '/new-post'
+        'url': '#'
     }
 
     wrong_collage_data = {

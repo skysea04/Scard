@@ -177,6 +177,8 @@ async function clickFollow(){
     }
     else{
         postFollowIcon.classList.toggle('active')
+        // 這裡要幫使用者離開/加入追蹤的socket_room（待捕）
+        // socket.emit('follow_post', postID)
     }
 }
 postFollowIcon.addEventListener('click', clickFollow)

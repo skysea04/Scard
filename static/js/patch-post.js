@@ -1,58 +1,32 @@
+const postID = location.pathname.split('/')[4]
 //// api資訊
-const newPostAPI = '/api/new-post'
+const postAPI = '/api/post/' + postID
 const postImageAPI = '/api/new-post/image'
 
 //// 定義文章各欄位變數
-const boardSelect = document.querySelector('.board-select')
-const nameSelect = document.querySelector('.name-select')
+const boardOption = document.querySelector('.board-select option')
+const nameOption= document.querySelector('.name-select option')
 const postTitle = document.querySelector('.post-title')
 const postContent = document.querySelector('.post-content')
 const postAvatar = document.querySelector('.post-avatar')
 //// 將看版資訊與個人名稱資訊匯入
-fetch(newPostAPI)
-    .then(res => res.json())
-    .then(data => {
-        if(data.error){ //出現錯誤，顯示提示Modal
-            showErrorModal(data)
-        }
-        else{
-            // 新增發文身份名稱選項
-            const fullName = document.createElement('option')
-            fullName.value = 'full'
-            fullName.innerText = `${data.collage} ${data.department}`
-            const collageName = document.createElement('option')
-            collageName.value = 'collage'
-            collageName.innerText = data.collage
-            const anonymous = document.createElement('option')
-            anonymous.value = '匿名'
-            anonymous.innerText = '匿名'
-            nameSelect.append(fullName, collageName, anonymous)
+fetch(postAPI)
+.then(res => res.json())
+.then(data => {
+    if(data.error){ //出現錯誤，顯示提示Modal
+        showErrorModal(data)
+    }
+    else{
+        boardOption.innerText = data.boardName
+        nameOption.innerText = data.userName
+        postAvatar.src = data.avatar
+        postTitle.value = data.title
+        postContent.innerHTML = data.content
+        selectImages()
+    }
+})
 
-            // 新增發文頭像
-            postAvatar.src = data.avatar
 
-            // 新增發文看板選項
-            data.boardList.forEach(board => {
-                const boardOption = document.createElement('option')
-                boardOption.value = board.boardId
-                boardOption.innerText = board.showName
-                boardSelect.append(boardOption)
-            })
-        }
-    })
-
-//// 儲存文章標題
-postTitle.value = localStorage.getItem('newPostTitle')
-function savePostTitle(){
-    localStorage.setItem('newPostTitle', postTitle.value)
-}
-postTitle.addEventListener('input', savePostTitle)
-
-//// 內文編輯器
-if(!localStorage.getItem('newPostContent')){
-    localStorage.setItem('newPostContent', '<p><br></p>')
-}
-postContent.innerHTML = localStorage.getItem('newPostContent')
 let postContentHTML = postContent.innerHTML
 let allContent = postContent.childNodes
 let textCursor = allContent[allContent.length - 1]
@@ -62,16 +36,13 @@ function inputSave(){
     selectImages()
     postContentHTML = postContent.innerHTML
     if(postContentHTML == ''){
-        postContentHTML = '<p><br></p>'
-        localStorage.setItem('newPostContent', postContentHTML)
-        postContent.innerHTML = localStorage.getItem('newPostContent')
+        postContent.innerHTML = '<p><br></p>'
         textCursor = postContent.querySelector('p')
     }else{
         textCursor = window.getSelection().anchorNode
         if(textCursor.nodeName == '#text'){
             textCursor = textCursor.parentNode
         }
-        localStorage.setItem('newPostContent', postContentHTML)
     }
 }
 // 在postContent內更改點擊位置可以改變textCursor元素
@@ -105,7 +76,6 @@ function pasteSave(e){
                     textCursor.insertAdjacentElement('afterend', page)
                     textCursor = page
                 }
-                localStorage.setItem('newPostContent', postContent.innerHTML)
             });
         } else if ((pasteData[i].kind == 'string') &&
                     (pasteData[i].type.match('^text/html'))) {
@@ -163,10 +133,6 @@ async function showUpload(inputImage){
             textCursor.insertAdjacentElement('afterend', imgContainer)
             textCursor = imgContainer
         }
-        
-        // 儲存到localStorage
-        postContentHTML = postContent.innerHTML
-        localStorage.setItem('newPostContent', postContentHTML);
         selectImages()   
     }else{
         showErrorModal(data)
@@ -197,24 +163,20 @@ selectImages()
 //// 上傳貼文
 const sendPostBtn = document.querySelector('.send-post')
 async function sendPost(){
-    const postData = {
-        board: boardSelect.value,
-        name: nameSelect.value,
+    const patchData = {
         title: postTitle.value,
         content: postContent.innerHTML
     }
-    const res = await fetch(newPostAPI, {
-        method: 'POST',
-        body: JSON.stringify(postData),
+    const res = await fetch(postAPI, {
+        method: 'PATCH',
+        body: JSON.stringify(patchData),
         headers: {'Content-Type': 'application/json'}
     })
     const data = await res.json()
     if(data.error){//出現錯誤，顯示提示Modal
         showErrorModal(data)
     }else{
-        localStorage.setItem('newPostTitle', '')
-        localStorage.setItem('newPostContent', '<p><br></p>')
-        window.location = data.url
+        location = location.pathname.slice(0, -5)
     }
 }
 

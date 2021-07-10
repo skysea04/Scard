@@ -46,6 +46,14 @@ fetch(postAPI)
     if(data.follow){
         postFollowIcon.classList.add('active')
     }
+    if(data.isAuthor){
+        postFollowIcon.classList.add('d-none')
+        const editBtn = thePost.querySelector('.post-edit')
+        editBtn.classList.remove('d-none')
+        editBtn.addEventListener('click', ()=>{
+            location = location.pathname + '/edit'
+        })
+    }
 
     // 如果留言數為0，顯示沒有留言的頁面配置
     if(data.commentCount == 0){

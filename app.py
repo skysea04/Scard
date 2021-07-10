@@ -59,7 +59,8 @@ def show_board(board=None):
 			board_list.append(post_board.sys_name)
 		if board == None or board in board_list:
 			return render_template('index.html')
-	finally:
+	except:
+		# 之後再修一個500的
 		abort(404)
 
 
@@ -75,7 +76,24 @@ def view_post(board, post_id):
 				return redirect(f'/b/{right_board.sys_name}/p/{post_id}')
 		else:
 			return render_template('post-not-exist.html')
-	finally:
+	except:
+		# 之後再修一個500的
+		return redirect(url_for('show_board'))
+
+@app.route('/b/<board>/p/<post_id>/edit')
+def edit_post(board, post_id):
+	try:
+		if 'user' in session:
+			user_id = session['user']['id']
+			post = Post.query.filter_by(id=post_id).first()
+			if post:
+				if post.user_id == user_id:
+					return render_template('patch-post.html')
+			else:
+				return render_template('post-not-exist.html')
+		return redirect(f'/b/{board}/p/{post_id}')
+	except:
+		# 之後再修一個500的
 		return redirect(url_for('show_board'))
 			
 
@@ -150,7 +168,8 @@ def redirect_message():
 			if message_id:
 				message_id = message_id[0]
 				return redirect(url_for('message', id=message_id))
-	finally:
+	except:
+		# 之後再修一個500
 		return redirect(url_for('show_board'))
 
 @app.route('/message/<id>')

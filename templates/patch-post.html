@@ -11,13 +11,13 @@
     <main class="container mx-auto p-3 px-5 row"> 
         <div class="col-12 col-md-10 col-lg-8  bg-white rounded mx-auto post-form"> 
 
-            <select class="form-select mb-3 board-select">
-                <option value='' selected>選擇發文看板</option>
+            <select class="form-select mb-3 board-select" disabled>
+                <option value='' selected></option>
             </select>
 
             <div class="mb-3 d-flex">
                 <img src="/static/blank.png" class="rounded-circle mx-2 post-avatar" alt="">
-                <select class="form-select name-select">
+                <select class="form-select name-select" disabled>
                     <option value='' selected>選擇發文身份</option>
                 </select>
             </div>
@@ -53,5 +53,5 @@
     {% endblock %}
 
     {% block JS %}
-    <script src="/static/js/new-post.js"></script>
+    <script src="/static/js/patch-post.js"></script>
     {% endblock %}

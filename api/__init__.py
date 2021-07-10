@@ -72,4 +72,12 @@ class ErrorData:
         'url': '#'
     }
 
+    wrong_user_edit_data = {
+        'error': True,
+        'title': '錯誤對象',
+        'message': '你沒有編輯這則文章的權限喔',
+        'confirm': '確認',
+        'url': '/'
+    }
+
 from . import user, profile, scard, message, new_post, index, post, comment, notification

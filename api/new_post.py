@@ -3,7 +3,6 @@ import io, boto3, re
 from uuid import uuid4
 from PIL import Image
 from . import api, ErrorData, Post, PostBoard, User, Subscribe, db
-from datetime import datetime
 s3 = boto3.client('s3')
 
 no_sign_data = {
@@ -110,7 +109,7 @@ def post_new_post():
         try:
             board_id = int(req_data["board"])
         except:
-            return jsonify(wrong_board_data), 400
+            return jsonify(ErrorData.wrong_board_data), 400
         select_name = req_data["name"]
         post_title = req_data["title"]
         post_content = req_data["content"]
@@ -118,7 +117,7 @@ def post_new_post():
         # 查看使用者是否有正確選擇board
         board = PostBoard.view_board(board_id)
         if not board:
-            return jsonify(wrong_board_data), 400
+            return jsonify(ErrorData.wrong_board_data), 400
         
         # 查看使用者是否有正確選擇發文名稱
         user = User.view_user(user_id)
@@ -129,11 +128,11 @@ def post_new_post():
         elif select_name == '匿名':
             user_name = '匿名'
         else:
-            return jsonify(wrong_name_data), 400
+            return jsonify(ErrorData.wrong_name_data), 400
         
         # 查看使用者是否有填寫文章標題或內容
         if post_title == '' or post_content == '<p><br></p>':
-            return jsonify(wrong_content_data), 400
+            return jsonify(ErrorData.wrong_content_data), 400
 
         # 抓到所有內文中的圖片檔案，如果有圖片則將第一筆圖片src放入資料庫
         imgs = re.findall(r"https://.{73}jpeg",post_content)

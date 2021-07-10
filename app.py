@@ -52,25 +52,31 @@ def index():
 @app.route('/b')
 @app.route('/b/<board>')
 def show_board(board=None):
-	boards = PostBoard.query.all()
-	board_list = []
-	for post_board in boards:
-		board_list.append(post_board.sys_name)
-	if board == None or board in board_list:
-		return render_template('index.html')
-	abort(404)
+	try:
+		boards = PostBoard.query.all()
+		board_list = []
+		for post_board in boards:
+			board_list.append(post_board.sys_name)
+		if board == None or board in board_list:
+			return render_template('index.html')
+	finally:
+		abort(404)
+
 
 @app.route('/b/<board>/p/<post_id>')
 def view_post(board, post_id):
-	post = Post.query.filter_by(id=post_id).first()
-	if post:
-		right_board = PostBoard.view_board(post.board_id)
-		if right_board.sys_name == board:
-			return render_template('post.html')
+	try:
+		post = Post.query.filter_by(id=post_id).first()
+		if post:
+			right_board = PostBoard.view_board(post.board_id)
+			if right_board.sys_name == board:
+				return render_template('post.html')
+			else:
+				return redirect(f'/b/{right_board.sys_name}/p/{post_id}')
 		else:
-			return redirect(f'/b/{right_board.sys_name}/p/{post_id}')
-	else:
-		return render_template('post-not-exist.html')
+			return render_template('post-not-exist.html')
+	finally:
+		return redirect(url_for('show_board'))
 			
 
 @app.route('/new-post')
@@ -131,20 +137,21 @@ def scard():
 
 @app.route('/message')
 def redirect_message():
-	if "user" in session:
-		user_id = session["user"]["id"]
-		# 找尋最近期通信過的朋友
-		message_id = db.session.execute("SELECT messages.scard_id\
-		FROM messages INNER JOIN scard ON messages.scard_id = scard.id\
-		WHERE scard.user_1 = :id or scard.user_2 = :id\
-		ORDER BY messages.id DESC\
-		LIMIT 1", {"id":user_id}).first()
-		# 如果有朋友，轉移到該位朋友的頻道
-		if message_id:
-			message_id = message_id[0]
-			return redirect(url_for('message', id=message_id))
-
-	return redirect(url_for('show_board'))
+	try: 
+		if "user" in session:
+			user_id = session["user"]["id"]
+			# 找尋最近期通信過的朋友
+			message_id = db.session.execute("SELECT messages.scard_id\
+			FROM messages INNER JOIN scard ON messages.scard_id = scard.id\
+			WHERE scard.user_1 = :id or scard.user_2 = :id\
+			ORDER BY messages.id DESC\
+			LIMIT 1", {"id":user_id}).first()
+			# 如果有朋友，轉移到該位朋友的頻道
+			if message_id:
+				message_id = message_id[0]
+				return redirect(url_for('message', id=message_id))
+	finally:
+		return redirect(url_for('show_board'))
 
 @app.route('/message/<id>')
 def message(id):
@@ -157,9 +164,13 @@ def message(id):
 def handle_send_message(data):
 	# print('send_message',data)
 	r.publish(data["room"], json.dumps(data))
-	message = Messages(scard_id=data["room"], user_id=data["id"], message=data["message"])
-	db.session.add(message)
-	db.session.commit()
+	try:
+		message = Messages(scard_id=data["room"], user_id=data["id"], message=data["message"])
+		db.session.add(message)
+		db.session.commit()
+	except:
+		db.session.close()
+		
 
 msg_p = r.pubsub()
 msg_room_lst = []

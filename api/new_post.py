@@ -2,7 +2,7 @@ from flask import jsonify, request, session
 import io, boto3, re
 from uuid import uuid4
 from PIL import Image
-from . import api, ErrorData, Notification, Post, PostBoard, User, db
+from . import api, ErrorData, Post, PostBoard, User, Subscribe, db
 from datetime import datetime
 s3 = boto3.client('s3')
 
@@ -64,7 +64,6 @@ wrong_content_data = {
 
 @api.route('/new-post', methods=["GET"])
 def get_new_post():
-    print('get_new_post', datetime.now().strftime("%H:%M"))
     if "user" in session:
         # print(session)
         user_verify = session["user"]["verify_status"]
@@ -99,7 +98,6 @@ def get_new_post():
 
 @api.route('/new-post', methods=["POST"])
 def post_new_post():
-    print('post_new_post', datetime.now().strftime("%H:%M"))
     if "user" in session:
         user_id = session["user"]["id"]
         user_verify = session["user"]["verify_status"]
@@ -146,8 +144,8 @@ def post_new_post():
             new_post = Post(board_id=board_id, user_id=user_id, user_name=user_name, title=post_title, content=post_content, first_img = imgs[0])
         db.session.add(new_post)
         db.session.commit()
-        new_note = Notification(id=f'post{new_post.id}', href=f'/b/{board.sys_name}/p/{new_post.id}')
-        db.session.add(new_note)
+        new_subscribe = Subscribe(channel_id=f'post_{new_post.id}_poster', user_id=user_id)
+        db.session.add(new_subscribe)
         db.session.commit()
         data = {
             'ok': True,
@@ -159,7 +157,6 @@ def post_new_post():
 
 @api.route('/new-post/image', methods=["POST"])
 def post_image():
-    print('post_image', datetime.now().strftime("%H:%M"))
     if "user" in session:
         user_verify = session["user"]["verify_status"]
         if user_verify == 'stranger':

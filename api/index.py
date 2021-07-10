@@ -1,13 +1,8 @@
 from flask import request, jsonify
 from . import api, db
-from datetime import datetime
-# import sys
-# sys.path.append("..")
-# from models.model import Post, PostBoard, db
 
 @api.route('/posts', methods=["GET"])
 def get_posts():
-    print('get_posts', datetime.now().strftime("%H:%M"))
     is_popular = request.args.get('popular')
     select_board = request.args.get('board')
     # 熱門render之後補

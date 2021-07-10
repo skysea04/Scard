@@ -1,11 +1,9 @@
 from flask import jsonify, session
-from . import api, ErrorData, Post, PostUserFollow , PostUserLike, db
-from datetime import datetime
+from . import api, ErrorData, Post, PostUserLike, Subscribe, db
 
 # 獲取文章資訊
 @api.route('/post/<int:post_id>', methods=["GET"])
 def get_post(post_id):
-    print('get_post', datetime.now().strftime("%H:%M"))
     try:
         post = db.session.execute('SELECT user.comment_avatar, postboard.sys_name, postboard.show_name, post.user_name, post.title, post.content, post.create_time, post.like_count, post.comment_count\
         FROM ((post INNER JOIN postboard ON post.board_id = postboard.id)\
@@ -16,7 +14,7 @@ def get_post(post_id):
         if "user" in session:
             user_id = session["user"]["id"]
             like = PostUserLike.query.filter_by(user_id=user_id, post_id=post_id).first()
-            follow = PostUserFollow.query.filter_by(user_id=user_id, post_id=post_id).first()
+            follow = Subscribe.query.filter_by(channel_id=f'post_{post_id}', user_id=user_id).first()
             if like:
                 have_like = True
             if follow:
@@ -43,7 +41,6 @@ def get_post(post_id):
 # 使用者更動對特定文章的按讚
 @api.route('/post/<int:post_id>/like', methods=["PATCH"])
 def patch_post_like(post_id):
-    print('patch_post_like', datetime.now().strftime("%H:%M"))
     if 'user' in session:
         user_id = session["user"]["id"]
         user_verify = session["user"]["verify_status"]
@@ -69,45 +66,27 @@ def patch_post_like(post_id):
     return jsonify(ErrorData.no_sign_data), 403
 
 # 使用者更動對特定文章的追蹤
-@api.route('/post/<int:post_id>/follow', methods=["PATCH"])
+@api.route('/post/<post_id>/follow', methods=["PATCH"])
 def patch_post_follow(post_id):
-    print('patch_post_follow', datetime.now().strftime("%H:%M"))
     if 'user' in session:
         user_id = session['user']['id']
         user_verify = session["user"]["verify_status"]
         if user_verify == 'stranger':
             return jsonify(ErrorData.verify_mail_data), 403
 
-        follow = PostUserFollow.query.filter_by(user_id=user_id, post_id=post_id).first()
-        if follow:
-            db.session.delete(follow)
-            # print('remove')
-            # 增新訂閱詳細流程（待補）
+        is_follow = True
+        sub = Subscribe.query.filter_by(channel_id=f'post_{post_id}', user_id=user_id).first()
+        if sub:
+            db.session.delete(sub)
+            is_follow = False
         else:
-            follow = PostUserFollow(user_id=user_id, post_id=post_id, note_id=f'post{post_id}')
-            db.session.add(follow)
-            # print('append')
-            # 取消訂閱詳細流程（待補）
+            sub = Subscribe(channel_id=f'post_{post_id}', user_id=user_id)
+            db.session.add(sub)
         db.session.commit()
         data = {
-            "ok": True
+            "ok": True,
+            "isFollow": is_follow
         }
         return jsonify(data), 200
 
-    return jsonify(ErrorData.no_sign_data), 403
-
-# 獲取使用者追蹤中的文章
-@api.route('/post/my-follow', methods=['GET'])
-def get_myfollow_post():
-    print('get_myfollow_post', datetime.now().strftime("%H:%M"))
-    if 'user' in session:
-        user_id = session['user']['id']
-        posts = PostUserFollow.query.filter_by(user_id=user_id).all()
-        post_lst = []
-        for post in posts:
-            post_lst.append(post.post_id)
-        data = {
-            'posts': post_lst
-        }
-        return jsonify(data), 200
     return jsonify(ErrorData.no_sign_data), 403

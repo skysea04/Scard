@@ -1,13 +1,11 @@
 from flask import request, jsonify, session
-from . import api, ErrorData, Comment, CommentUserLike, Notification, Post, PostBoard, PostUserFollow, User, db
+from . import api, ErrorData, Comment, CommentUserLike,  Post, PostBoard, User, Subscribe, db
 from datetime import datetime
 import sys, json
 sys.path.append("..")
 from app import r
-# from models.model import Comment, CommentUserLike, Notification, Post, PostBoard, PostUserFollow, User, db
 @api.route('/comment/<int:post_id>', methods=["POST"])
 def post_comment(post_id):
-    print('post_comment', datetime.now().strftime("%H:%M"))
     if "user" in session:
         user_id = session["user"]["id"]
         # user_verify = session["user"]["verify"]
@@ -36,25 +34,55 @@ def post_comment(post_id):
         if content == '<p><br></p>':
             return jsonify(ErrorData.wrong_content_data), 400
 
-        # 將回應更新到資料庫，增加comment_count，回傳使用者成功資訊
+        # 將回應更新到資料庫，增加comment_count
         post = Post.query.filter_by(id=post_id).first()
         board = PostBoard.view_board(post.board_id)
         post.comment_count += 1
         new_cmt = Comment(post_id=post_id, user_id=user_id, user_name=user_name, floor=post.comment_count, content=content)
+        db.session.add(new_cmt)
 
-        user_follow = PostUserFollow.query.filter_by(user_id=user_id, post_id=post_id).first()
+        post_chan = f'post_{post_id}'
+        poster_chan = f'post_{post_id}_poster'
+        # 幫留言者自動追蹤文章
+        user_sub = Subscribe.query.filter_by(channel_id = post_chan, user_id=user_id).first()
         add_follow = False
-        if not user_follow:
-            user_follow = PostUserFollow(user_id=user_id, post_id=post_id, note_id=f'post{post_id}')
-            db.session.add(user_follow)
+        if not user_sub:
+            user_sub = Subscribe(channel_id = post_chan, user_id=user_id)
+            db.session.add(user_sub)
             add_follow = True
 
-        post_note = Notification.query.filter_by(id = f'post{post_id}').first()
-        if post_note.content is None:
-            post_note.content = f'你追蹤的文章<b>「{post.title}」</b>有新的回應。'
-        post_note.update_time = datetime.now()
+
+
+        ## 存通知內容到每個文章訂閱者與原po的redis中
+        # 給訂閱者
+        note_to_suber = {
+            'channel': post_chan,
+            'user_id': user_id,
+            'msg': f'你追蹤的文章<b>「{post.title}」</b>有新的回應。',
+            'href': f'/b/{board.sys_name}/p/{post_id}',
+            'time': datetime.now().strftime("%-m月%-d日 %H:%M")
+        }        
+        subers = Subscribe.query.filter_by(channel_id = post_chan).all()
+        for suber in subers:
+            if suber.user_id == user_id:
+                continue
+            r.hset(f'user_{suber.user_id}_note', post_chan, json.dumps(note_to_suber))
+
+        # 給原po
+        note_to_poster = {
+            'channel': poster_chan,
+            'user_id': user_id,
+            'msg': f'你的文章<b>「{post.title}」</b>有新的回應。',
+            'href': f'/b/{board.sys_name}/p/{post_id}',
+            'time': datetime.now().strftime("%-m月%-d日 %H:%M")
+        }
+        r.hset(f'user_{post.user_id}_note', poster_chan, json.dumps(note_to_poster))
         
-        db.session.add(new_cmt)
+        # pub to channel => 即時通知
+        r.publish(post_chan, json.dumps(note_to_suber))
+        r.publish(poster_chan, json.dumps(note_to_poster))
+
+        # 確認改動存入資料庫
         db.session.commit()
         data = {
             'id': new_cmt.id,
@@ -66,21 +94,12 @@ def post_comment(post_id):
             'content': content,
             'addFollow': add_follow
         }
-        note_data = {
-            'room': f'post{post_id}',
-            'msg': f'你追蹤的文章<b>「{post.title}」</b>有新的回應。',
-            'href': f'/b/{board.sys_name}/p/{post_id}',
-            'time': datetime.now().strftime("%-m月%-d日 %H:%M")
-        }
-        # print(note_data)
-        r.publish(note_data['room'], json.dumps(note_data))
         return jsonify(data), 200
         
     return jsonify(ErrorData.no_sign_data), 403
 
 @api.route('/comment/<int:post_id>', methods=["GET"])
 def get_comment(post_id):
-    print('get_comment', datetime.now().strftime("%H:%M"))
     try:
         cmt_lst = []
         if "user" in session:
@@ -126,7 +145,6 @@ def get_comment(post_id):
 
 @api.route('/comment/<int:comment_id>/like', methods=["PATCH"])
 def patch_comment_like(comment_id):
-    print('patch_comment_like', datetime.now().strftime("%H:%M"))
     if 'user' in session:
         user_id = session["user"]["id"]
         user_verify = session["user"]["verify_status"]

@@ -47,13 +47,11 @@ app.register_blueprint(api, url_prefix="/api")
 
 @app.route('/')
 def index():
-	print('index', datetime.now().strftime("%H:%M"))
 	return redirect(url_for('show_board'))
 
 @app.route('/b')
 @app.route('/b/<board>')
 def show_board(board=None):
-	print('show_board', datetime.now().strftime("%H:%M"))
 	boards = PostBoard.query.all()
 	board_list = []
 	for post_board in boards:
@@ -64,7 +62,6 @@ def show_board(board=None):
 
 @app.route('/b/<board>/p/<post_id>')
 def view_post(board, post_id):
-	print('view_post', datetime.now().strftime("%H:%M"))
 	post = Post.query.filter_by(id=post_id).first()
 	if post:
 		right_board = PostBoard.view_board(post.board_id)
@@ -78,21 +75,18 @@ def view_post(board, post_id):
 
 @app.route('/new-post')
 def new_post():
-	print('new_post', datetime.now().strftime("%H:%M"))
 	if 'user' in session:
 		return render_template('new-post.html')
 	return redirect(url_for('signup'))
 
 @app.route('/signup')
 def signup():
-	print('signup', datetime.now().strftime("%H:%M"))
 	if 'user' in session:
 		return redirect(url_for('index'))
 	return render_template('signup.html')
 
 @app.route('/mailverify')
 def go_to_verify_mail():
-	print('go_to_verify_mail', datetime.now().strftime("%H:%M"))
 	if 'user' in session:
 		user_email = session['user']['email']
 		return render_template('verify-my-mail.html',mail=user_email)
@@ -101,7 +95,6 @@ def go_to_verify_mail():
 
 @app.route('/mailverify/<email>')
 def mail_verify(email):
-	print('mail_verify', datetime.now().strftime("%H:%M"))
 	user = User.query.filter_by(email=email).first()
 	if not user:
 		abort(404)
@@ -120,28 +113,24 @@ def mail_verify(email):
 
 @app.route('/basicprofile')
 def basic_profile():
-	print('basic_profile',datetime.now().strftime("%H:%M"))
 	if 'user' in session:
 		return render_template('basic-profile.html')
 	return redirect(url_for('signup'))
 
 @app.route('/my/profile')
 def my_profile():
-	print('my_profile', datetime.now().strftime("%H:%M"))
 	if 'user' in session:
 		return render_template('my-profile.html')
 	return redirect(url_for('signup'))
 
 @app.route('/scard')
 def scard():
-	print('scard', datetime.now().strftime("%H:%M"))
 	if 'user' in session:
 		return render_template('scard.html')
 	return redirect(url_for('signup'))
 
 @app.route('/message')
 def redirect_message():
-	print('redirect_message', datetime.now().strftime("%H:%M"))
 	if "user" in session:
 		user_id = session["user"]["id"]
 		# 找尋最近期通信過的朋友
@@ -159,7 +148,6 @@ def redirect_message():
 
 @app.route('/message/<id>')
 def message(id):
-	print('message', datetime.now().strftime("%H:%M"))
 	if 'user' in session:
 		return render_template('message.html')
 	return redirect(url_for('signup'))
@@ -167,7 +155,6 @@ def message(id):
 
 @socketio.on('send_message')
 def handle_send_message(data):
-	print('handle_send_message', datetime.now().strftime("%H:%M"))
 	# print('send_message',data)
 	r.publish(data["room"], json.dumps(data))
 	message = Messages(scard_id=data["room"], user_id=data["id"], message=data["message"])
@@ -178,37 +165,31 @@ msg_p = r.pubsub()
 msg_room_lst = []
 @socketio.on('join_room')
 def handle_join_room(room_id):
-	print('handle_join_room', datetime.now().strftime("%H:%M"))
 	join_room(room_id)
 	if room_id not in msg_room_lst:
 		msg_p.subscribe(room_id)
 	for message in msg_p.listen():
-		print('listen_message', datetime.now().strftime("%H:%M"))
 		if isinstance(message.get('data'), bytes):
 			msg = json.loads(message['data'])
 			msg["time"] = datetime.now().strftime("%-m月%-d日 %H:%M")
 			# print(msg, msg["room"])
 			emit('receive_message', msg, to=msg["room"])
 
-post_p = r.pubsub()
-post_room_lst = []
-@socketio.on('follow_post')
-def handle_follow_post(post_id):
-	print('handle_follow_post', datetime.now().strftime("%H:%M"))
-	post_room = f'post{post_id}'
-	join_room(post_room)
-	if post_room not in post_room_lst:
-		post_p.subscribe(post_room)
-	for note in post_p.listen():
-		print('listen note', datetime.now().strftime("%H:%M"))
+chan_p = r.pubsub()
+chan_lst = []
+@socketio.on('sub_channel')
+def handle_sub_channel(chan_id):
+	join_room(chan_id)
+	if chan_id not in chan_lst:
+		chan_p.subscribe(chan_id)
+	for note in chan_p.listen():
 		if isinstance(note.get('data'), bytes):
 			msg = json.loads(note['data'])
 			# print(type(msg), msg)
-			emit('receive_post_note', msg, to=msg['room'])
+			emit('receive_channel', msg, to=msg['channel'])
 
 @app.errorhandler(404)
 def page_not_found(e):
-	print('404', datetime.now().strftime("%H:%M"))
 	# note that we set the 404 status explicitly
 	return render_template('404.html'), 404
 

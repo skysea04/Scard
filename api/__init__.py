@@ -1,6 +1,6 @@
 from flask import Blueprint
 # from app import r
-from models.model import Comment, CommentUserLike, Notification, Post, PostBoard, PostUserFollow, PostUserLike, User, Scard, Messages, Collage, CollageDepartment, cache, db
+from models.model import Comment, CommentUserLike, Notification, Post, PostBoard, PostUserFollow, PostUserLike, User, Scard, Messages, Collage, CollageDepartment, Subscribe, cache, db
 api = Blueprint('api', __name__)
 class ErrorData:
     no_sign_data = {

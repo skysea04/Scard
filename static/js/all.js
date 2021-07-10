@@ -17,7 +17,7 @@ function showErrorModal(data){
 // api
 const userAPI = '/api/user'
 const profileAPI = '/api/profile'
-const myFollowPostAPI = '/api/post/my-follow'
+const mySubAPI = '/api/my/sub'
 const noteAPI = '/api/notification'
 
 // socket
@@ -27,10 +27,12 @@ const socket = io()
 const navUser = document.querySelector('.nav-user')
 const navStranger = document.querySelector('.nav-stranger')
 
+let userID
 async function checkSign(){
     const res =await fetch(userAPI)
     const data = await res.json()
     if(data.id){
+        userID = data.id
         navUser.classList.add('d-flex')
         navStranger.classList.add('d-none')
         notification()
@@ -51,12 +53,12 @@ checkSign()
 // 通知功能大禮包
 function notification(){
     socket.on('connect', function(){
-        fetch(myFollowPostAPI)
+        fetch(mySubAPI)
         .then(res => res.json())
         .then(data => {
-            if(data.posts){
-                data.posts.forEach( post => {
-                    socket.emit('follow_post', post)
+            if(data.data){
+                data.data.forEach( sub => {
+                    socket.emit('sub_channel', sub)
                 })
             }
         })
@@ -86,12 +88,15 @@ function notification(){
     })
     
     // 當新通知來時直接更新
-    socket.on('receive_post_note', data => {
+    socket.on('receive_channel', data => {
         console.log(data)
         createNote(data)
     })
     
     function createNote(data){
+        // 如果通知發送來源就是自己，不新增通知
+        if(data.user_id === userID) return
+
         const oldNote = noteLst.querySelector(`a[href="${data.href}"]`)
         if(oldNote){ //如果之前就有相同文章的通知，直接更改資訊即可
             const noteTime = oldNote.querySelector('.note-time')

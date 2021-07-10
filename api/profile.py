@@ -3,12 +3,10 @@ import io, sys, boto3
 from uuid import uuid4
 from PIL import Image
 from . import api, ErrorData, Collage, CollageDepartment, User, db, cache
-from datetime import datetime
 s3 = boto3.client('s3')
 
 @api.route('/profile', methods=["GET"])
 def get_profile():
-    print('get_profile', datetime.now().strftime("%H:%M"))
     # 查看是否登入
     if "user" in session:
         user_id = session["user"]["id"]
@@ -40,7 +38,6 @@ def get_profile():
 
 @api.route('/profile', methods=["POST"])
 def post_profile():
-    print('post_profile', datetime.now().strftime("%H:%M"))
     # 查看是否登入
     if 'user' in session:
         user_id = session["user"]["id"]
@@ -98,7 +95,6 @@ def post_profile():
 
 @api.route('/profile', methods=["PATCH"])
 def patch_profile():
-    print('patch_profile', datetime.now().strftime("%H:%M"))
     # 查看是否登入
     if "user" in session:
         user_id = session["user"]["id"]
@@ -154,7 +150,6 @@ def patch_profile():
 
 @api.route('/profile/avatar', methods=["PATCH"])
 def patch_avatar():
-    print('patch_avatar', datetime.now().strftime("%H:%M"))
     if "user" in session:
         user_id = session["user"]["id"]
         file = request.files["avatar"]

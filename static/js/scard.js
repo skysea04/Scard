@@ -2,13 +2,6 @@
 const scardAPI = '/api/scard'
 const scardZeroingAPI = '/api/scard/zeroing'
 
-// errorModal相關變數
-// const errorModalContain = document.getElementById('error-modal')
-// const errorModal = new bootstrap.Modal(errorModalContain)
-// const modalTitle = errorModalContain.querySelector('.modal-title')
-// const modalBody = errorModalContain.querySelector('.modal-body')
-// const modalHref = errorModalContain.querySelector('.modal-href')
-
 // scard頁面相關變數
 const friendHref = document.querySelector('.friend-href')
 const addFriendBtn = document.querySelector('.add-friend-btn')
@@ -27,36 +20,36 @@ const wantToTry = scardPage.querySelector('.want-to-try')
 
 
 fetch(scardAPI)
-    .then(res => res.json())
-    .then(data => {
-        if(data.error){
-            showErrorModal(data)
-        }else{
-            if(data.isFriend){
-                addFriendBtn.innerText = '已成為卡友'
-                friendHref.href = `/message/${data.messageRoomId}`
-            }else if(data.invited){
-                addFriendBtn.innerText = '已送出邀請'
-                addFriendBtn.classList.add('btn-secondary')
-                addFriendBtn.setAttribute("disabled", "")
-            }
-
-            avatar.src = data.avatar
-            name.innerText = data.name
-            collage.innerText = data.collage
-            department.innerText = data.department
-            interest.innerText = data.interest
-            club.innerText = data.club
-            course.innerText = data.course
-            country.innerText = data.country
-            worry.innerText = data.worry
-            swap.innerText = data.swap
-            wantToTry.innerText = data.wantToTry
-            
-            // 將沒看卡的天數歸0
-            scardZeroing()
+.then(res => res.json())
+.then(data => {
+    if(data.error){
+        showErrorModal(data)
+    }else{
+        if(data.isFriend){
+            addFriendBtn.innerText = '已成為卡友'
+            friendHref.href = `/message/${data.messageRoomId}`
+        }else if(data.invited){
+            addFriendBtn.innerText = '已送出邀請'
+            addFriendBtn.classList.add('btn-secondary')
+            addFriendBtn.setAttribute("disabled", "")
         }
-    })
+
+        avatar.src = data.avatar
+        name.innerText = data.name
+        collage.innerText = data.collage
+        department.innerText = data.department
+        interest.innerText = data.interest
+        club.innerText = data.club
+        course.innerText = data.course
+        country.innerText = data.country
+        worry.innerText = data.worry
+        swap.innerText = data.swap
+        wantToTry.innerText = data.wantToTry
+        
+        // 將沒看卡的天數歸0
+        scardZeroing()
+    }
+})
 
 function scardZeroing(){
     fetch(scardZeroingAPI, {method: 'PATCH'})

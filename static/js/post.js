@@ -48,11 +48,72 @@ fetch(postAPI)
     }
     if(data.isAuthor){
         postFollowIcon.classList.add('d-none')
+        //// 建立編輯、刪除文章的元件與函式
+        // delModal變數
+        const delModalContain = document.getElementById('del-modal')
+        const delModal = new bootstrap.Modal(delModalContain)
+        const delModalBody = delModalContain.querySelector('.modal-body')
+        const delModalHref = delModalContain.querySelector('.modal-href')
+        
+        // 編輯文章元件
+        const editHref = document.createElement('a')
+        editHref.className = 'scard-l btn rounded-0'
+        editHref.innerText = '編輯文章'
+        editHref.href = `${location.pathname}/edit`
+        
+        // 刪除文章元件
+        const delHref = document.createElement('a')
+        delHref.className = 'text-danger btn rounded-0'
+        delHref.innerText = '刪除文章'
+
+        async function delPost(){
+            const res = await fetch(postAPI, {method: 'DELETE'})
+            const data = await res.json()
+            if(data.error){
+                showErrorModal(data)
+            }else{ // 成功刪除返回首頁
+                location = '/b'
+            }
+        }
+        
+        // 請使用者確認是否刪除文章
+        function showDelModal(){
+            delModalHref.addEventListener('click', delPost)
+            delModalBody.innerText = `確定要刪除本篇文章嗎？此操作無法復原。`
+            delModal.show()
+        }
+        // 當modal被關閉時，取消delModalHref與刪除文章的事件關聯
+        delModalContain.addEventListener('hidden.bs.modal', ()=>{
+            delModalHref.removeEventListener('click', delPost)
+        })
+        
+        delHref.addEventListener('click', showDelModal)
+        
+        // 包覆編輯＆刪除選項
+        const editLst = document.createElement('div')
+        editLst.className = 'd-flex flex-column'
+        editLst.append(editHref, delHref)
+        
+        // 操作文章按鈕
         const editBtn = thePost.querySelector('.post-edit')
         editBtn.classList.remove('d-none')
-        editBtn.addEventListener('click', ()=>{
-            location = location.pathname + '/edit'
+        
+        // 文章popover
+        const editPopover = new bootstrap.Popover(editBtn, {
+            container: 'body',
+            placement: "bottom",
+            html: true,
+            trigger: 'manual',
+            content: editLst
         })
+
+        editBtn.addEventListener('click', ()=>{
+            editPopover.toggle()
+        })
+        editBtn.addEventListener('blur', ()=>{
+            editPopover.hide()
+        })
+
     }
 
     // 如果留言數為0，顯示沒有留言的頁面配置
@@ -106,33 +167,177 @@ function getComment(comment){
     authorField.className = 'd-flex author-field'
     authorField.append(avatar, cmtAuthor)
 
-    //// 按讚（編輯）欄位
-    const likeIcon = document.createElement('div')
-    likeIcon.className = 'me-2'
-    likeIcon.innerHTML = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
-    </svg>
-    `
-    const likeCount = document.createElement('p')
-    likeCount.className = 'me-2'
-    likeCount.innerText = comment.likeCount
-    
-    const likeField = document.createElement('div')
-    likeField.className = 'd-flex align-items-center like'
-    comment.like && likeField.classList.add('active')
-    likeField.append(likeIcon, likeCount)
-    
-
-    const infoField = document.createElement('div')
-    infoField.className = 'd-flex info-field post-interact'
-    infoField.append(likeField)
-
     // 留言header
     const cmtHeader = document.createElement('div')
-    cmtHeader.className = 'd-flex justify-content-between align-items-center text-black-50 fs-6 mb-2 comment-header'
-    cmtHeader.append(authorField, infoField)
+    cmtHeader.className = 'd-flex justify-content-between align-items-center text-black-50 fs-6 mb-3 comment-header'
+    cmtHeader.append(authorField)
+    
+    // 如果留言存在，顯示按讚/編輯icon
+    if(!comment.delete){
+        const likeIcon = document.createElement('div')
+        likeIcon.className = 'me-2'
+        likeIcon.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 15">
+            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+        </svg>
+        `
+        const likeCount = document.createElement('p')
+        likeCount.className = 'me-2'
+        likeCount.innerText = comment.likeCount
+        
+        const likeField = document.createElement('div')
+        likeField.className = 'd-flex align-items-center like'
+        comment.like && likeField.classList.add('active')
+        likeField.append(likeIcon, likeCount)
+        
 
+        const infoField = document.createElement('div')
+        infoField.className = 'd-flex info-field post-interact'
+        infoField.append(likeField)
+
+        // 如果瀏覽者就是留言作者
+        if(comment.isAuthor){
+            
+            // 分隔bar
+            const infoBar = document.createElement('div')
+            infoBar.className = 'info-bar my-auto bg-secondary mx-2'
+            
+            // 改動留言按鈕
+            const editBtn = document.createElement('button')
+            editBtn.className = 'edit btn p-0 text-secondary ms-1'
+            editBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+            </svg>
+            `
+            // delModal變數
+            const delModalContain = document.getElementById('del-modal')
+            const delModal = new bootstrap.Modal(delModalContain)
+            const delModalBody = delModalContain.querySelector('.modal-body')
+            const delModalHref = delModalContain.querySelector('.modal-href')
+            
+            
+            // 編輯文章元件
+            const editHref = document.createElement('a')
+            editHref.className = 'scard-l btn rounded-0'
+            editHref.innerText = '編輯留言'
+            
+            // 刪除文章元件
+            const delHref = document.createElement('a')
+            delHref.className = 'text-danger btn rounded-0'
+            delHref.innerText = '刪除留言'
+            // delHref.addEventListener('click', showDelModal)
+            
+            // 包覆編輯＆刪除選項
+            const editLst = document.createElement('div')
+            editLst.className = 'd-flex flex-column'
+            editLst.append(editHref, delHref)
+            
+            //api
+            const theCommentAPI = `/api/comment/${comment.id}`
+
+            // 編輯留言
+            async function patchComment(){
+                const commentData = {
+                    content: postCommentContent.innerHTML
+                }
+                const res = await fetch(theCommentAPI, {
+                    method: 'PATCH',
+                    body: JSON.stringify(commentData),
+                    headers: {'Content-Type': 'application/json'}
+                })
+                const data = await res.json()
+                if(data.error){
+                    showErrorModal(data)
+                }else{
+                    // 更新留言內容
+                    cmtBody.innerHTML = comment.content = postCommentContent.innerHTML
+                    closePatchComment()
+                }
+            }
+            // 顯現留言面板
+            function openPatchComment(){
+                sendBtn.addEventListener('click', patchComment)
+                postCommentContent.innerHTML = comment.content
+                commentBlank.classList.add('d-none')
+                postComment.classList.remove('d-none')
+            }
+
+            // 關閉留言面板
+            function closePatchComment(){
+                sendBtn.removeEventListener('click', patchComment)
+                postCommentContent.innerHTML = '<p></b></p>'
+                commentBlank.classList.remove('d-none')
+                postComment.classList.add('d-none')
+            }
+
+            editHref.addEventListener('click', openPatchComment)
+            cancelComment.addEventListener('click', closePatchComment)
+
+            // 刪除留言
+            async function delComment(){
+                const res = await fetch(theCommentAPI, {method:'DELETE'})
+                const data = await res.json()
+                if(data.error){
+                    showErrorModal(data)
+                }else{
+                    // 修正該留言內容為刪除版本樣式
+                    avatar.src = '/static/icons/avatar/nobody.svg'
+                    userName.innerText = '這則留言已被刪除'
+                    cmtBody.innerHTML = '<p>已經刪除的內容就像Scard一樣，錯過是無法再相見的！</p>'
+                    infoField.classList.add('d-none')
+                    // delModal關閉
+                    delModal.hide()
+                }
+            }
+
+            // 請使用者確認是否刪除留言
+            function showDelModal(){
+                delModalHref.addEventListener('click', delComment)
+                delModalBody.innerText = `確定要刪除本則留言嗎？此操作無法復原。`
+                delModal.show()
+            }
+            // 當modal被關閉時，取消delModalHref與刪除文章的事件關聯
+            delModalContain.addEventListener('hidden.bs.modal', ()=>{
+                delModalHref.removeEventListener('click', delComment)
+            })
+
+            delHref.addEventListener('click', showDelModal)
+            
+            // 文章popover
+            const editPopover = new bootstrap.Popover(editBtn, {
+                container: 'body',
+                placement: "bottom",
+                html: true,
+                trigger: 'manual',
+                content: editLst
+            })
+            editBtn.addEventListener('click', ()=>{
+                editPopover.toggle()
+            })
+            editBtn.addEventListener('blur', ()=>{
+                editPopover.hide()
+            })
+
+            infoField.append(infoBar, editBtn)
+        }
+        cmtHeader.append(infoField)
+        //按讚API
+        const cmtLikeAPI = `/api/comment/${comment.id}/like`
+        async function cmtClickLike(){
+            const res = await fetch(cmtLikeAPI, {method: "PATCH"})
+            const data = await res.json()
+            if(data.error){
+                showErrorModal(data)
+            }
+            else{
+                likeCount.innerText = data.likeCount
+                likeField.classList.toggle('active')
+            }
+        }
+        likeField.addEventListener('click', cmtClickLike)
+    }
+    
     // 留言body
     const cmtBody = document.createElement('div')
     cmtBody.className = 'comment-body'
@@ -145,22 +350,6 @@ function getComment(comment){
     
     // 加入留言列表
     cmtLst.append(cmt)
-
-    //按讚API
-    const cmtLikeAPI = `/api/comment/${comment.id}/like`
-    async function cmtClickLike(){
-        const res = await fetch(cmtLikeAPI, {method: "PATCH"})
-        const data = await res.json()
-        if(data.error){
-            showErrorModal(data)
-        }
-        else{
-            likeCount.innerText = data.likeCount
-            likeField.classList.toggle('active')
-        }
-    }
-    likeField.addEventListener('click', cmtClickLike)
-    
 }
 
 // 對文章按讚
@@ -185,8 +374,11 @@ async function clickFollow(){
     }
     else{
         postFollowIcon.classList.toggle('active')
-        // 這裡要幫使用者離開/加入追蹤的socket_room（待捕）
-        // socket.emit('follow_post', postID)
+        if(data.isFollow){ //使用者追蹤貼文，幫使用者加入頻道
+            socket.emit('sub_channel', `post_${postID}`)
+        }else{
+            socket.emit('unsub_channel', `post_${postID}`)
+        }
     }
 }
 postFollowIcon.addEventListener('click', clickFollow)
@@ -229,15 +421,23 @@ fetch(newPostAPI)
             // 新增發文頭像
             postCommentAvatar.src = data.avatar
 
-            commentBlank.addEventListener('click', commentToggle)
-            cancelComment.addEventListener('click', commentToggle)
+            commentBlank.addEventListener('click', openPostComment)
+            cancelComment.addEventListener('click', closePostComment)
         }
     })
 
-// 顯現/關閉留言面板
-function commentToggle(){
-    commentBlank.classList.toggle('d-none')
-    postComment.classList.toggle('d-none')
+// 顯現留言面板
+function openPostComment(){
+    sendBtn.addEventListener('click', sendComment)
+    commentBlank.classList.add('d-none')
+    postComment.classList.remove('d-none')
+}
+
+// 關閉留言面板
+function closePostComment(){
+    sendBtn.removeEventListener('click', sendComment)
+    commentBlank.classList.remove('d-none')
+    postComment.classList.add('d-none')
 }
 
 // 擴展/縮小留言面板區域
@@ -321,7 +521,7 @@ function pasteSave(e){
 postCommentContent.addEventListener('click', changetextCursor)
 // 每次輸入皆改動
 postCommentContent.addEventListener('input', inputSave)
-// 每次paste是情況上傳照片或呈線文字
+// 每次paste情況上傳照片或呈線文字
 postCommentContent.addEventListener('paste', pasteSave)
 
 // 上傳圖片到回覆內容中
@@ -400,9 +600,9 @@ async function sendComment(){
         showErrorModal(data)
     }
     else{
-        postCommentContent.innerHTML = ''
+        postCommentContent.innerHTML = '<p></b></p>'
         // 關閉留言編輯區
-        commentToggle()
+        closePostComment()
 
         // 加入留言到頁面
         getComment(data)
@@ -424,4 +624,3 @@ async function sendComment(){
     }
 
 }
-sendBtn.addEventListener('click', sendComment)

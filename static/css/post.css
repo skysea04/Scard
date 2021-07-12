@@ -34,13 +34,18 @@ section.post-field{
 .info-field{
     height: 30px;
 }
+.info-bar{
+    width: 1px;
+    height: 24px;
+}
+
 
 .post-count img{
     height: 24px;
     width: 24px;
 }
 
-.post-interact *{
+.post-interact :is(.like, .edit, .follow){
     cursor: pointer;
 }
 .follow.active svg{

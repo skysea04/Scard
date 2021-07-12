@@ -1,3 +1,4 @@
+/* 基礎設定 */
 body{
     font-family: Roboto,Helvetica Neue,Helvetica,Arial,PingFang TC,黑體-繁,Heiti TC,蘋果儷中黑,Apple LiGothic Medium,微軟正黑體,Microsoft JhengHei,sans-serif;
 }
@@ -23,6 +24,46 @@ a{
     z-index: 1000;
 }
 
+.btn:focus{
+    box-shadow: none;
+}
+
+.modal-dialog{
+    top:200px;
+}
+
+.popover{
+    padding: 0 0;
+    max-width: 400px;
+}
+.popover-body{
+    padding: 0 0;
+}
+
+.popover-body a:hover{
+    background-color: rgba(0, 16, 32, 0.06);
+}
+
+
+.bi-wallet2::before{
+    transform: rotate(270deg);
+}
+
+:is(.form-control, .form-select):focus {
+    box-shadow: none;
+}
+
+.navbar-brand{
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.home-page{
+    font-size: 1.8rem;
+}
+/* 基礎設定 */
+
+/* scard色系 */
 .bg-scard-l{
     background-color: #3397CF;
 }
@@ -45,34 +86,8 @@ a{
 .scard-d{
     background-color: #00324E;
 }
+/* scard色系 */
 
-.modal-dialog{
-    top:200px;
-}
-
-.popover{
-    padding: 0 0;
-    max-width: 400px;
-}
-.popover-body{
-    padding: 0 0;
-}
-
-.bi-wallet2::before{
-    transform: rotate(270deg);
-}
-
-:is(.form-control, .form-select):focus {
-    box-shadow: none;
-}
-
-.navbar-brand{
-    padding-top: 0;
-    padding-bottom: 0;
-}
-.home-page{
-    font-size: 1.8rem;
-}
 
 
 

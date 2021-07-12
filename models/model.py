@@ -168,6 +168,7 @@ class Comment(db.Model):
     content = db.Column(db.Text, nullable=False)
     create_time = db.Column(db.DateTime, server_default=text('NOW()'), nullable=False)
     like_count = db.Column(db.Integer, server_default=text("0"), nullable=False)
+    delete = db.Column(db.Boolean, server_default=expression.false(), nullable=False)
     
 class CommentUserLike(db.Model):
     __tablename__ = 'comment_user_like'

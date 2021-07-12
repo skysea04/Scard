@@ -5,60 +5,12 @@ from PIL import Image
 from . import api, ErrorData, Post, PostBoard, User, Subscribe, db
 s3 = boto3.client('s3')
 
-no_sign_data = {
-    "error": True,
-    'title': '您尚未登入',
-    'message': '想一起加入討論，要先登入 Scard 唷！',
-    'confirm': '登入',
-    'url': '/signup'
-}
-
-basic_profile_data = {
-    'error': True, 
-    'title': '您尚未填寫基本資料',
-    'message': '想一起加入討論，要先填完基本資料唷！',
-    'confirm': '填資料去',
-    'url': '/basicprofile'
-}
-
-server_error_data = {
-    "error": True,
-    'title': '錯誤訊息',
-    'message': '伺服器內部錯誤',
-    'confirm': '重新整理',
-    'url': '/new-post'
-}
-
 error_format_data = {
     "error": True,
     'title': '錯誤格式',
     'message': '你上傳的不是圖片喔，重新確認一下吧',
     'confirm': '確認',
     'url': '/new-post'
-}
-
-wrong_board_data = {
-    "error": True,
-    'title': '看板選擇錯誤',
-    'message': '你沒有選擇看板喔，重新選擇一次吧',
-    'confirm': '確認',
-    'url': '#'
-}
-
-wrong_name_data = {
-    "error": True,
-    'title': '名稱選擇錯誤',
-    'message': '你沒有選擇名稱喔，重新選擇一次吧',
-    'confirm': '確認',
-    'url': '#'
-}
-
-wrong_content_data = {
-    "error": True,
-    'title': '文章缺乏內容',
-    'message': '你的文章沒有標題或內容喔，快來補齊他們吧',
-    'confirm': '確認',
-    'url': '#'
 }
 
 @api.route('/new-post', methods=["GET"])
@@ -70,10 +22,6 @@ def get_new_post():
             return jsonify(ErrorData.verify_mail_data), 403
         elif user_verify == 'mail':
             return jsonify(ErrorData.basic_profile_data), 403
-        
-        user_collage = session["user"]["collage"]
-        user_department = session["user"]["department"]
-        user_avatar = session["user"]["commentAvatar"]
 
         # 搜集所有po文版資訊
         board_list = []
@@ -86,14 +34,14 @@ def get_new_post():
             board_list.append(board_dict)
 
         data = {
-            "collage": user_collage,
-            "department": user_department,
-            "avatar": user_avatar,
+            "collage": session["user"]["collage"],
+            "department": session["user"]["department"],
+            "avatar": session["user"]["commentAvatar"],
             "boardList": board_list
         }
         return jsonify(data), 200
 
-    return jsonify(no_sign_data), 403
+    return jsonify(ErrorData.no_sign_data), 403
 
 @api.route('/new-post', methods=["POST"])
 def post_new_post():
@@ -152,7 +100,7 @@ def post_new_post():
         }
         return jsonify(data), 200
         
-    return jsonify(no_sign_data), 403
+    return jsonify(ErrorData.no_sign_data), 403
 
 @api.route('/new-post/image', methods=["POST"])
 def post_image():
@@ -192,8 +140,8 @@ def post_image():
                 return jsonify(data), 200
             
             except:
-                return jsonify(server_error_data), 500
+                return jsonify(ErrorData.server_error_data), 500
         
         return jsonify(error_format_data), 400
 
-    return jsonify(no_sign_data), 403
+    return jsonify(ErrorData.no_sign_data), 403

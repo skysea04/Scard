@@ -11,7 +11,6 @@ def get_notification():
         note_lst = []
         notes = r.hvals(f'user_{user_id}_note')
         for note in notes:
-            # note = json.loads(note)
             note_lst.append(json.loads(note))
         note_lst = sorted(note_lst, key= lambda n:n['time'])
         data = {"data": note_lst}

@@ -64,7 +64,7 @@ def post_comment(post_id):
         }        
         subers = Subscribe.query.filter_by(channel_id = post_chan).all()
         for suber in subers:
-            if suber.user_id == user_id:
+            if suber.user_id == user_id: # 當訂閱者就是發留言者時跳過
                 continue
             r.hset(f'user_{suber.user_id}_note', post_chan, json.dumps(note_to_suber))
 
@@ -92,7 +92,8 @@ def post_comment(post_id):
             'createTime': datetime.now().strftime('%-m月%-d日 %H:%M'),
             'likeCount': 0,
             'content': content,
-            'addFollow': add_follow
+            'addFollow': add_follow,
+            'isAuthor': True
         }
         return jsonify(data), 200
         
@@ -100,16 +101,17 @@ def post_comment(post_id):
 
 @api.route('/comment/<int:post_id>', methods=["GET"])
 def get_comment(post_id):
-    try:
+    # try:
         cmt_lst = []
         if "user" in session:
             user_id = session["user"]["id"]
-            cmts = db.session.execute('SELECT user.comment_avatar, comment.id, comment.user_name, comment.floor, comment.create_time, comment.like_count, comment.content, comment_user_like.user_id\
+            cmts = db.session.execute('SELECT user.comment_avatar, comment.id, comment.user_id as author_id, comment.user_name, comment.floor, comment.create_time, comment.like_count, comment.content, comment.delete, comment_user_like.user_id\
             FROM ((comment INNER JOIN user ON comment.user_id=user.id)\
             LEFT JOIN comment_user_like ON comment.id=comment_user_like.comment_id AND comment_user_like.user_id = :user_id)\
             WHERE comment.post_id = :post_id', {'user_id': user_id, 'post_id': post_id}).all()
             for cmt in cmts:
                 like = True if cmt.user_id else False
+                is_author = True if cmt.author_id == user_id else False
                 cmt_data = {
                     'id': cmt.id,
                     'avatar': cmt.comment_avatar,
@@ -118,14 +120,21 @@ def get_comment(post_id):
                     'createTime': cmt.create_time.strftime('%-m月%-d日 %H:%M'),
                     'likeCount': cmt.like_count,
                     'content': cmt.content,
-                    'like': like
+                    'like': like,
+                    'isAuthor': is_author
                 }
+                if cmt.delete == True:
+                    cmt_data['delete'] = True
+                    cmt_data['avatar'] = '/static/icons/avatar/nobody.svg'
+                    cmt_data['userName'] = '這則留言已被刪除'
+                    cmt_data['content'] = '<p>已經刪除的內容就像Scard一樣，錯過是無法再相見的！</p>'
                 cmt_lst.append(cmt_data)
         else:
             cmts = db.session.execute('SELECT user.comment_avatar, comment.id, comment.user_name, comment.floor, comment.create_time, comment.like_count, comment.content\
             FROM comment INNER JOIN user ON comment.user_id=user.id\
             WHERE comment.post_id= :post_id',{'post_id': post_id}).all()
             like = False
+            is_author = False
             for cmt in cmts:
                 cmt_data = {
                     'id': cmt.id,
@@ -135,36 +144,67 @@ def get_comment(post_id):
                     'createTime': cmt.create_time.strftime('%-m月%-d日 %H:%M'),
                     'likeCount': cmt.like_count,
                     'content': cmt.content,
-                    'like': like
+                    'like': like,
+                    'isAuthor': is_author
                 }
                 cmt_lst.append(cmt_data)
-        
+        db.session.close()
         return jsonify(cmt_lst), 200
-    except:
-        return jsonify(ErrorData.server_error_data), 500
+    # except:
+    #     db.session.close()
+    #     return jsonify(ErrorData.server_error_data), 500
 
-@api.route('/comment/<int:comment_id>/like', methods=["PATCH"])
-def patch_comment_like(comment_id):
-    if 'user' in session:
-        user_id = session["user"]["id"]
-        user_verify = session["user"]["verify_status"]
-        if user_verify == 'stranger':
-            return jsonify(ErrorData.verify_mail_data), 403
-
-        like = CommentUserLike.query.filter_by(comment_id=comment_id, user_id=user_id).first()
-        if like:
-            db.session.delete(like)
-            cmt = Comment.query.filter_by(id=comment_id).first()
-            cmt.like_count -= 1            
-        else:
-            like = CommentUserLike(comment_id=comment_id, user_id=user_id)
-            db.session.add(like)
-            cmt = Comment.query.filter_by(id=comment_id).first()
-            cmt.like_count += 1
-        db.session.commit()
-        data = {
-            "likeCount": cmt.like_count
-        }
-        return jsonify(data), 200
-        
+@api.route('/comment/<int:cmt_id>', methods=["PATCH"])
+def patch_comment(cmt_id):
+    cmt = Comment.query.filter_by(id=cmt_id).first()
+    if 'user' in session and cmt:
+        if cmt.user_id == session['user']['id']:
+            req_data = request.json
+            content = req_data['content']
+            cmt.content = content
+            db.session.commit()
+            data = {'ok': True}
+            return jsonify(data), 200
     return jsonify(ErrorData.no_sign_data), 403
+
+@api.route('/comment/<int:cmt_id>', methods=["DELETE"])
+def delete_comment(cmt_id):
+    cmt = Comment.query.filter_by(id=cmt_id).first()
+    if 'user' in session and cmt:
+        if cmt.user_id == session['user']['id']:
+            cmt.delete = True
+            db.session.commit()
+            data = {'ok':True}
+            return jsonify(data), 200
+    return jsonify(ErrorData.wrong_user_edit_data), 403
+
+
+@api.route('/comment/<int:cmt_id>/like', methods=["PATCH"])
+def patch_comment_like(cmt_id):
+    try:
+        if 'user' in session:
+            user_id = session["user"]["id"]
+            user_verify = session["user"]["verify_status"]
+            if user_verify == 'stranger':
+                return jsonify(ErrorData.verify_mail_data), 403
+
+            like = CommentUserLike.query.filter_by(comment_id=cmt_id, user_id=user_id).first()
+            if like:
+                db.session.delete(like)
+                cmt = Comment.query.filter_by(id=cmt_id).first()
+                cmt.like_count -= 1            
+            else:
+                like = CommentUserLike(comment_id=cmt_id, user_id=user_id)
+                db.session.add(like)
+                cmt = Comment.query.filter_by(id=cmt_id).first()
+                cmt.like_count += 1
+            db.session.commit()
+            data = {
+                "likeCount": cmt.like_count
+            }
+            return jsonify(data), 200
+            
+        return jsonify(ErrorData.no_sign_data), 403
+    except:
+        db.session.close()
+        return jsonify(ErrorData.server_error_data), 500

@@ -287,7 +287,6 @@ delModalHref.addEventListener('click', delFriend)
 
 
 //// 傳送訊息
-// const socket = io()
 socket.on('connect', function(){
     fetch(messageRoomAPI)
     .then(res => res.json())

@@ -1,6 +1,6 @@
 from logging import debug
 from flask import *
-from flask_socketio import SocketIO, join_room, send, emit
+from flask_socketio import SocketIO, join_room, leave_room, emit
 import os
 from datetime import datetime
 from dotenv import load_dotenv
@@ -217,6 +217,10 @@ def handle_sub_channel(chan_id):
 			msg = json.loads(note['data'])
 			# print(type(msg), msg)
 			emit('receive_channel', msg, to=msg['channel'])
+
+@socketio.on('unsub_channel')
+def handle_unsub_channel(chan_id):
+	leave_room(chan_id)
 
 @app.errorhandler(404)
 def page_not_found(e):

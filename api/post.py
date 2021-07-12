@@ -45,79 +45,105 @@ def get_post(post_id):
 # 修改文章內容
 @api.route('/post/<int:post_id>', methods=["PATCH"])
 def patch_post(post_id):
-    post = Post.query.filter_by(id=post_id).first()
-    if 'user' in session and post:
-        if post.user_id == session['user']['id']:
-            req_data = request.json
-            title = req_data["title"]
-            content = req_data["content"]
-            if title == '' or content == '<p><br></p>':
-                return jsonify(ErrorData.wrong_content_data), 400
-            imgs = re.findall(r"https://.{73}jpeg",content)
+    try:
+        post = Post.query.filter_by(id=post_id).first()
+        if 'user' in session and post:
+            if post.user_id == session['user']['id']:
+                req_data = request.json
+                title = req_data["title"]
+                content = req_data["content"]
+                if title == '' or content == '<p><br></p>':
+                    return jsonify(ErrorData.wrong_content_data), 400
+                imgs = re.findall(r"https://.{73}jpeg",content)
 
-            post.title = title
-            post.content = content
-            if imgs == []:
-                post.first_img = None
-            else:
-                post.first_img = imgs[0]
+                post.title = title
+                post.content = content
+                if imgs == []:
+                    post.first_img = None
+                else:
+                    post.first_img = imgs[0]
 
-            db.session.commit()
-            data = {
-                'ok': True
-            }
-            return jsonify(data), 200
-    return jsonify(ErrorData.wrong_user_edit_data), 403
+                db.session.commit()
+                data = {'ok': True}
+                return jsonify(data), 200
+        return jsonify(ErrorData.wrong_user_edit_data), 403
+    except:
+        db.session.close()
+        return jsonify(ErrorData.server_error_data), 500
+
+# 刪除文章
+@api.route('/post/<int:post_id>', methods=["DELETE"])
+def delete_post(post_id):
+    try:
+        post = Post.query.filter_by(id=post_id).first()
+        if 'user' in session and post:
+            if post.user_id == session['user']['id']:
+                db.session.delete(post)
+                db.session.commit()
+                data = {'ok':True}
+                return jsonify(data), 200
+        return jsonify(ErrorData.wrong_user_edit_data), 403
+    except:
+        db.session.close()
+        return jsonify(ErrorData.server_error_data), 500
+            
+
 
 # 使用者更動對特定文章的按讚
 @api.route('/post/<int:post_id>/like', methods=["PATCH"])
 def patch_post_like(post_id):
-    if 'user' in session:
-        user_id = session["user"]["id"]
-        user_verify = session["user"]["verify_status"]
-        if user_verify == 'stranger':
-            return jsonify(ErrorData.verify_mail_data), 403
+    try:
+        if 'user' in session:
+            user_id = session["user"]["id"]
+            user_verify = session["user"]["verify_status"]
+            if user_verify == 'stranger':
+                return jsonify(ErrorData.verify_mail_data), 403
 
-        like = PostUserLike.query.filter_by(user_id=user_id, post_id=post_id).first()
-        if like:
-            db.session.delete(like)
-            post = Post.query.filter_by(id=post_id).first()
-            post.like_count -= 1            
-        else:
-            like = PostUserLike(user_id=user_id, post_id=post_id)
-            db.session.add(like)
-            post = Post.query.filter_by(id=post_id).first()
-            post.like_count += 1
-        db.session.commit()
-        data = {
-            "likeCount": post.like_count
-        }
-        return jsonify(data), 200
-        
-    return jsonify(ErrorData.no_sign_data), 403
+            like = PostUserLike.query.filter_by(user_id=user_id, post_id=post_id).first()
+            if like:
+                db.session.delete(like)
+                post = Post.query.filter_by(id=post_id).first()
+                post.like_count -= 1            
+            else:
+                like = PostUserLike(user_id=user_id, post_id=post_id)
+                db.session.add(like)
+                post = Post.query.filter_by(id=post_id).first()
+                post.like_count += 1
+            db.session.commit()
+            data = {
+                "likeCount": post.like_count
+            }
+            return jsonify(data), 200
+            
+        return jsonify(ErrorData.no_sign_data), 403
+    except:
+        return jsonify(ErrorData.server_error_data), 500
 
 # 使用者更動對特定文章的追蹤
 @api.route('/post/<post_id>/follow', methods=["PATCH"])
 def patch_post_follow(post_id):
-    if 'user' in session:
-        user_id = session['user']['id']
-        user_verify = session["user"]["verify_status"]
-        if user_verify == 'stranger':
-            return jsonify(ErrorData.verify_mail_data), 403
+    try:
+        if 'user' in session:
+            user_id = session['user']['id']
+            user_verify = session["user"]["verify_status"]
+            if user_verify == 'stranger':
+                return jsonify(ErrorData.verify_mail_data), 403
 
-        is_follow = True
-        sub = Subscribe.query.filter_by(channel_id=f'post_{post_id}', user_id=user_id).first()
-        if sub:
-            db.session.delete(sub)
-            is_follow = False
-        else:
-            sub = Subscribe(channel_id=f'post_{post_id}', user_id=user_id)
-            db.session.add(sub)
-        db.session.commit()
-        data = {
-            "ok": True,
-            "isFollow": is_follow
-        }
-        return jsonify(data), 200
+            is_follow = True
+            sub = Subscribe.query.filter_by(channel_id=f'post_{post_id}', user_id=user_id).first()
+            if sub:
+                db.session.delete(sub)
+                is_follow = False
+            else:
+                sub = Subscribe(channel_id=f'post_{post_id}', user_id=user_id)
+                db.session.add(sub)
+            db.session.commit()
+            data = {
+                "ok": True,
+                "isFollow": is_follow
+            }
+            return jsonify(data), 200
 
-    return jsonify(ErrorData.no_sign_data), 403
+        return jsonify(ErrorData.no_sign_data), 403
+    except:
+        return jsonify(ErrorData.server_error_data), 500

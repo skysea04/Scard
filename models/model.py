@@ -149,15 +149,6 @@ class PostUserLike(db.Model):
 
 Index('user_post_index', PostUserLike.user_id, PostUserLike.post_id)
 
-class PostUserFollow(db.Model):
-    __tablename__ = 'post_user_follow'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id', ondelete='CASCADE'), nullable=False)
-    note_id = db.Column(db.String(255), db.ForeignKey('notification.id', ondelete='CASCADE'))
-
-Index('user_post_index', PostUserFollow.user_id, PostUserFollow.post_id)
-
 class Comment(db.Model):
     __tablename__ = 'comment'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -177,13 +168,6 @@ class CommentUserLike(db.Model):
     comment_id = db.Column(db.Integer, db.ForeignKey('comment.id', ondelete='CASCADE'), nullable=False)
 
 Index('comment_user_index', CommentUserLike.comment_id, CommentUserLike.user_id)
-
-class Notification(db.Model):
-    __tablename__ = 'notification'
-    id = db.Column(db.String(255), primary_key=True)
-    content = db.Column(db.String(255))
-    href = db.Column(db.String(255))
-    update_time = db.Column(db.DateTime, server_default=text('NOW()'), nullable=False)
 
 class Subscribe(db.Model):
     __tablename__ = 'subscribe'

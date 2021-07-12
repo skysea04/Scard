@@ -21,15 +21,17 @@ def get_notification():
 # 獲取使用者追蹤（訂閱）的頻道
 @api.route('/my/sub', methods=['GET'])
 def get_my_sub():
-    if 'user' in session:
-        user_id = session['user']['id']
-        subs = Subscribe.query.filter_by(user_id=user_id).all()
-        # posts = PostUserFollow.query.filter_by(user_id=user_id).all()
-        sub_lst = []
-        for sub in subs:
-            sub_lst.append(sub.channel_id)
-        data = {
-            'data': sub_lst
-        }
-        return jsonify(data), 200
-    return jsonify(ErrorData.no_sign_data), 403
+    try:
+        if 'user' in session:
+            user_id = session['user']['id']
+            subs = Subscribe.query.filter_by(user_id=user_id).all()
+            sub_lst = []
+            for sub in subs:
+                sub_lst.append(sub.channel_id)
+            data = {
+                'data': sub_lst
+            }
+            return jsonify(data), 200
+        return jsonify(ErrorData.no_sign_data), 403
+    except:
+        return jsonify(ErrorData.server_error_data), 500

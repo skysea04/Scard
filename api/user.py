@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask import request, jsonify, session
 from . import ErrorData, api, User, db
 import sys, smtplib, email.message as email_message

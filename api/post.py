@@ -79,6 +79,8 @@ def delete_post(post_id):
         if 'user' in session and post:
             if post.user_id == session['user']['id']:
                 db.session.delete(post)
+                db.session.execute('DELETE FROM subscribe WHERE channel_id = :poster_chan', {'poster_chan': f'post_{post_id}_poster'})
+                db.session.execute('DELETE FROM subscribe WHERE channel_id = :post_chan', {'post_chan': f'post_{post_id}'})
                 db.session.commit()
                 data = {'ok':True}
                 return jsonify(data), 200

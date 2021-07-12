@@ -13,9 +13,15 @@ Password : 123
 ## 使用技術
 * Python Flask
 * Socket.io + Redis(ElastiCache) Pub/Sub + ELB
-* AWS EC2 RDS S3 CDN ELB ElastiCache
+* AWS 
+  * EC2
+  * ELB
+  * RDS 
+  * S3
+  * CDN
+  * ElastiCache
 * BootStrap5
-* Facebook/Google Login
+* Facebook / Google Login
 ## 功能介紹
 
 ### 瀏覽首頁
@@ -57,3 +63,7 @@ Password : 123
 * 成為好友的兩人可以進行送信聊天，聊天以socket.io實作，朋友的最新對話也會隨時更新至好友欄順序呈現
 
 ![image](https://user-images.githubusercontent.com/73434165/122117614-a58fad80-ce59-11eb-89b8-86ec7923084f.png)
+
+
+### MySQL資料庫架構
+![image](https://user-images.githubusercontent.com/73434165/125291328-d7f6d280-e353-11eb-8fba-bcf5b6c55d5b.png)

@@ -12,6 +12,8 @@ Password : 123
 
 ## 使用技術
 * Python Flask
+* Multi-thread(強化抽卡配對效率)
+* MySQL
 * Socket.io + Redis(ElastiCache) Pub/Sub + ELB
 * AWS 
   * EC2

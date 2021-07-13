@@ -21,6 +21,7 @@ section.post-field{
 
 .post-content, .comment-body{
     text-align: justify;
+    color: initial;
 }
 
 .comment{

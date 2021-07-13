@@ -11,19 +11,13 @@ Password : 123
 亦可在註冊/登入建立自己的帳號，成為網站會員之一
 
 ## 使用技術
-* Python Flask
-* Multi-thread(強化抽卡配對效率)
-* MySQL
-* Socket.io + Redis(ElastiCache) Pub/Sub + ELB
-* AWS 
-  * EC2
-  * ELB
-  * RDS 
-  * S3
-  * CDN
-  * ElastiCache
-* BootStrap5
-* Facebook / Google Login
+* **Python Flask**
+* **Multi-thread** (強化抽卡配對效率)
+* **MySQL + Redis** (資料庫系統)
+* **Socket.io + Redis Pub/Sub + ELB** (實踐多開機器情境的聊天/通知功能)
+* **AWS &nbsp; EC2 / ELB / RDS / S3 / CDN / ElastiCache**
+* **BootStrap5**
+* **Facebook / Google Login**
 ## 功能介紹
 
 ### 瀏覽首頁

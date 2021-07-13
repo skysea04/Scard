@@ -82,8 +82,6 @@ def post_user():
             session["user"] = {
                 "id": exist_user.id,
                 "email": exist_user.email,
-                "verify": exist_user.verify,
-                "scard": exist_user.scard,
                 "verify_status": exist_user.verify_status,
                 "collage": exist_user.collage,
                 "department": exist_user.department,
@@ -101,8 +99,6 @@ def post_user():
                 session["user"] = {
                     "id": exist_user.id,
                     "email": exist_user.email,
-                    "verify": exist_user.verify,
-                    "scard": exist_user.scard,
                     "verify_status": exist_user.verify_status,
                     "collage": exist_user.collage,
                     "department": exist_user.department,
@@ -138,8 +134,6 @@ def delete_user():
 @api.route('/verify', methods=["GET"])
 def verify_user():
     if 'user' in session:
-        # verify = session["user"]["verify"]
-        # scard = session["user"]["scard"]
         href = request.args.get('a')
         verify = session['user']['verify_status']
         if verify == 'stranger':

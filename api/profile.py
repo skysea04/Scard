@@ -126,7 +126,6 @@ def patch_profile():
         user.swap = swap
         user.want_to_try = want_to_try
         # 填寫過後就可以抽卡了
-        # user.scard = True
         user.verify_status = 'scard'
         db.session.commit()
         data = {"ok": True}
@@ -166,7 +165,6 @@ def patch_avatar():
             
             try:
                 user = User.query.filter_by(id=user_id).first()
-                s3_url = 'https://scard-bucket.s3-ap-northeast-1.amazonaws.com'
                 cdn_url = 'https://d2lzngk4bddvz9.cloudfront.net'
 
                 new_avatar_name = "avatar/%s.jpeg" % (str(uuid4()))

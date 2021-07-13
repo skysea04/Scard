@@ -61,6 +61,9 @@ def post_new_post():
         select_name = req_data["name"]
         post_title = req_data["title"]
         post_content = req_data["content"]
+        
+
+        print('content', post_content)
 
         # 查看使用者是否有正確選擇board
         board = PostBoard.view_board(board_id)
@@ -91,6 +94,9 @@ def post_new_post():
             new_post = Post(board_id=board_id, user_id=user_id, user_name=user_name, title=post_title, content=post_content, first_img = imgs[0])
         db.session.add(new_post)
         db.session.commit()
+
+        print(new_post.content)
+        
         new_subscribe = Subscribe(channel_id=f'post_{new_post.id}_poster', user_id=user_id)
         db.session.add(new_subscribe)
         db.session.commit()

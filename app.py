@@ -31,7 +31,7 @@ app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}:3306/{mysql_database}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}:3306/{mysql_database}?charset=utf8mb4'
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping":True}
 
 
@@ -228,4 +228,4 @@ def page_not_found(e):
 	return render_template('404.html'), 404
 
 if __name__ == '__main__':
-	socketio.run(app, host="0.0.0.0",port=8000)
+	socketio.run(app, host="0.0.0.0",port=8000, debug=True)

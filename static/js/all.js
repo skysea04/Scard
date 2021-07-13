@@ -89,7 +89,7 @@ function notification(){
     
     // 當新通知來時直接更新
     socket.on('receive_channel', data => {
-        console.log(data)
+        // console.log(data)
         createNote(data)
     })
     

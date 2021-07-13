@@ -110,11 +110,11 @@ function pasteSave(e){
         } else if ((pasteData[i].kind == 'string') &&
                     (pasteData[i].type.match('^text/html'))) {
             // Drag pasteData item is HTML
-            console.log("... Drop: HTML");
+            // console.log("... Drop: HTML");
         } else if ((pasteData[i].kind == 'string') &&
                     (pasteData[i].type.match('^text/uri-list'))) {
             // Drag pasteData item is URI
-            console.log("... Drop: URI");
+            // console.log("... Drop: URI");
         } else if ((pasteData[i].kind == 'file') &&
                     (pasteData[i].type.match('^image/'))) {
             var f = pasteData[i].getAsFile();

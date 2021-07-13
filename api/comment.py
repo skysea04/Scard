@@ -8,7 +8,6 @@ from app import r
 def post_comment(post_id):
     if "user" in session:
         user_id = session["user"]["id"]
-        # user_verify = session["user"]["verify"]
         user_verify = session["user"]["verify_status"]
         if user_verify == 'stranger':
             return jsonify(ErrorData.verify_mail_data), 403
@@ -43,13 +42,14 @@ def post_comment(post_id):
 
         post_chan = f'post_{post_id}'
         poster_chan = f'post_{post_id}_poster'
-        # 幫留言者自動追蹤文章
-        user_sub = Subscribe.query.filter_by(channel_id = post_chan, user_id=user_id).first()
         add_follow = False
-        if not user_sub:
-            user_sub = Subscribe(channel_id = post_chan, user_id=user_id)
-            db.session.add(user_sub)
-            add_follow = True
+        if post.user_id != user_id:
+            # 幫留言者自動追蹤文章
+            user_sub = Subscribe.query.filter_by(channel_id = post_chan, user_id=user_id).first()
+            if not user_sub:
+                user_sub = Subscribe(channel_id = post_chan, user_id=user_id)
+                db.session.add(user_sub)
+                add_follow = True
 
 
 

@@ -28,24 +28,25 @@ Password : 123
 ### 瀏覽首頁
 
 登入首頁後即可看到文章列表，並能點選進入不同的文章分頁
-![image](https://user-images.githubusercontent.com/73434165/125581872-2fb36f19-f011-4c0b-88eb-670ec0a81476.png)
+![image](https://user-images.githubusercontent.com/73434165/125607108-6d6180fc-b4a7-48fb-877a-5c476c12e0c4.png)
 
 ### 登入／註冊
 
 在登入／註冊頁面輸入帳號密碼，未註冊過的帳號會同時處理註冊與登入，已註冊過的帳號則會辨別帳號密碼是否正確。
-![image](https://user-images.githubusercontent.com/73434165/125582373-d90e5ae8-d6fe-42b9-ace2-c015fa513932.png)
+
+![image](https://user-images.githubusercontent.com/73434165/125607300-d8f4d0ec-0f88-45c6-9d75-5c8c66214670.png)
 
 ### 帳戶功能
 
 * 使用者登入後若要編輯自我介紹、撰寫貼文，都要做基本資料的撰寫
 
-![image](https://user-images.githubusercontent.com/73434165/125604428-a0e9eeca-8dad-4f52-98ef-bcf1b5dd5200.png)
+![image](https://user-images.githubusercontent.com/73434165/125607552-81825dc6-7ffd-4cce-aa2c-7a294b3ae003.png)
 
 * 以下分別呈現撰寫、瀏覽貼文頁面
   
 ![image](https://user-images.githubusercontent.com/73434165/125604268-c49e9ccb-3754-4df7-8feb-2f06577e3444.png)
 
-![image](https://user-images.githubusercontent.com/73434165/125581650-0fd06bb4-e01e-406f-8c3e-071b2fa37aa6.png)
+![image](https://user-images.githubusercontent.com/73434165/125606823-a0f1cc6a-3608-40c3-ba29-eeda3583e46c.png)
 
 ### 抽卡機制  
 
@@ -64,4 +65,4 @@ Password : 123
 
 
 ### MySQL資料庫架構
-![image](https://user-images.githubusercontent.com/73434165/125291328-d7f6d280-e353-11eb-8fba-bcf5b6c55d5b.png)
+![image](https://user-images.githubusercontent.com/73434165/125606523-74c5a56d-2e0e-4e50-a7a1-7f05b5b52178.png)

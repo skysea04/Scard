@@ -1,5 +1,6 @@
 .f-14{
     font-size: 14px;
+    line-height: 14px;
 }
 
 .message-page{
@@ -44,8 +45,8 @@
     height: 60px;
     object-fit: cover;    
 }
-.w-240{
-    width: 240px;
+.w-220{
+    width: 220px;
 }
 
 

@@ -68,7 +68,7 @@ function getFriend(friend){
 
     // 朋友資訊外框
     const outerContainer = document.createElement('div')
-    outerContainer.classList.add('w-240', 'py-2', 'ps-2')
+    outerContainer.classList.add('w-220', 'p-2')
 
     outerContainer.append(innerContainer, lastestMessage)
     
@@ -79,7 +79,7 @@ function getFriend(friend){
 
     // 朋友欄位連結(最大框)
     const a = document.createElement('a')
-    a.classList.add('friend', 'p-3', 'pe-2', 'd-flex', 'w-100')
+    a.classList.add('friend', 'p-3', 'd-flex', 'w-100')
     const messageHref = `/message/${friend.messageRoomId}`
     if(messageHref == location.pathname){
         a.classList.add('active')

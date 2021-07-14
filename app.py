@@ -60,8 +60,7 @@ def show_board(board=None):
 		if board == None or board in board_list:
 			return render_template('index.html')
 	except:
-		# 之後再修一個500的
-		abort(404)
+		abort(500)
 
 
 @app.route('/b/<board>/p/<post_id>')
@@ -77,8 +76,7 @@ def view_post(board, post_id):
 		else:
 			return render_template('post-not-exist.html')
 	except:
-		# 之後再修一個500的
-		return redirect(url_for('show_board'))
+		abort(500)
 
 @app.route('/b/<board>/p/<post_id>/edit')
 def edit_post(board, post_id):
@@ -93,8 +91,7 @@ def edit_post(board, post_id):
 				return render_template('post-not-exist.html')
 		return redirect(f'/b/{board}/p/{post_id}')
 	except:
-		# 之後再修一個500的
-		return redirect(url_for('show_board'))
+		abort(500)
 			
 
 @app.route('/new-post')
@@ -119,21 +116,24 @@ def go_to_verify_mail():
 
 @app.route('/mailverify/<email>')
 def mail_verify(email):
-	user = User.query.filter_by(email=email).first()
-	if not user:
-		abort(404)
-	if user.verify_status == 'stranger':
-		user.verify_status = 'mail'
-		session["user"] = False
-		session["user"] = {
-			"id": user.id,
-			"verify_status": user.verify_status,
-			"collage": user.collage,
-			"department": user.department,
-			"commentAvatar": user.comment_avatar
-		}
-		db.session.commit()
-	return render_template('mail-verified.html')
+	try:
+		user = User.query.filter_by(email=email).first()
+		if not user:
+			abort(404)
+		if user.verify_status == 'stranger':
+			user.verify_status = 'mail'
+			session["user"] = False
+			session["user"] = {
+				"id": user.id,
+				"verify_status": user.verify_status,
+				"collage": user.collage,
+				"department": user.department,
+				"commentAvatar": user.comment_avatar
+			}
+			db.session.commit()
+		return render_template('mail-verified.html')
+	except:
+		abort(500)
 
 @app.route('/basicprofile')
 def basic_profile():
@@ -169,8 +169,7 @@ def redirect_message():
 				message_id = message_id[0]
 				return redirect(url_for('message', id=message_id))
 	except:
-		# 之後再修一個500
-		return redirect(url_for('show_board'))
+		abort(500)
 
 @app.route('/message/<id>')
 def message(id):
@@ -224,8 +223,12 @@ def handle_unsub_channel(chan_id):
 
 @app.errorhandler(404)
 def page_not_found(e):
-	# note that we set the 404 status explicitly
 	return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(e):
+    return render_template('500.html'), 500
+
 
 if __name__ == '__main__':
 	socketio.run(app, host="0.0.0.0",port=8000)

@@ -50,7 +50,7 @@ def create_user():
 
 # 增加未開卡天數
 def update_no_scard_days():
-    User.query.filter(User.days_no_open_scard <= 3).update({User.days_no_open_scard: User.days_no_open_scard + 1})
+    User.query.filter(User.days_no_open_scard <= 3, User.id > 1000).update({User.days_no_open_scard: User.days_no_open_scard + 1})
     db.session.commit()
 
 # 建立配對(多執行緒)

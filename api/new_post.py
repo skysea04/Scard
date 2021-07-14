@@ -5,14 +5,6 @@ from PIL import Image
 from . import api, ErrorData, Post, PostBoard, User, Subscribe, db
 s3 = boto3.client('s3')
 
-error_format_data = {
-    "error": True,
-    'title': '錯誤格式',
-    'message': '你上傳的不是圖片喔，重新確認一下吧',
-    'confirm': '確認',
-    'url': '/new-post'
-}
-
 @api.route('/new-post', methods=["GET"])
 def get_new_post():
     if "user" in session:
@@ -148,6 +140,6 @@ def post_image():
             except:
                 return jsonify(ErrorData.server_error_data), 500
         
-        return jsonify(error_format_data), 400
+        return jsonify(ErrorData.error_format_data), 400
 
     return jsonify(ErrorData.no_sign_data), 403

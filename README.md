@@ -27,7 +27,7 @@ Password : 123
 
 ### 瀏覽首頁
 
-登入首頁後即可看到文章列表，並能點選進入不同的文章分頁
+登入首頁後即可看到文章列表，並能點選進入不同的文章分頁。
 ![image](https://user-images.githubusercontent.com/73434165/125607108-6d6180fc-b4a7-48fb-877a-5c476c12e0c4.png)
 
 ### 登入／註冊
@@ -38,11 +38,11 @@ Password : 123
 
 ### 帳戶功能
 
-* 使用者登入後若要編輯自我介紹、撰寫貼文，都要做基本資料的撰寫
+* 使用者登入後若要編輯自我介紹、撰寫貼文，都要做基本資料的撰寫。
 
 ![image](https://user-images.githubusercontent.com/73434165/125607552-81825dc6-7ffd-4cce-aa2c-7a294b3ae003.png)
 
-* 以下分別呈現撰寫、瀏覽貼文頁面
+* 以下分別呈現撰寫、瀏覽貼文頁面。
   
 ![image](https://user-images.githubusercontent.com/73434165/125604268-c49e9ccb-3754-4df7-8feb-2f06577e3444.png)
 
@@ -51,18 +51,23 @@ Password : 123
 ### 抽卡機制  
 
 * 本網站採用與Dcard相同基礎的抽卡機制：每到午夜12點，符合抽卡資格者將會在抽卡頁面瀏覽到當天的Scard，已經抽過的卡將永遠不再被配對到。
-* 抽卡的配對在前一天的23:59進行，目前已測試10萬人配對，可以在30秒內完成。使用者在午夜00:00:00即可看到當天配對的Scard資訊。
+* 為增加配對效率，當抽卡人次多於1萬人時將使用muti-thread分為10條子執行緒進行，加速配對效率
+* 抽卡的配對在前一天的23:59進行，10萬人配對可在30秒內完成。使用者在午夜00:00:00即可看到當天配對的Scard資訊。
 * 三天沒有開啟Scard頁面者將暫時失去抽卡資格，直到使用者重新點開scard頁面，即會獲得隔天的抽卡機會(23:59後開卡者不算)。
 * 若兩人都送出交友邀請，兩人將成為卡友
 
-![image](https://user-images.githubusercontent.com/73434165/122116836-ae33b400-ce58-11eb-90dd-b086f1c16093.png)
+![image](https://user-images.githubusercontent.com/73434165/125691939-591113f1-c092-4da2-accc-b4a5040e6c04.png)
 
 ### 聊天機制
 
-* 成為好友的兩人可以進行送信聊天，聊天以socket.io實作，朋友的最新對話也會隨時更新至好友欄順序呈現
+* 成為好友的兩人可以進行送信聊天，聊天以socket.io實作，好友的最新回應也會隨時更新，並調整好友欄呈現順序。
 
-![image](https://user-images.githubusercontent.com/73434165/122117614-a58fad80-ce59-11eb-89b8-86ec7923084f.png)
+![image](https://user-images.githubusercontent.com/73434165/125691429-43909640-8b17-4d31-8571-7129958dd6fb.png)
 
+### 系統架構圖
+
+![image](https://user-images.githubusercontent.com/73434165/125689230-d7c18637-3669-42a1-9416-8c690d22273f.png)
 
 ### MySQL資料庫架構
 ![image](https://user-images.githubusercontent.com/73434165/125606523-74c5a56d-2e0e-4e50-a7a1-7f05b5b52178.png)
+

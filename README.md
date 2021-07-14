@@ -1,6 +1,11 @@
 # [Scard](https://scard.skysea.fun/b)
 
-本專案為Dcard複製品，專案內容還在建置中，目前已完成功能：帳號系統、基本資料、自介填寫、抽卡配對、聊天系統、PO文系統(瀏覽熱門文章、重新編輯功能尚未完成)。
+本專案為Dcard複製品，主功能如下：
+
+1. 帳號系統：個人帳號之建置、認證與個人資料填寫。
+2. 抽卡系統：每日進行不重複對象之抽卡配對，雙方送出交友邀請後可在聊天室對談互動。
+3. 文章系統：使用者可以發佈文章並在文章下留言、按讚、追蹤，並設有通知系統，隨時發送追蹤貼文的最新通知。
+
 ## Demo
 點擊該網址即可前往Scard登入頁面 : https://scard.skysea.fun/b
 
@@ -8,13 +13,13 @@
 Account : test1@test.com ~ test1000@test.com</br>
 Password : 123
 
-亦可在註冊/登入建立自己的帳號，成為網站會員之一
+亦可在註冊/登入頁面建立自己的帳號（註冊當下即登入），成為網站會員之一
 
 ## 使用技術
 * **Python Flask**
 * **Multi-thread** (強化抽卡配對效率)
 * **MySQL + Redis** (資料庫系統)
-* **Socket.io + Redis Pub/Sub + ELB** (實踐多開機器情境的聊天/通知功能)
+* **Socket.io + Redis Pub/Sub + ELB** (實踐多開機器情境的聊天/通知播送功能)
 * **AWS &nbsp; EC2 / ELB / RDS / S3 / CDN / ElastiCache**
 * **BootStrap5**
 * **Facebook / Google Login**
@@ -23,27 +28,24 @@ Password : 123
 ### 瀏覽首頁
 
 登入首頁後即可看到文章列表，並能點選進入不同的文章分頁
-![image](https://user-images.githubusercontent.com/73434165/123520974-46962800-d6e6-11eb-840b-fd569ceb6ec0.png)
+![image](https://user-images.githubusercontent.com/73434165/125581872-2fb36f19-f011-4c0b-88eb-670ec0a81476.png)
 
 ### 登入／註冊
 
 在登入／註冊頁面輸入帳號密碼，未註冊過的帳號會同時處理註冊與登入，已註冊過的帳號則會辨別帳號密碼是否正確。
-![image](https://user-images.githubusercontent.com/73434165/122114542-fd2c1a00-ce55-11eb-97f5-127ec0f9d879.png)
-
+![image](https://user-images.githubusercontent.com/73434165/125582373-d90e5ae8-d6fe-42b9-ace2-c015fa513932.png)
 
 ### 帳戶功能
 
 * 使用者登入後若要編輯自我介紹、撰寫貼文，都要做基本資料的撰寫
 
-![image](https://user-images.githubusercontent.com/73434165/123520759-d935c780-d6e4-11eb-806c-bd983e0e47b2.png)
+![image](https://user-images.githubusercontent.com/73434165/125604428-a0e9eeca-8dad-4f52-98ef-bcf1b5dd5200.png)
 
-* 以下分別呈現撰寫、瀏覽貼文、自我介紹編輯畫面
+* 以下分別呈現撰寫、瀏覽貼文頁面
   
-![image](https://user-images.githubusercontent.com/73434165/123520686-69274180-d6e4-11eb-942e-1229926abf29.png)
+![image](https://user-images.githubusercontent.com/73434165/125604268-c49e9ccb-3754-4df7-8feb-2f06577e3444.png)
 
-![image](https://user-images.githubusercontent.com/73434165/123520549-ddadb080-d6e3-11eb-86d6-6d1fc2a52fe8.png)
-
-![image](https://user-images.githubusercontent.com/73434165/122115394-04075c80-ce57-11eb-90f0-7ff80f0ed7b0.png)
+![image](https://user-images.githubusercontent.com/73434165/125581650-0fd06bb4-e01e-406f-8c3e-071b2fa37aa6.png)
 
 ### 抽卡機制  
 

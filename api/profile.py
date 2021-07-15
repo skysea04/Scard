@@ -63,8 +63,8 @@ def post_profile():
         
         # 將資料添入資料庫，回傳ok資訊
         user = User.query.filter_by(id=user_id).first()
-        # user.verify = True
-        user.verify_status = 'basic'
+        if user.verify_status == 'mail':
+            user.verify_status = 'basic'
         user.name = name
         user.gender = gender
         user.birthday = birthday

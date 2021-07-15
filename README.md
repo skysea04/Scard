@@ -17,6 +17,7 @@ Password : 123
 
 ## 使用技術
 * **Python Flask**
+* **Nginx**
 * **Multi-thread** (強化抽卡配對效率)
 * **MySQL + Redis** (資料庫系統)
 * **Socket.io + Redis Pub/Sub + ELB** (實踐多開機器情境的聊天/通知播送功能)

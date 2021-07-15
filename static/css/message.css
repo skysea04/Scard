@@ -25,6 +25,10 @@
     border-bottom: 1px solid #999999;
 }
 
+.friends .list-group::-webkit-scrollbar{
+    display: none;
+}
+
 .friend{
     border-bottom: 1px solid #444444;
 }

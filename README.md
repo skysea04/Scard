@@ -23,6 +23,16 @@ Password : 123
 * **AWS &nbsp; EC2 / ELB / RDS / S3 / CDN / ElastiCache**
 * **BootStrap5**
 * **Facebook / Google Login**
+
+
+## 系統架構圖
+
+![image](https://user-images.githubusercontent.com/73434165/125689230-d7c18637-3669-42a1-9416-8c690d22273f.png)
+
+## MySQL資料庫架構
+![image](https://user-images.githubusercontent.com/73434165/125606523-74c5a56d-2e0e-4e50-a7a1-7f05b5b52178.png)
+
+
 ## 功能介紹
 
 ### 瀏覽首頁
@@ -63,11 +73,3 @@ Password : 123
 * 成為好友的兩人可以進行送信聊天，聊天以socket.io實作，好友的最新回應也會隨時更新，並調整好友欄呈現順序。
 
 ![image](https://user-images.githubusercontent.com/73434165/125691429-43909640-8b17-4d31-8571-7129958dd6fb.png)
-
-## 系統架構圖
-
-![image](https://user-images.githubusercontent.com/73434165/125689230-d7c18637-3669-42a1-9416-8c690d22273f.png)
-
-## MySQL資料庫架構
-![image](https://user-images.githubusercontent.com/73434165/125606523-74c5a56d-2e0e-4e50-a7a1-7f05b5b52178.png)
-

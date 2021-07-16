@@ -1,10 +1,7 @@
-from enum import unique
-from re import T
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import expression
 from flask_migrate import Migrate
 from sqlalchemy import Index, text
-from redis import Redis
 from flask_caching import Cache
 import os
 from dotenv import load_dotenv
@@ -12,24 +9,20 @@ load_dotenv()
 
 redis_host = os.getenv("REDIS_HOST")
 
-redis = Redis()
 cache = Cache(config={"CACHE_TYPE": "RedisCache", "CACHE_REDIS_HOST": redis_host})
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
-
 
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    verify = db.Column(db.Boolean, server_default=expression.false(), nullable=False)
     name = db.Column(db.String(255))
     gender = db.Column(db.Enum("male", "female"))
     birthday = db.Column(db.Date)
     collage = db.Column(db.String(255))
     department = db.Column(db.String(255))
-    scard = db.Column(db.Boolean, server_default=expression.false(), nullable=False)
     avatar = db.Column(db.String(255), server_default="https://d2lzngk4bddvz9.cloudfront.net/avatar/default_avatar.jpeg")
     relationship = db.Column(db.Enum('secret', 'single', 'in_a_relationship', 'complicated', 'open_relationship', 'no_show'), default="no_show")
     interest = db.Column(db.Text)
@@ -42,6 +35,7 @@ class User(db.Model):
     days_no_open_scard = db.Column(db.Integer, server_default=text("3"), nullable=False)
     match_list = db.Column(db.JSON, server_default=text('(JSON_ARRAY())'))
     comment_avatar = db.Column(db.String(255))
+    verify_status = db.Column(db.Enum("stranger", "mail", 'basic', 'scard', 'admin'), server_default="stranger",  nullable=False)
 
     def as_dict(self):
         return{c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -63,14 +57,14 @@ class Collage(db.Model):
 class CollageDepartment(db.Model):
     __tablename__ = 'collage_department'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    collage_id = db.Column(db.String(255), db.ForeignKey('collage.id'), nullable=False)
+    collage_id = db.Column(db.String(255), db.ForeignKey('collage.id', ondelete='CASCADE'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
 
 class Scard(db.Model):
     __tablename__ = 'scard'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_1 = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user_2 = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_1 = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    user_2 = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     create_date = db.Column(db.Date, server_default=text('(NOW())'))
     user_1_message = db.Column(db.String(255))
     user_2_message = db.Column(db.String(255))
@@ -103,8 +97,8 @@ Index('user2_date_index', Scard.user_2, Scard.create_date)
 class Messages(db.Model):
     __tablename__ = 'messages'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    scard_id = db.Column(db.Integer, db.ForeignKey('scard.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    scard_id = db.Column(db.Integer, db.ForeignKey('scard.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     message = db.Column(db.Text, nullable=False)
     create_time = db.Column(db.DateTime, server_default=text('NOW()'))
 
@@ -126,8 +120,8 @@ class PostBoard(db.Model):
 class Post(db.Model):
     __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    board_id = db.Column(db.Integer, db.ForeignKey('postboard.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    board_id = db.Column(db.Integer, db.ForeignKey('postboard.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     user_name = db.Column(db.String(255), nullable=False)
     title = db.Column(db.String(255), nullable=False)
     content = db.Column(db.Text, nullable=False)
@@ -139,26 +133,36 @@ class Post(db.Model):
 class PostUserLike(db.Model):
     __tablename__ = 'post_user_like'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id', ondelete='CASCADE'), nullable=False)
 
-Index('post_user_index', PostUserLike.post_id, PostUserLike.user_id)
+Index('user_post_index', PostUserLike.user_id, PostUserLike.post_id)
 
 class Comment(db.Model):
     __tablename__ = 'comment'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     user_name = db.Column(db.String(255), nullable=False)
     floor = db.Column(db.Integer, nullable=False)
     content = db.Column(db.Text, nullable=False)
     create_time = db.Column(db.DateTime, server_default=text('NOW()'), nullable=False)
     like_count = db.Column(db.Integer, server_default=text("0"), nullable=False)
+    delete = db.Column(db.Boolean, server_default=expression.false(), nullable=False)
     
 class CommentUserLike(db.Model):
     __tablename__ = 'comment_user_like'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    comment_id = db.Column(db.Integer, db.ForeignKey('comment.id', ondelete='CASCADE'), nullable=False)
 
 Index('comment_user_index', CommentUserLike.comment_id, CommentUserLike.user_id)
+
+class Subscribe(db.Model):
+    __tablename__ = 'subscribe'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    channel_id = db.Column(db.String(255), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+
+Index('channel_user_index', Subscribe.channel_id, Subscribe.user_id)
+Index('user_index', Subscribe.user_id)

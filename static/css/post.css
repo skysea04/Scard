@@ -21,6 +21,7 @@ section.post-field{
 
 .post-content, .comment-body{
     text-align: justify;
+    color: initial;
 }
 
 .comment{
@@ -34,16 +35,21 @@ section.post-field{
 .info-field{
     height: 30px;
 }
+.info-bar{
+    width: 1px;
+    height: 24px;
+}
+
 
 .post-count img{
     height: 24px;
     width: 24px;
 }
 
-.post-interact *{
+.post-interact :is(.like, .edit, .follow){
     cursor: pointer;
 }
-.notice.active svg{
+.follow.active svg{
     color: #3397CF;
 }
 
@@ -58,7 +64,9 @@ section.post-field{
 .list-group-flush>.list-group-item:last-child{
     border-bottom-width: 1px;
 }
-
+.comments-field .user-name{
+    color: initial;   
+}
 
 /* post comment區域 */
 .comment-blank{
@@ -99,7 +107,7 @@ section.post-field{
 .upload-img{
     display: block;
     max-width: 100%;
-    max-height: 40vh;
+    max-height: 70vh;
 }
 
 .upload-img-spinner{

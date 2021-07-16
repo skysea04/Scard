@@ -1,12 +1,3 @@
-//// errorModal相關變數
-// const errorModalContain = document.getElementById('error-modal')
-// const errorModal = new bootstrap.Modal(errorModalContain)
-// const modalTitle = errorModalContain.querySelector('.modal-title')
-// const modalBody = errorModalContain.querySelector('.modal-body')
-// const modalHref = errorModalContain.querySelector('.modal-href')
-
-modalHref.addEventListener('click',()=> errorModal.hide())
-
 //// api資訊
 const newPostAPI = '/api/new-post'
 const postImageAPI = '/api/new-post/image'
@@ -22,11 +13,7 @@ fetch(newPostAPI)
     .then(res => res.json())
     .then(data => {
         if(data.error){ //出現錯誤，顯示提示Modal
-            modalTitle.innText = data.title
-            modalBody.innerText = data.message
-            modalHref.innerText = data.confirm
-            modalHref.href = data.url
-            errorModal.show()
+            showErrorModal(data)
         }
         else{
             // 新增發文身份名稱選項
@@ -123,11 +110,11 @@ function pasteSave(e){
         } else if ((pasteData[i].kind == 'string') &&
                     (pasteData[i].type.match('^text/html'))) {
             // Drag pasteData item is HTML
-            console.log("... Drop: HTML");
+            // console.log("... Drop: HTML");
         } else if ((pasteData[i].kind == 'string') &&
                     (pasteData[i].type.match('^text/uri-list'))) {
             // Drag pasteData item is URI
-            console.log("... Drop: URI");
+            // console.log("... Drop: URI");
         } else if ((pasteData[i].kind == 'file') &&
                     (pasteData[i].type.match('^image/'))) {
             var f = pasteData[i].getAsFile();
@@ -182,11 +169,7 @@ async function showUpload(inputImage){
         localStorage.setItem('newPostContent', postContentHTML);
         selectImages()   
     }else{
-        modalTitle.innText = data.title
-        modalBody.innerText = data.message
-        modalHref.innerText = data.confirm
-        modalHref.href = data.url
-        errorModal.show()
+        showErrorModal(data)
     }    
 }
 imgInput.addEventListener('change',()=>{
@@ -227,11 +210,7 @@ async function sendPost(){
     })
     const data = await res.json()
     if(data.error){//出現錯誤，顯示提示Modal
-        modalTitle.innText = data.title
-        modalBody.innerText = data.message
-        modalHref.innerText = data.confirm
-        modalHref.href = data.url
-        errorModal.show()
+        showErrorModal(data)
     }else{
         localStorage.setItem('newPostTitle', '')
         localStorage.setItem('newPostContent', '<p><br></p>')

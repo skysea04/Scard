@@ -6,21 +6,36 @@ const modalBody = errorModalContain.querySelector('.modal-body')
 const modalHref = errorModalContain.querySelector('.modal-href')
 modalHref.addEventListener('click',()=> errorModal.hide())
 
+function showErrorModal(data){
+    modalTitle.innerText = data.title
+    modalBody.innerText = data.message
+    modalHref.innerText = data.confirm
+    modalHref.href = data.url
+    errorModal.show()
+}
 
 // api
 const userAPI = '/api/user'
 const profileAPI = '/api/profile'
+const mySubAPI = '/api/my/sub'
+const noteAPI = '/api/notification'
+
+// socket
+const socket = io()
 
 // 根據是否登入顯示不同的nav內容
 const navUser = document.querySelector('.nav-user')
 const navStranger = document.querySelector('.nav-stranger')
 
+let userID
 async function checkSign(){
     const res =await fetch(userAPI)
     const data = await res.json()
     if(data.id){
+        userID = data.id
         navUser.classList.add('d-flex')
         navStranger.classList.add('d-none')
+        notification()
     }
     else{
         navUser.classList.remove('d-flex')
@@ -35,6 +50,94 @@ async function checkSign(){
 // 啟動一次
 checkSign()
 
+// 通知功能大禮包
+function notification(){
+    socket.on('connect', function(){
+        fetch(mySubAPI)
+        .then(res => res.json())
+        .then(data => {
+            if(data.data){
+                data.data.forEach( sub => {
+                    socket.emit('sub_channel', sub)
+                })
+            }
+        })
+    })
+
+    // 通知
+    const noteContainer = document.createElement('div')
+    noteContainer.className = 'note-container overflow-auto py-3'
+
+    const noteLst = document.createElement('div')
+    noteLst.className = 'note-lst'
+
+    const noteHeader = document.createElement('h5')
+    noteHeader.className = 'mb-3 ms-3'
+    noteHeader.innerText = '通知'
+    noteContainer.append(noteHeader, noteLst)
+    
+    // 匯入過去通知
+    fetch(noteAPI)
+    .then(res => res.json())
+    .then(data => {
+        if(data.data){
+            data.data.forEach(note => {
+                createNote(note)
+            })
+        }
+    })
+    
+    // 當新通知來時直接更新
+    socket.on('receive_channel', data => {
+        // console.log(data)
+        createNote(data)
+    })
+    
+    function createNote(data){
+        // 如果通知發送來源就是自己，不新增通知
+        if(data.user_id === userID) return
+
+        const oldNote = noteLst.querySelector(`a[href="${data.href}"]`)
+        if(oldNote){ //如果之前就有相同文章的通知，直接更改資訊即可
+            const noteTime = oldNote.querySelector('.note-time')
+            noteTime.innerText = data.time
+            noteLst.prepend(oldNote)
+        }
+        else{ //創造新的通知訊息
+            const note = document.createElement('a')
+            note.className = 'note py-2'
+            note.href = data.href
+    
+            const noteContent = document.createElement('p')
+            noteContent.className = 'note-content mx-3 pb-1 text-body'
+            noteContent.innerHTML = data.msg
+    
+            const noteTime = document.createElement('p')
+            noteTime.className = 'note-time mx-3'
+            noteTime.innerText = data.time
+            
+            note.append(noteContent, noteTime)
+            noteLst.prepend(note)
+        }
+    }
+
+    const noteBtn = document.querySelector('#notification')
+    const notePopover = new bootstrap.Popover(noteBtn, {
+        container: 'body',
+        placement: "bottom",
+        html: true,
+        trigger: 'manual',
+        content: noteContainer,
+        offset: [120, 7]
+    })
+    noteBtn.addEventListener('click', ()=>{
+        notePopover.toggle()
+    })
+    noteBtn.addEventListener('blur', ()=>{
+        notePopover.hide()
+    })
+}
+
 // 登出機制
 const signoutBtn = document.querySelector('.signout')
 
@@ -42,7 +145,11 @@ async function signout(){
     await fetch(userAPI, {method: 'DELETE'})
     const userURL = location.pathname.split('/')[1]
     const toSignUpList = ['new-post', 'scard', 'message', 'my']
-    fbLogout()
+    // google登出
+    try{googleSignout()}catch{}
+    // FB登出
+    try{fbLogout()}catch{}
+
     if(toSignUpList.includes(userURL)){
         location = '/signup'
     }else{
@@ -106,3 +213,48 @@ window.fbAsyncInit = function() {
     js.src = "https://connect.facebook.net/zh_TW/sdk.js";
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
+
+
+// Google OAuth 初始化
+var GoogleAuth;
+var SCOPE = 'profile email';
+function handleClientLoad() {
+    // Load the API's client and auth2 modules.
+    // Call the initClient function after the modules load.
+    gapi.load('client:auth2', initClient);
+}
+
+function initClient() {
+    // In practice, your app can retrieve one or more discovery documents.
+    // var discoveryUrl = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
+
+    // Initialize the gapi.client object, which app uses to make API requests.
+    // Get API key and client ID from API Console.
+    // 'scope' field specifies space-delimited list of access scopes.
+    gapi.client.init({
+        'clientId': '46769118537-mq0m5m2589ea8euptnha9903r2a85l18.apps.googleusercontent.com',
+        'cookiepolicy': "single_host_origin",
+        'scope': SCOPE
+    }).then(function () {
+        GoogleAuth = gapi.auth2.getAuthInstance();
+
+    });
+}
+
+function googleSignout(){
+    if (GoogleAuth.isSignedIn.get()) {
+        // User is authorized and has clicked "Sign out" button.
+        GoogleAuth.signOut();
+    } 
+}
+
+function setSigninStatus() {
+    var user = GoogleAuth.currentUser.get();
+    var isAuthorized = user.hasGrantedScopes(SCOPE);
+    if (isAuthorized) {
+        console.log('Signin')
+        console.log(user.dt.Nt, user.dt.LS)
+    } else {
+        console.log('not signin')
+    }
+}

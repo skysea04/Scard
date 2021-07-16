@@ -1,0 +1,57 @@
+{% extends "basic.html" %}
+    {% block CSS %}
+    <link rel="stylesheet" href="/static/css/new-post.css">
+    {% endblock %}
+
+    {% block title %}
+    <title>Scard</title>
+    {% endblock %}
+
+    {% block main %}
+    <main class="container mx-auto p-3 px-5 row"> 
+        <div class="col-12 col-md-10 col-lg-8  bg-white rounded mx-auto post-form"> 
+
+            <select class="form-select mb-3 board-select" disabled>
+                <option value='' selected></option>
+            </select>
+
+            <div class="mb-3 d-flex">
+                <img src="/static/blank.png" class="rounded-circle mx-2 post-avatar" alt="">
+                <select class="form-select name-select" disabled>
+                    <option value='' selected>選擇發文身份</option>
+                </select>
+            </div>
+
+            <textarea class="form-control form-control-lg mb-3 post-title" rows="1" placeholder="文章標題"></textarea>
+
+            <div class="form-control border rounded mb-3 p-3 post-content" contenteditable="true">
+                <p><br></p>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <div class="upload-img-field mx-2">
+                    <label for="img">
+                        <i class="bi bi-image fs-2 text-secondary"></i>
+                    </label>
+                    <input id="img" class="d-none" type="file" accept="image/*">
+                </div>
+                <div class="d-flex align-items-center">
+                    <p class="message text-end"></p>
+                    <a href="/" class="btn btn-secondary me-4">取消</a>
+                    <button class="btn bg-scard-l text-white send-post">送出</button>
+                </div>
+            </div>
+        </div>
+        <!-- 讀取圈圈for 載入圖片用 -->
+        <div class="spinner-border d-none upload-img-spinner" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </main>
+    {% endblock %}
+    
+    {% block modal %}
+    {% endblock %}
+
+    {% block JS %}
+    <script src="/static/js/patch-post.js"></script>
+    {% endblock %}

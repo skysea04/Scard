@@ -1,8 +1,5 @@
-from flask import request, jsonify, session
-from . import api
-import sys
-sys.path.append("..")
-from models.model import Post, PostBoard, db
+from flask import request, jsonify
+from . import api, db
 
 @api.route('/posts', methods=["GET"])
 def get_posts():

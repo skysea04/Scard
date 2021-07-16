@@ -5,7 +5,8 @@ async function signup(e){
     e.preventDefault()
     const signupData = {
         email : this.querySelector('input[name="email"]').value,
-        password : this.querySelector('input[name="password"]').value 
+        password : this.querySelector('input[name="password"]').value,
+        fromAPI: false
     }
     const res = await fetch(userAPI, {
                     method: 'POST',

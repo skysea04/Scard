@@ -1,5 +1,5 @@
 from flask import Blueprint
-
+from models.model import Comment, CommentUserLike, Post, PostBoard, PostUserLike, User, Scard, Messages, Collage, CollageDepartment, Subscribe, cache, db
 api = Blueprint('api', __name__)
 class ErrorData:
     no_sign_data = {
@@ -8,6 +8,14 @@ class ErrorData:
         'message': '想一起加入討論，要先登入 Scard 唷！',
         'confirm': '登入',
         'url': '/signup'
+    }
+
+    verify_mail_data = {
+        'error': True, 
+        'title': '帳號尚未啟用',
+        'message': '請至信箱收取驗證信，並點擊驗證連結完成帳號啟用。',
+        'confirm': '確認',
+        'url': '/mailverify'
     }
 
     basic_profile_data = {
@@ -22,8 +30,8 @@ class ErrorData:
         "error": True,
         'title': '錯誤訊息',
         'message': '伺服器內部錯誤',
-        'confirm': '重新整理',
-        'url': '#'
+        'confirm': '回到首頁',
+        'url': '/b'
     }
 
     error_format_data = {
@@ -31,7 +39,7 @@ class ErrorData:
         'title': '錯誤格式',
         'message': '你上傳的不是圖片喔，重新確認一下吧',
         'confirm': '確認',
-        'url': '/new-post'
+        'url': '#'
     }
 
     wrong_collage_data = {
@@ -63,4 +71,12 @@ class ErrorData:
         'url': '#'
     }
 
-from . import user, profile, scard, message, new_post, index, post, comment
+    wrong_user_edit_data = {
+        'error': True,
+        'title': '錯誤對象',
+        'message': '你沒有編輯這則文章的權限喔',
+        'confirm': '確認',
+        'url': '/'
+    }
+
+from . import user, profile, scard, message, new_post, index, post, comment, notification

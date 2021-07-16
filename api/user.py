@@ -1,28 +1,13 @@
 from flask import request, jsonify, session
+from argon2 import PasswordHasher
 from . import ErrorData, api, User, db
 import sys, smtplib, email.message as email_message
 
+ph = PasswordHasher()
 sys.path.append("..")
 from app import mail_username, mail_password
-
 mail_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
 mail_server.login(mail_username, mail_password)
-
-no_sign_data = {
-    "error": True,
-    'title': '您尚未登入',
-    'message': '想一起加入討論，要先登入 Scard 唷！',
-    'confirm': '登入',
-    'url': '/signup'
-}
-
-basic_profile_data = {
-    'error': True, 
-    'title': '您尚未填寫基本資料',
-    'message': '想一起加入討論，要先填完基本資料唷！',
-    'confirm': '填資料去',
-    'url': '/basicprofile'
-}
 
 my_profile_data = {
     'error': True,
@@ -55,14 +40,16 @@ def post_user():
         password = data['password']
         from_api = data['fromAPI']
         exist_user = User.query.filter_by(email=email).first()
+        hash_pwd = ph.hash(password)
 
         # 註冊成功 順便登入
         if not exist_user:
             if from_api:
-                new_user = User(email=email, password=password, verify_status='mail')
+                new_user = User(email=email, password=hash_pwd, verify_status='mail')
             else:
-                new_user = User(email=email, password=password)
+                new_user = User(email=email, password=hash_pwd)
 
+                # 寄信給使用者
                 mail_msg = email_message.EmailMessage()
                 mail_msg["From"] = mail_username
                 mail_msg["To"] = email
@@ -95,7 +82,8 @@ def post_user():
         # 該email已經在使用者名單內
         else:
             # 密碼也正確，讓他登入
-            if exist_user.password == password:
+            try: 
+                ph.verify(exist_user.password, password)
                 session["user"] = {
                     "id": exist_user.id,
                     "email": exist_user.email,
@@ -108,13 +96,13 @@ def post_user():
                     "ok": True
                 }
                 return jsonify(data), 200
-
-            # 密碼錯誤，顯示錯誤訊息
-            data = {
-                "error": True,
-                "message": "信箱或密碼錯誤"
-            }
-            return jsonify(data), 403
+            except:
+                # 密碼錯誤，顯示錯誤訊息
+                data = {
+                    "error": True,
+                    "message": "信箱或密碼錯誤"
+                }
+                return jsonify(data), 403
 
     # 伺服器錯誤
     except:

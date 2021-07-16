@@ -1,37 +1,52 @@
 alembic==1.6.5
+argon2-cffi @ file:///Users/runner/miniforge3/conda-bld/argon2-cffi_1625821429979/work
 bidict==0.21.2
-boto3==1.17.83
-botocore==1.20.83
+boto3==1.18.0
+botocore==1.21.0
+brotlipy==0.7.0
+certifi==2021.5.30
+cffi @ file:///Users/runner/miniforge3/conda-bld/cffi_1613413910603/work
+chardet @ file:///Users/runner/miniforge3/conda-bld/chardet_1610093454858/work
 click==8.0.1
+conda==4.10.3
+conda-package-handling @ file:///Users/runner/miniforge3/conda-bld/conda-package-handling_1618231726924/work
+cryptography @ file:///Users/runner/miniforge3/conda-bld/cryptography_1616851494586/work
+defusedxml==0.7.1
 Flask==2.0.1
 Flask-Caching==1.10.1
-Flask-Migrate==3.0.0
+Flask-Migrate==3.0.1
 Flask-SocketIO==5.1.0
 Flask-SQLAlchemy==2.5.1
 greenlet==1.1.0
-gunicorn==20.1.0
-h11==0.12.0
+idna @ file:///home/conda/feedstock_root/build_artifacts/idna_1593328102638/work
 itsdangerous==2.0.1
 Jinja2==3.0.1
 jmespath==0.10.0
 Mako==1.1.4
 MarkupSafe==2.0.1
 mysql-connector-python==8.0.25
-Pillow==8.2.0
+numpy @ file:///Users/runner/miniforge3/conda-bld/numpy_1624399908429/work
+odfpy==1.4.1
+pandas==1.2.5
+Pillow==8.3.1
 protobuf==3.17.3
+pycosat @ file:///Users/runner/miniforge3/conda-bld/pycosat_1610094841871/work
+pycparser @ file:///home/conda/feedstock_root/build_artifacts/pycparser_1593275161868/work
 PyMySQL==1.0.2
+pyOpenSSL @ file:///home/conda/feedstock_root/build_artifacts/pyopenssl_1608055815057/work
+PySocks @ file:///Users/runner/miniforge3/conda-bld/pysocks_1610291460269/work
 python-dateutil==2.8.1
-python-dotenv==0.17.1
+python-dotenv==0.18.0
 python-editor==1.0.4
 python-engineio==4.2.0
 python-socketio==5.3.0
-pytz==2021.1
+pytz @ file:///home/conda/feedstock_root/build_artifacts/pytz_1612179539967/work
 redis==3.5.3
-s3transfer==0.4.2
-simple-websocket==0.2.0
-six==1.16.0
-SQLAlchemy==1.4.15
-SQLAlchemy-Utils==0.37.6
-urllib3==1.26.5
+requests @ file:///home/conda/feedstock_root/build_artifacts/requests_1608156231189/work
+ruamel-yaml-conda @ file:///Users/runner/miniforge3/conda-bld/ruamel_yaml_1611943386799/work
+s3transfer==0.5.0
+six @ file:///home/conda/feedstock_root/build_artifacts/six_1620240208055/work
+SQLAlchemy==1.4.21
+tqdm @ file:///home/conda/feedstock_root/build_artifacts/tqdm_1623518955413/work
+urllib3 @ file:///home/conda/feedstock_root/build_artifacts/urllib3_1622056799390/work
 Werkzeug==2.0.1
-wsproto==1.0.0

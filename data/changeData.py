@@ -1,14 +1,16 @@
 import sys
 sys.path.append("..")
-from models.model import Collage, db
+from models.model import User, db
 from app import app
+from argon2 import PasswordHasher
 db.__init__(app)
-def changeCollName():
-    colls =  Collage.query.all()
-    for coll in colls:
-        if '財團法人' in coll.name:
-            print(coll.name.split('財團法人').pop())
-            coll.name = coll.name.split('財團法人').pop()
-
+ph = PasswordHasher()
+def changeUserPwd():
+    users = User.query.all()
+    for user in users:
+        user.password = ph.hash(user.password)
+        print(user.id)
     db.session.commit()
-changeCollName()
+
+changeUserPwd()
+    

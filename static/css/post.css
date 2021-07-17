@@ -121,4 +121,7 @@ section.post-field{
     .boards{
         display: none;
     }
+    section.post-field{
+        min-height: calc(100vh - 59px);
+    }
 }

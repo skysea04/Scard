@@ -99,4 +99,7 @@
     .boards{
         display: none;
     }
+    .list-group{
+        height: initial;
+    }
 }

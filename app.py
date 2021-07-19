@@ -170,6 +170,7 @@ def redirect_message():
 			if message_id:
 				message_id = message_id[0]
 				return redirect(url_for('message', id=message_id))
+		return redirect(url_for('show_board'))
 	except:
 		abort(500)
 

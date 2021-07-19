@@ -6,7 +6,7 @@ import sys, smtplib, email.message as email_message
 ph = PasswordHasher()
 sys.path.append("..")
 from app import mail_username, mail_password
-mail_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+mail_server = smtplib.SMTP_SSL('smtp.gmail.com', 587)
 mail_server.login(mail_username, mail_password)
 
 my_profile_data = {
@@ -16,6 +16,21 @@ my_profile_data = {
     'confirm': '填寫自介',
     'url': '/my/profile'
 }
+
+# 寄信給使用者驗證帳號
+def send_mail_to_verify(email):
+    mail_msg = email_message.EmailMessage()
+    mail_msg["From"] = mail_username
+    mail_msg["To"] = email
+    mail_msg["Subject"] = 'Scard驗證信箱'
+    href = f'https://scard.skysea.fun/mailverify/{email}'
+    mail_msg.add_alternative(f'\
+    <h3>立即啟用你的Scard帳號</h3>\
+    <p>感謝你/妳的註冊，我們想確認你所輸入的註冊信箱是正確的。</p>\
+    <p>點擊下方網址完成信箱驗證，即可馬上啟用Scard帳號喔！</p>\
+    <a href="{href}">{href}</a>\
+        ', subtype='html')
+    mail_server.send_message(mail_msg)
 
 @api.route('/user', methods=["GET"])
 def get_user():
@@ -34,7 +49,7 @@ def get_user():
 
 @api.route('/user', methods=["POST"])
 def post_user():
-    try:
+    # try:
         data = request.json
         email = data['email']
         password = data['password']
@@ -48,20 +63,8 @@ def post_user():
                 new_user = User(email=email, password=hash_pwd, verify_status='mail')
             else:
                 new_user = User(email=email, password=hash_pwd)
-
                 # 寄信給使用者
-                mail_msg = email_message.EmailMessage()
-                mail_msg["From"] = mail_username
-                mail_msg["To"] = email
-                mail_msg["Subject"] = 'Scard驗證信箱'
-                href = f'https://scard.skysea.fun/mailverify/{email}'
-                mail_msg.add_alternative(f'\
-                <h3>立即啟用你的Scard帳號</h3>\
-                <p>感謝你/妳的註冊，我們想確認你所輸入的註冊信箱是正確的。</p>\
-                <p>點擊下方網址完成信箱驗證，即可馬上啟用Scard帳號喔！</p>\
-                <a href="{href}">{href}</a>\
-                    ', subtype='html')
-                mail_server.send_message(mail_msg)
+                send_mail_to_verify(email)
 
             db.session.add(new_user)
             db.session.commit()
@@ -105,12 +108,12 @@ def post_user():
                 return jsonify(data), 403
 
     # 伺服器錯誤
-    except:
-        data = {
-            "error": True,
-            "message": "伺服器內部錯誤"
-        }
-        return jsonify(data), 500
+    # except:
+    #     data = {
+    #         "error": True,
+    #         "message": "伺服器內部錯誤"
+    #     }
+    #     return jsonify(data), 500
 
 @api.route('/user', methods=["DELETE"])
 def delete_user():
@@ -119,8 +122,16 @@ def delete_user():
     data = {"ok": True}
     return jsonify(data), 200
 
+@api.route('/mailverify', methods=["POST"])
+def verify_user_email():
+    if 'user' in session:
+        email = session['user']['email']
+        send_mail_to_verify(email)
+        return jsonify({'ok': True}), 200
+    return jsonify(ErrorData.no_sign_data), 403
+
 @api.route('/verify', methods=["GET"])
-def verify_user():
+def get_user_verify():
     if 'user' in session:
         href = request.args.get('a')
         verify = session['user']['verify_status']

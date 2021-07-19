@@ -11,7 +11,7 @@
         }
         .page{
             width: 100%;
-            height: 300px;
+            height: 320px;
         }
     </style>
     {% endblock %}
@@ -26,11 +26,30 @@
             <img class="mb-2" src="/static/icons/mail.svg">
             <h3 class="mb-2">驗證信箱</h3>
             <p class="mb-1 scard-l">{{ mail }}</p>
-            <p class="mb-1">完成信箱驗證，馬上啟用Scard帳號吧！</p>
-            <a href="/b" class="btn bg-scard-l w-auto text-white">返回首頁</a>
+            <p class="mb-2">完成信箱驗證，馬上啟用Scard帳號吧！</p>
+            <div class="d-flex justify-content-evenly mb-2">
+                <a href="/b" class="btn bg-scard-l w-auto text-white">返回首頁</a>
+                <button id="send-again" class="btn bg-scard-l text-white">再寄一次</button>
+            </div>
+            <p id="AJAX-msg" class="scard-l"></p>
         </div>
     </main>
     {% endblock %}
     
     {% block JS %}
+    <script>
+        const mailVerifyAPI = '/api/mailverify'
+        const sendBtn = document.querySelector('#send-again')
+        const msg = document.querySelector('#AJAX-msg')
+        async function reVerifyMail(){
+            const res = await fetch(mailVerifyAPI, {method:'POST'})
+            const data = await res.json()
+            if(data.ok){
+                msg.innerText = '已經重新寄送驗證信囉，趕快去確認吧！'
+            }else{
+                showErrorModal(data)
+            }
+        } 
+        sendBtn.addEventListener('click', reVerifyMail)
+    </script>
     {% endblock %}

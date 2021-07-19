@@ -109,8 +109,10 @@ def signup():
 @app.route('/mailverify')
 def go_to_verify_mail():
 	if 'user' in session:
-		user_email = session['user']['email']
-		return render_template('verify-my-mail.html',mail=user_email)
+		verify = session['user']['verify_status']
+		if verify == 'stranger':
+			user_email = session['user']['email']
+			return render_template('verify-my-mail.html',mail=user_email)
 	return redirect(url_for('show_board'))
 		
 
@@ -231,4 +233,4 @@ def internal_error(e):
 
 
 if __name__ == '__main__':
-	socketio.run(app, host="0.0.0.0",port=8000)
+	socketio.run(app, host="0.0.0.0",port=8000, debug=True)

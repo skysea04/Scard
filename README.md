@@ -16,15 +16,19 @@ Password : 123
 亦可在註冊/登入頁面建立自己的帳號（註冊當下即登入），成為網站會員之一
 
 ## 使用技術
-* **Python Flask**
-* **Nginx**
-* **Multi-thread** (強化抽卡配對效率)
-* **MySQL + Redis** (資料庫系統)
-* **Socket.io + Redis Pub/Sub + ELB** (實踐多開機器情境的聊天/通知播送功能)
-* **AWS &nbsp; EC2 / ELB / RDS / S3 / CDN / ElastiCache**
-* **BootStrap5**
-* **Facebook / Google Login**
 
+* Python Flask
+* RESTful API架構實踐專案功能
+* 支援Facebook / Google Login
+* SMTP進行email驗證
+* 結合Bootstrap完成網頁版面設置
+* 以原生Contenteditable實作文章編輯系統
+* 使用index加速MySQL查詢效率
+* 使用Redis存取個人資料快取與通知
+* 運用Muti-thread加速抽卡配對效率
+* 以S3儲存使用者上傳的圖片與大頭貼
+* 結合Socket.io + Redis pub/sub + ELB實踐多開機器情境的聊天 / 通知播送功能
+* 申請SSL憑證實踐HTTPS
 
 ## 系統架構圖
 

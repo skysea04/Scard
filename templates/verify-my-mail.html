@@ -29,7 +29,12 @@
             <p class="mb-2">完成信箱驗證，馬上啟用Scard帳號吧！</p>
             <div class="d-flex justify-content-evenly mb-2">
                 <a href="/b" class="btn bg-scard-l w-auto text-white">返回首頁</a>
-                <button id="send-again" class="btn bg-scard-l text-white">再寄一次</button>
+                <button id="send-again" class="btn bg-scard-l text-white">
+                    重寄驗證信
+                    <div id='email-spinner' class="spinner-border spinner-border-sm d-none" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </button>
             </div>
             <p id="AJAX-msg" class="scard-l"></p>
         </div>
@@ -40,15 +45,14 @@
     <script>
         const mailVerifyAPI = '/api/mailverify'
         const sendBtn = document.querySelector('#send-again')
+        const emailSpinner = document.querySelector('#email-spinner')
         const msg = document.querySelector('#AJAX-msg')
         async function reVerifyMail(){
+            emailSpinner.classList.remove('d-none')
             const res = await fetch(mailVerifyAPI, {method:'POST'})
             const data = await res.json()
-            if(data.ok){
-                msg.innerText = '已經重新寄送驗證信囉，趕快去確認吧！'
-            }else{
-                showErrorModal(data)
-            }
+            msg.innerText = data.message
+            emailSpinner.classList.add('d-none')
         } 
         sendBtn.addEventListener('click', reVerifyMail)
     </script>

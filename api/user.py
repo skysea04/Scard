@@ -49,7 +49,7 @@ def get_user():
 
 @api.route('/user', methods=["POST"])
 def post_user():
-    # try:
+    try:
         data = request.json
         email = data['email']
         password = data['password']
@@ -108,12 +108,12 @@ def post_user():
                 return jsonify(data), 403
 
     # 伺服器錯誤
-    # except:
-    #     data = {
-    #         "error": True,
-    #         "message": "伺服器內部錯誤"
-    #     }
-    #     return jsonify(data), 500
+    except:
+        data = {
+            "error": True,
+            "message": "伺服器內部錯誤"
+        }
+        return jsonify(data), 500
 
 @api.route('/user', methods=["DELETE"])
 def delete_user():
@@ -126,8 +126,17 @@ def delete_user():
 def verify_user_email():
     if 'user' in session:
         email = session['user']['email']
-        send_mail_to_verify(email)
-        return jsonify({'ok': True}), 200
+        try:
+            send_mail_to_verify(email)
+            return jsonify({
+                'ok': True,
+                'message': '已經重新寄送驗證信囉，趕快去確認吧！'
+            }), 200
+        except:
+            return jsonify({
+                'error': True,
+                'message': '信件送出失敗，請稍後再試'
+            }), 500
     return jsonify(ErrorData.no_sign_data), 403
 
 @api.route('/verify', methods=["GET"])

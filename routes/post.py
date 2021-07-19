@@ -11,7 +11,7 @@ def show_board(board=None):
 		boards = PostBoard.query.all()
 		board_list = []
 		for post_board in boards:
-			board_list.append(post_board.sys_name)
+			board_list.append(post_board.id)
 		if board == None or board in board_list:
 			return render_template('index.html')
 	except:
@@ -23,11 +23,11 @@ def view_post(board, post_id):
 	try:
 		post = Post.query.filter_by(id=post_id).first()
 		if post:
-			right_board = PostBoard.view_board(post.board_id)
-			if right_board.sys_name == board:
+			# right_board = PostBoard.view_board(post.board_id)
+			if post.board_id == board:
 				return render_template('post.html')
 			else:
-				return redirect(f'/b/{right_board.sys_name}/p/{post_id}')
+				return redirect(f'/b/{post.board_id}/p/{post_id}')
 		else:
 			return render_template('post-not-exist.html')
 	except:

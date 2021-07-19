@@ -107,8 +107,7 @@ class Messages(db.Model):
 
 class PostBoard(db.Model):
     __tablename__ = 'postboard'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    sys_name = db.Column(db.String(255), unique=True, nullable=False)
+    id = db.Column(db.String(255), primary_key=True)
     show_name = db.Column(db.String(255), unique=True, nullable=False)
     icon = db.Column(db.String(255), unique=True, nullable=False)
     rule = db.Column(db.Text)
@@ -120,7 +119,7 @@ class PostBoard(db.Model):
 class Post(db.Model):
     __tablename__ = 'post'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    board_id = db.Column(db.Integer, db.ForeignKey('postboard.id', ondelete='CASCADE'), nullable=False)
+    board_id = db.Column(db.String(255), db.ForeignKey('postboard.id', ondelete='CASCADE'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     user_name = db.Column(db.String(255), nullable=False)
     title = db.Column(db.String(255), nullable=False)

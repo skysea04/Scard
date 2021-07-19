@@ -16,16 +16,6 @@ from redis import Redis
 r = Redis(host=redis_host, port=6379)
 
 
-'''test area'''
-# import smtplib
-# mail_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-# mail_server.login(mail_username, mail_password)
-# import email.message
-'''test area'''
-
-
-
-
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
@@ -36,7 +26,7 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {"pool_pre_ping":True}
 
 
 socketio = SocketIO(app)
-from models.model import Messages, Post, PostBoard, User, db, migrate, cache
+from models.model import Messages, db, migrate, cache
 db.init_app(app)
 migrate.init_app(app, db)
 cache.init_app(app)

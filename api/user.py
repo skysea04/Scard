@@ -19,18 +19,21 @@ my_profile_data = {
 
 # 寄信給使用者驗證帳號
 def send_mail_to_verify(email):
-    mail_msg = email_message.EmailMessage()
-    mail_msg["From"] = mail_username
-    mail_msg["To"] = email
-    mail_msg["Subject"] = 'Scard驗證信箱'
-    href = f'https://scard.skysea.fun/mailverify/{email}'
-    mail_msg.add_alternative(f'\
-    <h3>立即啟用你的Scard帳號</h3>\
-    <p>感謝你/妳的註冊，我們想確認你所輸入的註冊信箱是正確的。</p>\
-    <p>點擊下方網址完成信箱驗證，即可馬上啟用Scard帳號喔！</p>\
-    <a href="{href}">{href}</a>\
-        ', subtype='html')
-    mail_server.send_message(mail_msg)
+    try:
+        mail_msg = email_message.EmailMessage()
+        mail_msg["From"] = mail_username
+        mail_msg["To"] = email
+        mail_msg["Subject"] = 'Scard驗證信箱'
+        href = f'https://scard.skysea.fun/mailverify/{email}'
+        mail_msg.add_alternative(f'\
+        <h3>立即啟用你的Scard帳號</h3>\
+        <p>感謝你/妳的註冊，我們想確認你所輸入的註冊信箱是正確的。</p>\
+        <p>點擊下方網址完成信箱驗證，即可馬上啟用Scard帳號喔！</p>\
+        <a href="{href}">{href}</a>\
+            ', subtype='html')
+        mail_server.send_message(mail_msg)
+    except:
+        return '送信失敗'
 
 @api.route('/user', methods=["GET"])
 def get_user():

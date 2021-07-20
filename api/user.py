@@ -6,7 +6,7 @@ import sys, smtplib, email.message as email_message
 ph = PasswordHasher()
 sys.path.append("..")
 from app import mail_username, mail_password
-mail_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+mail_server = smtplib.SMTP_SSL('smtp.gmail.com', 587)
 mail_server.login(mail_username, mail_password)
 
 my_profile_data = {

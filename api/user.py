@@ -33,7 +33,7 @@ def send_mail_to_verify(email):
             ', subtype='html')
         mail_server.send_message(mail_msg)
     except:
-        return '送信失敗'
+        print('送信失敗')
 
 @api.route('/user', methods=["GET"])
 def get_user():

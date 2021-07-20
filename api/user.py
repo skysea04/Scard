@@ -49,7 +49,7 @@ def get_user():
 
 @api.route('/user', methods=["POST"])
 def post_user():
-    try:
+    # try:
         data = request.json
         email = data['email']
         password = data['password']
@@ -108,12 +108,12 @@ def post_user():
                 return jsonify(data), 403
 
     # 伺服器錯誤
-    except:
-        data = {
-            "error": True,
-            "message": "伺服器內部錯誤"
-        }
-        return jsonify(data), 500
+    # except:
+    #     data = {
+    #         "error": True,
+    #         "message": "伺服器內部錯誤"
+    #     }
+    #     return jsonify(data), 500
 
 @api.route('/user', methods=["DELETE"])
 def delete_user():

@@ -35,7 +35,8 @@ fetch(postAPI)
     postBoard.href = data.boardSrc
     postBoard.innerText = data.boardName
     postCreateTime.innerText = data.createTime
-    postContent.innerHTML = data.content
+    let cleanContent = DOMPurify.sanitize( data.content , {USE_PROFILES: {html: true}} );
+    postContent.innerHTML = cleanContent
     postLikeCount.innerText = data.likeCount
     postCommentCounts.forEach( count =>{
         count.innerText = data.commentCount

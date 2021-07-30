@@ -15,7 +15,7 @@ def get_posts():
         render_index = page * render_num
         # 在首頁render的情況
         if select_board == 'all':
-            posts = db.session.execute('SELECT post.id, post.user_name, post.title, post.content, post.first_img, post.like_count, post.comment_count, postboard.sys_name, postboard.show_name, user.comment_avatar \
+            posts = db.session.execute('SELECT post.id, post.board_id, post.user_name, post.title, post.content, post.first_img, post.like_count, post.comment_count, postboard.show_name, user.comment_avatar \
                 FROM ((post INNER JOIN postboard ON post.board_id = postboard.id)\
                 INNER JOIN user ON post.user_id = user.id)\
                 ORDER BY id DESC\
@@ -25,15 +25,15 @@ def get_posts():
                 LIMIT :index, :render_num', {'index': render_index + render_num, 'render_num': 1}).first()
         # 在各看板render的情況
         else:
-            posts = db.session.execute('SELECT post.id, post.user_name, post.title, post.content, post.first_img, post.like_count, post.comment_count, postboard.sys_name, postboard.show_name, user.comment_avatar \
+            posts = db.session.execute('SELECT post.id, post.board_id, post.user_name, post.title, post.content, post.first_img, post.like_count, post.comment_count, postboard.show_name, user.comment_avatar \
                 FROM ((post INNER JOIN postboard ON post.board_id = postboard.id)\
                 INNER JOIN user ON post.user_id = user.id)\
-                WHERE postboard.sys_name = :board\
+                WHERE postboard.id = :board\
                 ORDER BY post.id DESC\
                 LIMIT :index, :render_num', {'board': select_board, 'index': render_index, 'render_num': render_num})
             next_post = db.session.execute('SELECT post.id\
                 FROM post INNER JOIN postboard ON post.board_id = postboard.id\
-                WHERE postboard.sys_name = :board\
+                WHERE postboard.id = :board\
                 ORDER BY post.id DESC\
                 LIMIT :index, :render_num', {'board': select_board, 'index': render_index + render_num, 'render_num': 1}).first()
 
@@ -45,7 +45,7 @@ def get_posts():
             post = post._asdict()
             # print(post)
             post_data = {
-                "url": f"/b/{post['sys_name']}/p/{post['id']}",
+                "url": f"/b/{post['board_id']}/p/{post['id']}",
                 "avatar": post['comment_avatar'],
                 "board": post['show_name'],
                 "userName": post['user_name'],

@@ -35,7 +35,7 @@ def post_comment(post_id):
 
         # 將回應更新到資料庫，增加comment_count
         post = Post.query.filter_by(id=post_id).first()
-        board = PostBoard.view_board(post.board_id)
+        # board = PostBoard.view_board(post.board_id)
         post.comment_count += 1
         new_cmt = Comment(post_id=post_id, user_id=user_id, user_name=user_name, floor=post.comment_count, content=content)
         db.session.add(new_cmt)
@@ -59,7 +59,7 @@ def post_comment(post_id):
             'channel': post_chan,
             'user_id': user_id,
             'msg': f'你追蹤的文章<b>「{post.title}」</b>有新的回應。',
-            'href': f'/b/{board.sys_name}/p/{post_id}',
+            'href': f'/b/{post.board_id}/p/{post_id}',
             'time': datetime.now().strftime("%-m月%-d日 %H:%M")
         }        
         subers = Subscribe.query.filter_by(channel_id = post_chan).all()
@@ -73,7 +73,7 @@ def post_comment(post_id):
             'channel': poster_chan,
             'user_id': user_id,
             'msg': f'你的文章<b>「{post.title}」</b>有新的回應。',
-            'href': f'/b/{board.sys_name}/p/{post_id}',
+            'href': f'/b/{post.board_id}/p/{post_id}',
             'time': datetime.now().strftime("%-m月%-d日 %H:%M")
         }
         r.hset(f'user_{post.user_id}_note', poster_chan, json.dumps(note_to_poster))

@@ -38,7 +38,7 @@ def get_friendlist():
             user_id = session['user']['id']
             # 根據使用者最後傳送或收到訊息的時間排續好友資訊
             last_messages = db.session.execute("SELECT scard_id, message, create_time, user_1, user_2 \
-                FROM (SELECT * FROM messages ORDER BY id DESC LIMIT 9999) friend , scard \
+                FROM (SELECT * FROM messages ORDER BY id DESC LIMIT 99999999999) friend , scard \
                 WHERE friend.scard_id = scard.id AND (scard.user_1=:id OR scard.user_2=:id) \
                 GROUP BY scard_id \
                 ORDER BY create_time DESC", {"id":user_id})

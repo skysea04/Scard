@@ -46,10 +46,7 @@ def post_new_post():
             return jsonify(ErrorData.basic_profile_data), 403
         
         req_data = request.json
-        try:
-            board_id = int(req_data["board"])
-        except:
-            return jsonify(ErrorData.wrong_board_data), 400
+        board_id = req_data["board"]
         select_name = req_data["name"]
         post_title = req_data["title"]
         post_content = req_data["content"]

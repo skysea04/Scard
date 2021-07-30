@@ -1,5 +1,5 @@
 // FB login
-const fbBtn = document.querySelector('.fb-login-button')
+const fbBtn = document.querySelector('.fb-btn')
 fbBtn.addEventListener("click", function (e) {
     e.preventDefault()
     checkLoginState()

@@ -1,23 +1,27 @@
 {% extends "basic.html" %}
     {% block title %}
-    <div id="fb-root"></div>
-    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v11.0&appId=164377919057019&autoLogAppEvents=1" nonce="tRCLLQrM"></script>
+    <!-- <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/zh_TW/sdk.js#xfbml=1&version=v11.0&appId=164377919057019&autoLogAppEvents=1" nonce="tRCLLQrM"></script> -->
     <title>註冊 / Scard</title>
     {% endblock %}
 
     {% block CSS %}
     <style>
-        .google-signin{
-            cursor: pointer;
-            width: 227px;
-            height: 40px;
+        .google-signin:hover{
+            background-color: #00000010;
         }
         .google-signin img{
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
         }
-        .google-signin div{
-            font-size: 18px;
+        .google-icon{
+            top: 6px;
+            left: 8px;
+        }
+
+        .fb-icon{
+            top: 6px;
+            left: 8px;
         }
     </style>
     {% endblock %}
@@ -26,10 +30,20 @@
     <main class="container mx-auto row mt-5">
         <form class="col-10 col-md-8 col-lg-6 p-4 bg-white rounded mx-auto signup"> 
             <h3 class="mb-3 text-center">註冊 / 登入</h3>
-            <div class="mb-3 fb-login-button w-100 text-center" data-width="" data-size="large" data-button-type="login_with"  data-auto-logout-link="false" data-use-continue-as="false" scope="public_profile,email" onlogin="checkLoginState()">Facebook 註冊 / 登入</div>
-            <div class="bg-white mx-auto d-flex align-items-center justify-content-around border rounded google-signin">
-                <img class="google-icon"  src="/static/icons/google.png" alt="">
-                <div class="fw-bolder">Google 註冊 / 登入&nbsp;&nbsp;</div>
+            <!-- <div class="mb-3 fb-btn w-100 text-center">Facebook 註冊 / 登入</div> -->
+            <div class="fb-btn btn btn-primary text-center position-relative w-100 p-2 mb-3">
+                <div class="position-absolute fb-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
+                        <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+                    </svg>
+                </div>
+                <p>Facebook 註冊 / 登入</p>
+            </div>
+            <div class="google-signin btn text-center position-relative w-100 border p-2 mb-4">
+                <div class="google-icon position-absolute">
+                    <img src="/static/icons/google.png" alt="">
+                </div>
+                <div class="">Google 註冊 / 登入&nbsp;&nbsp;</div>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">常用信箱</label>

@@ -122,6 +122,13 @@ i{
     color: red;
 }
 
+.nav-alert{
+    padding: .35em .55em;
+    top: 0;
+    right: 0;
+}
+
+
 /* 通知相關 */
 .note-container{
     width: 320px;

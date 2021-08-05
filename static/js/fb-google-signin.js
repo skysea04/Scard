@@ -94,10 +94,10 @@ function setSigninStatus() {
     var user = GoogleAuth.currentUser.get();
     var isAuthorized = user.hasGrantedScopes(SCOPE);
     if (isAuthorized) {
-        console.log(user.dt.Nt, user.dt.LS)
+        console.log(user.Ts.Et, user.Ts.mS)
         const signupData = {
-            email : `GOOGLE_${user.dt.Nt}`,
-            password : user.dt.LS,
+            email : `GOOGLE_${user.Ts.Et}`,
+            password : user.Ts.mS,
             fromAPI: true 
         }
         fetch(userAPI, {

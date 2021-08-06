@@ -142,7 +142,8 @@ def zeroing_scard():
         if 'user' in session:
             user_id = session["user"]["id"]
             # 將days_no_open_scard歸0
-            User.query.filter_by(id=user_id).update({User.days_no_open_scard: 0})
+            db.session.execute("UPDATE user SET days_no_open_scard = 0 WHERE id = :id", {id:user_id})
+            # User.query.filter_by(id=user_id).update({User.days_no_open_scard: 0})
             db.session.commit()
             data = {
                 "ok": True

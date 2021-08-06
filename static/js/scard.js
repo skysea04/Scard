@@ -24,7 +24,6 @@ fetch(scardAPI)
 .then(data => {
     if(data.error){
         showErrorModal(data)
-        scardZeroing()
     }else{
         if(data.isFriend){
             addFriendBtn.innerText = '已成為卡友'
@@ -47,11 +46,11 @@ fetch(scardAPI)
         swap.innerText = data.swap
         wantToTry.innerText = data.wantToTry
         
-        // 將沒看卡的天數歸0
-        scardZeroing()
     }
 })
 
+// 將沒看卡的天數歸0
+scardZeroing()
 function scardZeroing(){
     fetch(scardZeroingAPI, {method: 'PATCH'})
 }

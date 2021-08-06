@@ -24,6 +24,7 @@ fetch(scardAPI)
 .then(data => {
     if(data.error){
         showErrorModal(data)
+        scardZeroing()
     }else{
         if(data.isFriend){
             addFriendBtn.innerText = '已成為卡友'

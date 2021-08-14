@@ -19,8 +19,7 @@ Password : 123
 
 * Python Flask
 * RESTful API架構實踐專案功能
-* 支援Facebook / Google Login
-* SMTP進行email驗證
+* 支援Facebook / Google Login，並對直接註冊使用者進行email驗證
 * 結合Bootstrap完成網頁版面設置
 * 以原生Contenteditable實作文章編輯系統
 * 使用index加速MySQL查詢效率

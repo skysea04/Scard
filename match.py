@@ -157,10 +157,10 @@ def match_user_method():
 # update_no_scard_days()
 
 # 建立配對(多執行緒)
-# match_user_method()
+match_user_method()
 
 # cache 刪除
-cache.delete_memoized(User.view_user)
+# cache.delete_memoized(User.view_user)
 
 
 end_time = time.time()

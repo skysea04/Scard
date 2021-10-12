@@ -187,6 +187,9 @@ links.forEach(link => {
 })
 
 
+
+
+/*
 // fb登出
 function fbLogout() {
     FB.logout(res => {
@@ -258,3 +261,4 @@ function setSigninStatus() {
         console.log('not signin')
     }
 }
+*/

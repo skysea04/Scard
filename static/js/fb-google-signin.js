@@ -1,3 +1,5 @@
+// unfunctional fb / google temporarily
+/*
 // FB login
 const fbBtn = document.querySelector('.fb-btn')
 fbBtn.addEventListener("click", function (e) {
@@ -123,3 +125,4 @@ function setSigninStatus() {
 function updateSigninStatus() {
     setSigninStatus();
 }
+*/

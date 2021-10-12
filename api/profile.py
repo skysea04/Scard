@@ -165,7 +165,9 @@ def patch_avatar():
             
             try:
                 user = User.query.filter_by(id=user_id).first()
-                cdn_url = 'https://d2lzngk4bddvz9.cloudfront.net'
+                cdn_url = 'https://d3vb6r08z9jp7h.cloudfront.net'
+                # https://d2lzngk4bddvz9.cloudfront.net
+                
 
                 new_avatar_name = "avatar/%s.jpeg" % (str(uuid4()))
                 # 如果舊avatar是default，直接將圖片上傳到s3，並將user.avatar改為新avatar連結

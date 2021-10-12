@@ -5,9 +5,9 @@ import sys, smtplib, email.message as email_message
 
 ph = PasswordHasher()
 sys.path.append("..")
-from app import mail_username, mail_password
-mail_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-mail_server.login(mail_username, mail_password)
+# from app import mail_username, mail_password
+# mail_server = smtplib.SMTP_SSL('smtp.gmail.com', 535)
+# mail_server.login(mail_username, mail_password)
 
 my_profile_data = {
     'error': True,
@@ -18,22 +18,24 @@ my_profile_data = {
 }
 
 # 寄信給使用者驗證帳號
-def send_mail_to_verify(email):
-    try:
-        mail_msg = email_message.EmailMessage()
-        mail_msg["From"] = mail_username
-        mail_msg["To"] = email
-        mail_msg["Subject"] = 'Scard驗證信箱'
-        href = f'https://scard.skysea.fun/mailverify/{email}'
-        mail_msg.add_alternative(f'\
-        <h3>立即啟用你的Scard帳號</h3>\
-        <p>感謝你/妳的註冊，我們想確認你所輸入的註冊信箱是正確的。</p>\
-        <p>點擊下方網址完成信箱驗證，即可馬上啟用Scard帳號喔！</p>\
-        <a href="{href}">{href}</a>\
-            ', subtype='html')
-        mail_server.send_message(mail_msg)
-    except:
-        print('送信失敗')
+
+# def send_mail_to_verify(email):
+#     try:
+#         mail_msg = email_message.EmailMessage()
+#         mail_msg["From"] = mail_username
+#         mail_msg["To"] = email
+#         mail_msg["Subject"] = 'Scard驗證信箱'
+#         href = f'https://scard.skysea.fun/mailverify/{email}'
+#         mail_msg.add_alternative(f'\
+#         <h3>立即啟用你的Scard帳號</h3>\
+#         <p>感謝你/妳的註冊，我們想確認你所輸入的註冊信箱是正確的。</p>\
+#         <p>點擊下方網址完成信箱驗證，即可馬上啟用Scard帳號喔！</p>\
+#         <a href="{href}">{href}</a>\
+#             ', subtype='html')
+#         mail_server.send_message(mail_msg)
+#     except:
+#         print('送信失敗')
+
 
 @api.route('/user', methods=["GET"])
 def get_user():
@@ -65,9 +67,10 @@ def post_user():
             if from_api:
                 new_user = User(email=email, password=hash_pwd, verify_status='mail')
             else:
-                new_user = User(email=email, password=hash_pwd)
+                # this condition will make user who signup with email and password let verify_status be "mail", skip the verify mail step temporarily. 
+                new_user = User(email=email, password=hash_pwd, verify_status='mail')
                 # 寄信給使用者
-                send_mail_to_verify(email)
+                # send_mail_to_verify(email)
 
             db.session.add(new_user)
             db.session.commit()
@@ -125,22 +128,24 @@ def delete_user():
     data = {"ok": True}
     return jsonify(data), 200
 
-@api.route('/mailverify', methods=["POST"])
-def verify_user_email():
-    if 'user' in session:
-        email = session['user']['email']
-        try:
-            send_mail_to_verify(email)
-            return jsonify({
-                'ok': True,
-                'message': '已經重新寄送驗證信囉，趕快去確認吧！'
-            }), 200
-        except:
-            return jsonify({
-                'error': True,
-                'message': '信件送出失敗，請稍後再試'
-            }), 500
-    return jsonify(ErrorData.no_sign_data), 403
+### because we skip the mailverify step tmeporarily, 
+### so we don't use this api now  
+# @api.route('/mailverify', methods=["POST"])
+# def verify_user_email():
+#     if 'user' in session:
+#         email = session['user']['email']
+#         try:
+#             send_mail_to_verify(email)
+#             return jsonify({
+#                 'ok': True,
+#                 'message': '已經重新寄送驗證信囉，趕快去確認吧！'
+#             }), 200
+#         except:
+#             return jsonify({
+#                 'error': True,
+#                 'message': '信件送出失敗，請稍後再試'
+#             }), 500
+#     return jsonify(ErrorData.no_sign_data), 403
 
 @api.route('/verify', methods=["GET"])
 def get_user_verify():

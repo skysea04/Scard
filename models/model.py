@@ -23,7 +23,7 @@ class User(db.Model):
     birthday = db.Column(db.Date)
     collage = db.Column(db.String(255))
     department = db.Column(db.String(255))
-    avatar = db.Column(db.String(255), server_default="https://d2lzngk4bddvz9.cloudfront.net/avatar/default_avatar.jpeg")
+    avatar = db.Column(db.String(255), server_default="https://d3vb6r08z9jp7h.cloudfront.net/avatar/default_avatar.jpeg")
     relationship = db.Column(db.Enum('secret', 'single', 'in_a_relationship', 'complicated', 'open_relationship', 'no_show'), default="no_show")
     interest = db.Column(db.Text)
     club = db.Column(db.Text)

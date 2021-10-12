@@ -124,7 +124,7 @@ def post_image():
                 in_mem_file.seek(0)
             
             try:
-                cdn_url = 'https://d2lzngk4bddvz9.cloudfront.net'
+                cdn_url = "https://d3vb6r08z9jp7h.cloudfront.net"
                 image_name = "image/%s.%s" % (str(uuid4()), file_format)
                 s3.upload_fileobj(in_mem_file, "scard-bucket", image_name, ExtraArgs={'ContentType': f"image/{file_format}", 'ACL': "public-read"})
 

@@ -15,7 +15,6 @@ start_time = time.time()
 today = date.today()
 yesterday = today - timedelta(days=1)
 dby = yesterday - timedelta(days=1)
-
 '''
 測試區
 '''
@@ -158,7 +157,11 @@ def match_user_method():
 # update_no_scard_days()
 
 # 建立配對(多執行緒)
-match_user_method()
+# match_user_method()
+
+# cache 刪除
+cache.delete_memoized(User.view_user)
+
 
 end_time = time.time()
 print(f'共花{end_time-start_time}秒')

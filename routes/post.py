@@ -2,7 +2,7 @@ from flask import  session, redirect, url_for, render_template, abort
 from . import page, Post, PostBoard
 @page.route('/')
 def index():
-	return redirect(url_for('page.show_board'))
+	return redirect('/b')
 
 @page.route('/b')
 @page.route('/b/<board>')

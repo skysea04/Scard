@@ -15,7 +15,7 @@ async function signup(e){
                 })
     const data =await res.json()
     if(data.ok){
-        window.location.replace('/')
+        window.location = '/b'
     }else{
         const message = this.querySelector('.message')
         message.innerText = data.message

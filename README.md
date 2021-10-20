@@ -24,7 +24,7 @@ Password : 123
 * 以原生Contenteditable實作文章編輯系統
 * 使用index加速MySQL查詢效率
 * 使用Redis存取個人資料快取與通知
-* 運用Muti-thread加速抽卡配對效率
+* 運用Multi-thread加速抽卡配對效率
 * 以S3儲存使用者上傳的圖片與大頭貼
 * 結合Socket.io + Redis pub/sub + ELB實踐多開機器情境的聊天 / 通知播送功能
 * 申請SSL憑證實踐HTTPS

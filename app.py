@@ -57,6 +57,7 @@ def handle_join_room(room_id):
 	join_room(room_id)
 	if room_id not in msg_room_lst:
 		msg_p.subscribe(room_id)
+		msg_room_lst.append(room_id)
 	for message in msg_p.listen():
 		if isinstance(message.get('data'), bytes):
 			msg = json.loads(message['data'])
@@ -71,6 +72,7 @@ def handle_sub_channel(chan_id):
 	join_room(chan_id)
 	if chan_id not in chan_lst:
 		chan_p.subscribe(chan_id)
+		chan_lst.append(chan_id)
 	for note in chan_p.listen():
 		if isinstance(note.get('data'), bytes):
 			msg = json.loads(note['data'])
